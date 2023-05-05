@@ -1,4 +1,9 @@
 import pydle
+import time
+from dungeon import *
+from monster import *
+from utils import *
+
 
 class Command():
     def __init__(self, callback, help_message):
@@ -8,25 +13,65 @@ class Command():
 
 class Gorgobot(pydle.Client):
 
-    #Has a game, game has players
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.dungeon = Dungeon()
 
-    def __init__():
-        super();
-        #get back game
-        print("Hola");
-
-    async def callback_help(self, target, source, *argv):
+    async def _callback_help(self, target, source, *argv):
         for name in self.commands:
             await self.message(target, name + " : " + self.commands[name].help_message)
 
-    async def callback_pitch(self, target, source, *argv):
-        await self.message(target, "Ceci est mon donjon, " + source + ". Il attire moults aventuriers prêts à me voler mon butin si durement et cruellement accumulé. J'ai besoin de sbires comme vous pour renforcer mes défenses. Je serais me montrer redevable cela va se soi.")
+    async def _callback_pitch(self, target, source, *argv):
+        await self.message(target, "Ceci est mon donjon. Il attire moults aventuriers prêts à me voler mon butin si durement et cruellement accumulé. J'ai besoin de sbires comme vous pour renforcer mes défenses. Je serais me montrer redevable cela va se soi.")
+
+    async def _callback_join(self, target, source, *argv):
+        self.dungeon.add_player(source)
+        await self.message(target, f"Bienvenue dans mon armée {source}.")
+
+    async def _callback_find(self, target, source, *argv):
+        self.dungeon.generate_monster()
+        await self.message(target, f"J'ai trouvé un {self.dungeon.monster.name} {self.dungeon.monster.adjective}.")
+
+    async def _callback_fight(self, target, source, *argv):
+        while self.dungeon.monster.is_alive():
+            self.dungeon.fight()
+            if self.dungeon.turn == Turn.PLAYER:
+                log = "⚔ {} frappe {} {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
+                        self.dungeon.player.name,
+                        self.dungeon.monster.name,
+                        self.dungeon.monster.adjective,
+                        colors["red"],
+                        self.dungeon.player.damage,
+                        colors["reset"], colors["green"],
+                        "???",
+                        colors["reset"], colors["green"],
+                        self.dungeon.monster.hp,
+                        colors["reset"],
+                    )
+            else:
+                log = "⚔ {} {} frappe {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
+                        self.dungeon.monster.name,
+                        self.dungeon.monster.adjective,
+                        self.dungeon.player.name,
+                        colors["red"],
+                        self.dungeon.monster.damage,
+                        colors["reset"], colors["green"],
+                        "???",
+                        colors["reset"], colors["green"],
+                        self.dungeon.player.hp,
+                        colors["reset"],
+                    )
+            await self.message(target, log)
+            time.sleep(1)
+        self.dungeon.clear_monster()
 
     commands = {
-        "!help": Command(callback_help, "Affiche cette aide"),
-        "!pitch": Command(callback_pitch, "Conte l'histoire"),
-        #"!status": Command(callback_status, "Affiche ton statut"),
-        #"!battle": Command(callback_battle, "Force un combat"),
+        "!help": Command(_callback_help, "Affiche cette aide"),
+        "!pitch": Command(_callback_pitch, "Conte l'histoire"),
+        "!join": Command(_callback_join, "Rejoins mon armée"),
+        "!find": Command(_callback_find, "Cherche un monstre à combattre"),
+        #"!status": Command(_callback_status, "Affiche ton statut"),
+        "!fight": Command(_callback_fight, "Lance un combat"),
     }
 
     async def on_connect(self):
