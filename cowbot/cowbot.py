@@ -1,7 +1,7 @@
 import pydle
 import time
-from dungeon import *
-from monster import *
+from game import *
+from indian import *
 from utils import *
 
 
@@ -11,7 +11,7 @@ class Command():
         self.help_message = help_message
 
 
-class Gorgobot(pydle.Client):
+class Cowbot(pydle.Client):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -22,15 +22,15 @@ class Gorgobot(pydle.Client):
             await self.message(target, name + " : " + self.commands[name].help_message)
 
     async def _callback_pitch(self, target, source, *argv):
-        await self.message(target, "Ceci est mon donjon. Il attire moults aventuriers prêts à me voler mon butin si durement et cruellement accumulé. J'ai besoin de sbires comme vous pour renforcer mes défenses. Je serais me montrer redevable cela va se soi.")
+        await self.message(target, "pitch")
 
     async def _callback_join(self, target, source, *argv):
         self.dungeon.add_player(source)
-        await self.message(target, f"Bienvenue dans mon armée {source}.")
+        await self.message(target, f"join {source}.")
 
     async def _callback_find(self, target, source, *argv):
         self.dungeon.generate_monster()
-        await self.message(target, f"J'ai trouvé un {self.dungeon.monster.name} {self.dungeon.monster.adjective}.")
+        await self.message(target, f"find {self.dungeon.monster.name} {self.dungeon.monster.adjective}.")
 
     async def _callback_fight(self, target, source, *argv):
         while self.dungeon.monster.is_alive():
@@ -83,5 +83,5 @@ class Gorgobot(pydle.Client):
             if message.startswith('!'):
                 await self.commands[message].callback(self, target, source)
 
-client = Gorgobot('gorgobot', realname='Maitre du donjon')
+client = Cowbot('cowbot', realname='Patron du saloon')
 client.run('irc.libera.chat', tls=True, tls_verify=False)
