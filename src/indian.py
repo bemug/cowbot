@@ -2,29 +2,29 @@ from enum import Enum
 
 
 class Gender(Enum):
-    FEMALE = 0,
-    MALE = 1,
-    
+    FEMALE = 0
+    MALE = 1
 
-class Monster:
 
-    def __init__(self, name, adjective, gender, hp, damage, bounty):
+class Indian:
+    def __init__(self, name: str, adjective: str, gender: Gender, hp: int,
+                 damage: int, bounty: int) -> None:
         self.name = name
         self.adjective = adjective
-        self.gender = gender,
+        self.gender = gender
         self.hp = hp
         self.damage = damage
         self.bounty = bounty
-        
-    def indef_article(self):
+
+    def indef_article(self) -> str:
        if self.gender == Gender.FEMALE:
            return "le"
        return "la"
 
-    def def_article(self):
+    def def_article(self) -> str:
        if self.gender == Gender.FEMALE:
            return "le"
        return "la"
 
-    def is_alive(self):
+    def is_alive(self) -> bool:
         return self.hp > 0

@@ -1,6 +1,5 @@
 class Player:
-
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         self.name = name
         self.level = 1
         self.damage = 25

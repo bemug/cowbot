@@ -12,7 +12,6 @@ class Command():
 
 
 class Cowbot(pydle.Client):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.dungeon = Dungeon()
@@ -29,32 +28,32 @@ class Cowbot(pydle.Client):
         await self.message(target, f"join {source}.")
 
     async def _callback_find(self, target, source, *argv):
-        self.dungeon.generate_monster()
-        await self.message(target, f"find {self.dungeon.monster.name} {self.dungeon.monster.adjective}.")
+        self.dungeon.generate_indian()
+        await self.message(target, f"find {self.dungeon.indian.name} {self.dungeon.indian.adjective}.")
 
     async def _callback_fight(self, target, source, *argv):
-        while self.dungeon.monster.is_alive():
+        while self.dungeon.indian.is_alive():
             self.dungeon.fight()
             if self.dungeon.turn == Turn.PLAYER:
                 log = "⚔ {} frappe {} {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
                         self.dungeon.player.name,
-                        self.dungeon.monster.name,
-                        self.dungeon.monster.adjective,
+                        self.dungeon.indian.name,
+                        self.dungeon.indian.adjective,
                         colors["red"],
                         self.dungeon.player.damage,
                         colors["reset"], colors["green"],
                         "???",
                         colors["reset"], colors["green"],
-                        self.dungeon.monster.hp,
+                        self.dungeon.indian.hp,
                         colors["reset"],
                     )
             else:
                 log = "⚔ {} {} frappe {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
-                        self.dungeon.monster.name,
-                        self.dungeon.monster.adjective,
+                        self.dungeon.indian.name,
+                        self.dungeon.indian.adjective,
                         self.dungeon.player.name,
                         colors["red"],
-                        self.dungeon.monster.damage,
+                        self.dungeon.indian.damage,
                         colors["reset"], colors["green"],
                         "???",
                         colors["reset"], colors["green"],
@@ -63,7 +62,7 @@ class Cowbot(pydle.Client):
                     )
             await self.message(target, log)
             time.sleep(1)
-        self.dungeon.clear_monster()
+        self.dungeon.clear_indian()
 
     commands = {
         "!help": Command(_callback_help, "Affiche cette aide"),
@@ -82,6 +81,7 @@ class Cowbot(pydle.Client):
         if source != self.nickname:
             if message.startswith('!'):
                 await self.commands[message].callback(self, target, source)
+
 
 client = Cowbot('cowbot', realname='Patron du saloon')
 client.run('irc.libera.chat', tls=True, tls_verify=False)
