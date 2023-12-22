@@ -1,37 +1,38 @@
-import pydle
-import time
+from pydle import Client, Source, Target # type: ignore
+from time import sleep
+from typing import Any, Awaitable, Callable, Coroutine
 from game import *
 from indian import *
 from utils import *
 
 
 class Command():
-    def __init__(self, callback, help_message):
+    def __init__(self, callback: Callable[[Cowbot, Any, Any, Any], Coroutine[Any, Any, None]], help_message: str) -> None:
         self.callback = callback
         self.help_message = help_message
 
 
-class Cowbot(pydle.Client):
-    def __init__(self, *args, **kwargs):
+class Cowbot(Client): # type: ignore
+    def __init__(self, *args: str, **kwargs: int) -> None:
         super().__init__(*args, **kwargs)
-        self.dungeon = Dungeon()
+        self.game = Game()
 
-    async def _callback_help(self, target, source, *argv):
+    async def _callback_help(self, target: Target, source: Source, *argv: Any) -> None:
         for name in self.commands:
             await self.message(target, name + " : " + self.commands[name].help_message)
 
-    async def _callback_pitch(self, target, source, *argv):
+    async def _callback_pitch(self, target: Target, source: Source, *argv: Any) -> None:
         await self.message(target, "pitch")
 
-    async def _callback_join(self, target, source, *argv):
+    async def _callback_join(self, target: Target, source: Source, *argv: Any) -> None:
         self.dungeon.add_player(source)
         await self.message(target, f"join {source}.")
 
-    async def _callback_find(self, target, source, *argv):
+    async def _callback_find(self, target: Target, source: Source, *argv: Any) -> None:
         self.dungeon.generate_indian()
         await self.message(target, f"find {self.dungeon.indian.name} {self.dungeon.indian.adjective}.")
 
-    async def _callback_fight(self, target, source, *argv):
+    async def _callback_fight(self, target: Target, source: Source, *argv: Any) -> None:
         while self.dungeon.indian.is_alive():
             self.dungeon.fight()
             if self.dungeon.turn == Turn.PLAYER:
@@ -61,7 +62,7 @@ class Cowbot(pydle.Client):
                         colors["reset"],
                     )
             await self.message(target, log)
-            time.sleep(1)
+            sleep(1)
         self.dungeon.clear_indian()
 
     commands = {
@@ -73,15 +74,15 @@ class Cowbot(pydle.Client):
         "!fight": Command(_callback_fight, "Lance un combat"),
     }
 
-    async def on_connect(self):
+    async def on_connect(self) -> None:
         await self.join('##donjon')
 
-    async def on_message(self, target, source, message):
+    async def on_message(self, target: Target, source: Source, message: str) -> None:
         # don't respond to our own messages, as this leads to a positive feedback loop
         if source != self.nickname:
             if message.startswith('!'):
-                await self.commands[message].callback(self, target, source)
+                await self.commands[message].callback(self, target, source, None)
 
 
-client = Cowbot('cowbot', realname='Patron du saloon')
+client = Cowbot('cowbot', realname='Patron du saloon') # type: ignore
 client.run('irc.libera.chat', tls=True, tls_verify=False)
