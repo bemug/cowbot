@@ -1,4 +1,4 @@
-from pydle import Client, Source, Target # type: ignore
+import irc.bot #type: ignore
 from time import sleep
 from typing import Any, Awaitable, Callable, Coroutine
 from game import *
@@ -7,36 +7,38 @@ from utils import *
 
 
 class Command():
-    def __init__(self, callback: Callable[[Cowbot, Any, Any, Any], Coroutine[Any, Any, None]], help_message: str) -> None:
+    #TODO replace first any with Cowbot
+    def __init__(self, callback: Callable[[Any, Any, Any, Any], Coroutine[Any, Any, None]], help_message: str) -> None:
         self.callback = callback
         self.help_message = help_message
 
 
-class Cowbot(Client): # type: ignore
-    def __init__(self, *args: str, **kwargs: int) -> None:
-        super().__init__(*args, **kwargs)
+class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
+    def __init__(self, channel, nickname, server, port=6667):
+        irc.bot.SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
+        self.channel = channel
         self.game = Game()
 
-    async def _callback_help(self, target: Target, source: Source, *argv: Any) -> None:
+    def _callback_help(self, target: int, source, *argv: Any) -> None:
         for name in self.commands:
-            await self.message(target, name + " : " + self.commands[name].help_message)
+            self.connection.privmsg(target, name + " : " + self.commands[name].help_message)
 
-    async def _callback_pitch(self, target: Target, source: Source, *argv: Any) -> None:
-        await self.message(target, "pitch")
+    def _callback_pitch(self, target, *argv: Any) -> None:
+        self.connection.privmsg(target, "pitch")
 
-    async def _callback_join(self, target: Target, source: Source, *argv: Any) -> None:
+    def _callback_join(self, target, source, *argv: Any) -> None:
         self.dungeon.add_player(source)
-        await self.message(target, f"join {source}.")
+        self.connection.privmsg(target, f"join {source}.")
 
-    async def _callback_find(self, target: Target, source: Source, *argv: Any) -> None:
+    def _callback_find(self, target, source, *argv: Any) -> None:
         self.dungeon.generate_indian()
-        await self.message(target, f"find {self.dungeon.indian.name} {self.dungeon.indian.adjective}.")
+        self.connection.privmsg(target, f"find {self.dungeon.indian.name} {self.dungeon.indian.adjective}.")
 
-    async def _callback_fight(self, target: Target, source: Source, *argv: Any) -> None:
+    def _callback_fight(self, target, source, *argv: Any) -> None:
         while self.dungeon.indian.is_alive():
             self.dungeon.fight()
             if self.dungeon.turn == Turn.PLAYER:
-                log = "⚔ {} frappe {} {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
+                log = "{} frappe {} {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
                         self.dungeon.player.name,
                         self.dungeon.indian.name,
                         self.dungeon.indian.adjective,
@@ -49,7 +51,7 @@ class Cowbot(Client): # type: ignore
                         colors["reset"],
                     )
             else:
-                log = "⚔ {} {} frappe {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
+                log = "{} {} frappe {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
                         self.dungeon.indian.name,
                         self.dungeon.indian.adjective,
                         self.dungeon.player.name,
@@ -61,7 +63,7 @@ class Cowbot(Client): # type: ignore
                         self.dungeon.player.hp,
                         colors["reset"],
                     )
-            await self.message(target, log)
+            self.connection.privmsg(target, log)
             sleep(1)
         self.dungeon.clear_indian()
 
@@ -74,15 +76,49 @@ class Cowbot(Client): # type: ignore
         "!fight": Command(_callback_fight, "Lance un combat"),
     }
 
-    async def on_connect(self) -> None:
-        await self.join('##donjon')
+    def on_nicknameinuse(self, c, e):
+        c.nick(c.get_nickname() + "_")
 
-    async def on_message(self, target: Target, source: Source, message: str) -> None:
-        # don't respond to our own messages, as this leads to a positive feedback loop
-        if source != self.nickname:
-            if message.startswith('!'):
-                await self.commands[message].callback(self, target, source, None)
+    def on_welcome(self, c, e):
+        c.join(self.channel)
+
+    def on_privmsg(self, c, e):
+        self.do_command(e, e.arguments[0])
+
+    def on_pubmsg(self, c, e):
+        print(e) #TODO debug
+        message: str = e.arguments[0]
+        if message.startswith('!'):
+            try:
+                self.commands[message].callback(self, e.target, None)
+            except KeyError:
+                self.connection.privmsg(e.target, f"Commande inconnue : {message}")
+        return
 
 
-client = Cowbot('cowbot', realname='Patron du saloon') # type: ignore
-client.run('irc.libera.chat', tls=True, tls_verify=False)
+def main():
+    import sys
+
+    if len(sys.argv) != 4:
+        print("Usage: cowbot <server[:port]> <channel> <nickname>")
+        sys.exit(1)
+
+    s = sys.argv[1].split(":", 1)
+    server = s[0]
+    if len(s) == 2:
+        try:
+            port = int(s[1])
+        except ValueError:
+            print("Error: Erroneous port.")
+            sys.exit(1)
+    else:
+        port = 6667
+    channel = sys.argv[2]
+    nickname = sys.argv[3]
+
+    bot = Cowbot(channel, nickname, server, port) #type: ignore
+    bot.start()
+
+
+if __name__ == "__main__":
+    main()
