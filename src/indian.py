@@ -26,5 +26,8 @@ class Indian:
            return "le"
        return "la"
 
-    def is_alive(self) -> bool:
-        return self.hp > 0
+    def is_dead(self) -> bool:
+        return self.hp <= 0
+
+    def __str__(self):
+        return self.name.capitalize() + " " + self.adjective.capitalize()

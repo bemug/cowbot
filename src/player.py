@@ -7,3 +7,9 @@ class Player:
         self.hp = self.max_hp
         self.max_exp = 10
         self.exp = self.max_exp
+
+    def __str__(self):
+        return self.name
+
+    def is_dead(self):
+        return self.hp <= 0

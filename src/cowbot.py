@@ -1,6 +1,7 @@
 import irc.bot #type: ignore
 from time import sleep
-from typing import Any, Awaitable, Callable, Coroutine
+from typing import Any, Callable, Coroutine
+from aftermath import *
 from game import *
 from indian import *
 from utils import *
@@ -20,8 +21,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         self.game = Game()
 
     def _callback_help(self, target: int, source, *argv: Any) -> None:
-        for name in self.commands:
-            self.connection.privmsg(target, name + " : " + self.commands[name].help_message)
+        for command in self.commands:
+            self.connection.privmsg(target, command + " : " + self.commands[command].help_message)
 
     def _callback_pitch(self, target, source, *argv: Any) -> None:
         self.connection.privmsg(target, "Bienvenue dans mon saloon, étranger. Installez vous. J'ai là un excellent whisky, vous devriez le goûter.")
@@ -32,41 +33,32 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         self.connection.privmsg(target, f"join {source}.")
 
     def _callback_find(self, target, source, *argv: Any) -> None:
-        self.game.generate_indian()
+        self.game.find_indian()
         self.connection.privmsg(target, f"find {self.game.indian.name} {self.game.indian.adjective}.")
 
     def _callback_fight(self, target, source, *argv: Any) -> None:
-        while self.game.indian.is_alive():
-            self.game.fight()
-            if self.game.turn == Turn.PLAYER:
-                log = "{} frappe {} {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
-                        self.game.player.name,
-                        self.game.indian.name,
-                        self.game.indian.adjective,
-                        colors["red"],
-                        self.game.player.damage,
-                        colors["reset"], colors["green"],
-                        "???",
-                        colors["reset"], colors["green"],
-                        self.game.indian.hp,
-                        colors["reset"],
-                    )
-            else:
-                log = "{} {} frappe {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
-                        self.game.indian.name,
-                        self.game.indian.adjective,
-                        self.game.player.name,
-                        colors["red"],
-                        self.game.indian.damage,
-                        colors["reset"], colors["green"],
-                        "???",
-                        colors["reset"], colors["green"],
-                        self.game.player.hp,
-                        colors["reset"],
-                    )
+        log: str = ""
+
+        self.game.start_fight()
+        while not self.game.is_fight_over():
+            am: Aftermath = self.game.process_fight()
+            log = "🞄  {} frappe {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
+                    str(am.source),
+                    str(am.target),
+                    colors["red"],
+                    am.from_hp - am.to_hp,
+                    colors["reset"], colors["green"],
+                    am.from_hp,
+                    colors["reset"], colors["green"],
+                    am.to_hp,
+                    colors["reset"],
+                )
             self.connection.privmsg(target, log)
+            if am.target.is_dead():
+                self.connection.privmsg(target, f"✝  {am.target} décède.")
             sleep(1)
-        self.game.clear_indian()
+        #TODO msg + loot
+        self.connection.privmsg(target, "Combat terminé.")
 
     commands = {
         "!help": Command(_callback_help, "Affiche cette aide"),

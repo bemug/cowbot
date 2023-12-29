@@ -1,4 +1,5 @@
 from enum import Enum
+from aftermath import *
 from indian import *
 from typing import List, Optional
 from player import *
@@ -13,13 +14,12 @@ class Turn(Enum):
 class Game():
     def __init__(self) -> None:
         self.players: List[Player] = []
-        self.bounty = 0
         self.turn = Turn.INDIAN
-        self.in_fight = False
+        self.indian = None
 
-    def generate_indian(self) -> Indian:
-        #Always get the cert avisé
-        return Indian("cerf", "avisé", Gender.MALE, 30, 2, 5)
+    def find_indian(self) -> None:
+        #Always get the cerf avisé
+        self.indian = Indian("cerf", "avisé", Gender.MALE, 30, 2, 5)
 
     def _change_turn(self) -> None:
         if self.turn == Turn.PLAYER:
@@ -27,25 +27,28 @@ class Game():
         else:
             self.turn = Turn.PLAYER
 
-    def fight(self) -> None:
-        #First pass will change turn to the player
-        #TODO create a fight object ?
+    def start_fight(self) -> None:
+        print("Start fight")
+
+    def process_fight(self) -> Aftermath:
         self._change_turn()
         player = self.players[randint(0, len(self.players) - 1)]
-        indian = self.generate_indian()
-        self._fight_between(player, indian)
-
-    def _fight_between(self, player: Player, indian: Indian) -> None:
-
         if self.turn == Turn.PLAYER:
-            player.hp -= indian.damage
+            source = player
+            target = self.indian
         else:
-            indian.hp -= player.damage
+            source = self.indian
+            target = player
+        from_hp: int = target.hp
+        self._hit(source, target)
+        return Aftermath(source, target, from_hp, target.hp)
 
-        if not indian.is_alive():
-            #Finish the fight
-            self.in_fight = False
-            self.turn = Turn.INDIAN
+    def _hit(self, source, target) -> None:
+        dmg: int = source.damage
+        target.hp = max(target.hp - dmg, 0)
+
+    def is_fight_over(self) -> bool:
+        return self.indian.is_dead()
 
     def add_player(self, name: str) -> None:
         self.players.append(Player(name))
