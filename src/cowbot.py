@@ -23,49 +23,49 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         for name in self.commands:
             self.connection.privmsg(target, name + " : " + self.commands[name].help_message)
 
-    def _callback_pitch(self, target, *argv: Any) -> None:
+    def _callback_pitch(self, target, source, *argv: Any) -> None:
         self.connection.privmsg(target, "pitch")
 
     def _callback_join(self, target, source, *argv: Any) -> None:
-        self.dungeon.add_player(source)
+        self.game.add_player(source)
         self.connection.privmsg(target, f"join {source}.")
 
     def _callback_find(self, target, source, *argv: Any) -> None:
-        self.dungeon.generate_indian()
-        self.connection.privmsg(target, f"find {self.dungeon.indian.name} {self.dungeon.indian.adjective}.")
+        self.game.generate_indian()
+        self.connection.privmsg(target, f"find {self.game.indian.name} {self.game.indian.adjective}.")
 
     def _callback_fight(self, target, source, *argv: Any) -> None:
-        while self.dungeon.indian.is_alive():
-            self.dungeon.fight()
-            if self.dungeon.turn == Turn.PLAYER:
+        while self.game.indian.is_alive():
+            self.game.fight()
+            if self.game.turn == Turn.PLAYER:
                 log = "{} frappe {} {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
-                        self.dungeon.player.name,
-                        self.dungeon.indian.name,
-                        self.dungeon.indian.adjective,
+                        self.game.player.name,
+                        self.game.indian.name,
+                        self.game.indian.adjective,
                         colors["red"],
-                        self.dungeon.player.damage,
+                        self.game.player.damage,
                         colors["reset"], colors["green"],
                         "???",
                         colors["reset"], colors["green"],
-                        self.dungeon.indian.hp,
+                        self.game.indian.hp,
                         colors["reset"],
                     )
             else:
                 log = "{} {} frappe {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
-                        self.dungeon.indian.name,
-                        self.dungeon.indian.adjective,
-                        self.dungeon.player.name,
+                        self.game.indian.name,
+                        self.game.indian.adjective,
+                        self.game.player.name,
                         colors["red"],
-                        self.dungeon.indian.damage,
+                        self.game.indian.damage,
                         colors["reset"], colors["green"],
                         "???",
                         colors["reset"], colors["green"],
-                        self.dungeon.player.hp,
+                        self.game.player.hp,
                         colors["reset"],
                     )
             self.connection.privmsg(target, log)
             sleep(1)
-        self.dungeon.clear_indian()
+        self.game.clear_indian()
 
     commands = {
         "!help": Command(_callback_help, "Affiche cette aide"),
@@ -90,7 +90,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         message: str = e.arguments[0]
         if message.startswith('!'):
             try:
-                self.commands[message].callback(self, e.target, None)
+                self.commands[message].callback(self, e.target, e.source.nick, None)
             except KeyError:
                 self.connection.privmsg(e.target, f"Commande inconnue : {message}")
         return
