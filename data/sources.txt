@@ -1,0 +1,1 @@
+animals.txt : http://www.nurykabe.com/dump/text/lists/liste%20d'animaux%20(fr).txt
