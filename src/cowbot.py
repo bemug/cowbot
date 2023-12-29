@@ -101,6 +101,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                 self.connection.privmsg(e.target, f"Commande inconnue : {message}")
         return
 
+    def debug_start(self):
+        self.game.add_player("zoologist")
+        self.game.find_indian()
 
 def main():
     import sys
@@ -123,6 +126,9 @@ def main():
     nickname = sys.argv[3]
 
     bot = Cowbot(channel, nickname, server, port) #type: ignore
+
+    bot.debug_start()
+
     bot.start()
 
 
