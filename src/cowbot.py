@@ -76,6 +76,11 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         "!fight": Command(_callback_fight, "Lance un combat"),
     }
 
+    def get_users(self):
+        users: List = list(self.channels.get(self.channel).users())
+        users.remove(self.connection.nickname)
+        return sorted(users)
+
     def on_nicknameinuse(self, c, e):
         c.nick(c.get_nickname() + "_")
 
