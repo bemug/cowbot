@@ -9,7 +9,7 @@ class Player:
         self.exp = self.max_exp
 
     def __str__(self):
-        return self.name
+        return self.name.capitalize()
 
     def is_dead(self):
         return self.hp <= 0
