@@ -24,7 +24,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.connection.privmsg(target, name + " : " + self.commands[name].help_message)
 
     def _callback_pitch(self, target, source, *argv: Any) -> None:
-        self.connection.privmsg(target, "pitch")
+        self.connection.privmsg(target, "Bienvenue dans mon saloon, étranger. Installez vous. J'ai là un excellent whisky, vous devriez le goûter.")
+        self.connection.privmsg(target, "Dites, j'ai entendu dire que vous n'aimiez pas trop les indiens ? Ils me mènent la vie dure ces temps-ci. Ils débarquent dans mon saloon et piquent dans la caisse. Peut être que vous pourriez en dessouder quelques-uns pour moi ? Je saurais me montrer redevable.")
 
     def _callback_join(self, target, source, *argv: Any) -> None:
         self.game.add_player(source)
