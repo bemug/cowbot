@@ -34,15 +34,17 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_find(self, target, source, *argv: Any) -> None:
         self.game.find_indian()
-        self.connection.privmsg(target, f"find {self.game.indian.name} {self.game.indian.adjective}.")
+        self.connection.privmsg(target, f"find {self.game.indian}.")
 
     def _callback_fight(self, target, source, *argv: Any) -> None:
         log: str = ""
 
         self.game.start_fight()
+        self.connection.privmsg(target, f"{self.game.indian} débarque dans le saloon.")
+        sleep(1)
         while not self.game.is_fight_over():
             am: Aftermath = self.game.process_fight()
-            log = "🞄  {} frappe {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
+            log = "{} frappe {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
                     str(am.source),
                     str(am.target),
                     colors["red"],
@@ -55,7 +57,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                 )
             self.connection.privmsg(target, log)
             if am.target.is_dead():
-                self.connection.privmsg(target, f"✝  {am.target} décède.")
+                self.connection.privmsg(target, f"{am.target} décède. ✝")
             sleep(1)
         #TODO msg + loot
         self.connection.privmsg(target, "Combat terminé.")
