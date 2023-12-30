@@ -6,6 +6,9 @@ from player import *
 from random import randint, choice
 
 
+BEER_PRICE: int = 10
+
+
 class Turn(Enum):
     PLAYER = 0
     INDIAN = 1
@@ -14,13 +17,17 @@ class Turn(Enum):
 class Game():
     def __init__(self) -> None:
         self.players: List[Player] = []
-        self.turn = Turn.INDIAN
+        self.turn = Turn.PLAYER
         self.indian = None
-        self.cash: int = 0
+        self.cash: int = 1
+
+    def _get_difficulty_factor(self) -> int:
+        return int(self.cash / BEER_PRICE)
 
     def find_indian(self) -> None:
-        #Always get the cerf avisé
-        self.indian = Indian("cerf", "avisé", Gender.MALE, 30, 2, 5)
+        hp = 10 + pow(self._get_difficulty_factor(), 2)
+        damage = 5 + pow(self._get_difficulty_factor(), 2)
+        self.indian = Indian("cerf", "avisé", Gender.MALE, hp, damage)
 
     def _change_turn(self) -> None:
         if self.turn == Turn.PLAYER:
