@@ -44,7 +44,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         sleep(1)
         while not self.game.is_fight_over():
             am: Aftermath = self.game.process_fight()
-            log = "{} frappe {} pour {}{} DMG{} ({}{} PV{} → {}{} PV{}).".format(
+            #armor sign will be ⛊
+            log = "{} frappe {} pour {}{} ✷{} ({}{} ♥{} → {}{} ♥{}).".format(
                     str(am.source),
                     str(am.target),
                     colors["red"],
