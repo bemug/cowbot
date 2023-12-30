@@ -16,6 +16,7 @@ class Game():
         self.players: List[Player] = []
         self.turn = Turn.INDIAN
         self.indian = None
+        self.cash: int = 0
 
     def find_indian(self) -> None:
         #Always get the cerf avisé

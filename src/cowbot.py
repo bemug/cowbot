@@ -20,23 +20,23 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         self.channel = channel
         self.game = Game()
 
-    def _callback_help(self, target: int, source, *argv: Any) -> None:
+    def _callback_help(self, target: int, source, args: str) -> None:
         for command in self.commands:
             self.connection.privmsg(target, command + " : " + self.commands[command].help_message)
 
-    def _callback_pitch(self, target, source, *argv: Any) -> None:
+    def _callback_pitch(self, target, source, args: str) -> None:
         self.connection.privmsg(target, "Bienvenue dans mon saloon, étranger. Installez vous. J'ai là un excellent whisky, vous devriez le goûter.")
         self.connection.privmsg(target, "Dites, j'ai entendu dire que vous n'aimiez pas trop les indiens ? Ils me mènent la vie dure ces temps-ci. Ils débarquent dans mon saloon et piquent dans la caisse. Peut être que vous pourriez en dessouder quelques-uns pour moi ? Je saurais me montrer redevable.")
 
-    def _callback_join(self, target, source, *argv: Any) -> None:
+    def _callback_join(self, target, source, args: str) -> None:
         self.game.add_player(source)
         self.connection.privmsg(target, f"join {source}.")
 
-    def _callback_find(self, target, source, *argv: Any) -> None:
+    def _callback_find(self, target, source, args: str) -> None:
         self.game.find_indian()
         self.connection.privmsg(target, f"find {self.game.indian}.")
 
-    def _callback_fight(self, target, source, *argv: Any) -> None:
+    def _callback_fight(self, target, source, args: str) -> None:
         log: str = ""
 
         self.game.start_fight()
@@ -62,6 +62,17 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         #TODO msg + loot
         self.connection.privmsg(target, "Combat terminé.")
 
+    def _callback_cash(self, target, source, args: str) -> None:
+        if len(args) != 1:
+            self.connection.privmsg(target, "!cash <cash>")
+            return
+        try:
+            self.game.cash = int(args[0])
+        except ValueError:
+            self.connection.privmsg(target, f"'{args[0]}' n'est pas un nombre.")
+            return
+        self.connection.privmsg(target, f"Il y a à présent {self.game.cash}$ dans le tiroir-caisse.")
+
     commands = {
         "!help": Command(_callback_help, "Affiche cette aide"),
         "!pitch": Command(_callback_pitch, "Conte l'histoire"),
@@ -69,6 +80,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         "!find": Command(_callback_find, "Cherche un monstre à combattre"),
         #"!status": Command(_callback_status, "Affiche ton statut"),
         "!fight": Command(_callback_fight, "Lance un combat"),
+        "!cash": Command(_callback_cash, "Change le cash dans le tiroir-caisse"),
     }
 
     def get_users(self):
@@ -89,8 +101,14 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         print(e) #TODO debug
         message: str = e.arguments[0]
         if message.startswith('!'):
+            command: str = message.split(' ', 1)[0]
+            args: str = None
             try:
-                self.commands[message].callback(self, e.target, e.source.nick, None)
+                args: str = message.split(' ')[1:]
+            except IndexError:
+                pass
+            try:
+                self.commands[message.split(' ')[0]].callback(self, e.target, e.source.nick, args)
             except KeyError:
                 self.connection.privmsg(e.target, f"Commande inconnue : {message}")
         return
