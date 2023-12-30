@@ -3,7 +3,7 @@ from aftermath import *
 from indian import *
 from typing import List, Optional
 from player import *
-from random import randint
+from random import randint, choice
 
 
 class Turn(Enum):
@@ -28,7 +28,7 @@ class Game():
             self.turn = Turn.PLAYER
 
     def start_fight(self) -> None:
-        print("Start fight")
+        self.turn = choice(list(Turn))
 
     def process_fight(self) -> Aftermath:
         self._change_turn()
