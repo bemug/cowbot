@@ -24,16 +24,6 @@ class Indian:
     def _get_max_hp(self) -> int:
         return 15 + self._get_level()
 
-    def indef_article(self) -> str:
-       if self.gender == Gender.FEMALE:
-           return "le"
-       return "la"
-
-    def def_article(self) -> str:
-       if self.gender == Gender.FEMALE:
-           return "le"
-       return "la"
-
     def is_dead(self) -> bool:
         return self.hp <= 0
 
