@@ -19,15 +19,10 @@ class Game():
         self.players: List[Player] = []
         self.turn = Turn.PLAYER
         self.indian = None
-        self.cash: int = 1
-
-    def _get_difficulty_factor(self) -> int:
-        return int(self.cash / BEER_PRICE)
+        self.exp: int = 0
 
     def find_indian(self) -> None:
-        hp = 10 + pow(self._get_difficulty_factor(), 2)
-        damage = 5 + pow(self._get_difficulty_factor(), 2)
-        self.indian = Indian("cerf", "avisé", Gender.MALE, hp, damage)
+        self.indian = Indian("cerf", "avisé", Gender.MALE, self.exp)
 
     def _change_turn(self) -> None:
         if self.turn == Turn.PLAYER:
@@ -52,7 +47,7 @@ class Game():
         return Aftermath(source, target, from_hp, target.hp)
 
     def _hit(self, source, target) -> None:
-        dmg: int = source.damage
+        dmg: int = source._get_damage()
         target.hp = max(target.hp - dmg, 0)
 
     def is_fight_over(self) -> bool:
