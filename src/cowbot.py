@@ -32,15 +32,15 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         self.game.add_player(source)
         self.connection.privmsg(target, f"join {source}.")
 
-    def _callback_find(self, target, source, args: str) -> None:
-        self.game.find_indian()
-        self.connection.privmsg(target, f"find {self.game.indian}.")
-
     def _callback_fight(self, target, source, args: str) -> None:
         log: str = ""
+        number_str = ""
 
         self.game.start_fight()
-        self.connection.privmsg(target, f"{self.game.indian} débarque dans le saloon.")
+
+        if len(self.game.indians) > 1:
+            number_str = "nt"
+        self.connection.privmsg(target, f"{list_str(self.game.indians)} débarque{number_str} dans le saloon.")
         sleep(1)
         while not self.game.is_fight_over():
             am: Aftermath = self.game.process_fight()
@@ -78,7 +78,6 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         "!help": Command(_callback_help, "Affiche cette aide"),
         "!pitch": Command(_callback_pitch, "Conte l'histoire"),
         "!join": Command(_callback_join, "Rejoins mon armée"),
-        "!find": Command(_callback_find, "Cherche un monstre à combattre"),
         #"!status": Command(_callback_status, "Affiche ton statut"),
         "!fight": Command(_callback_fight, "Lance un combat"),
         "!cash": Command(_callback_cash, "Change le cash dans le tiroir-caisse"),
@@ -116,7 +115,6 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def debug_start(self):
         self.game.add_player("zoologist")
-        self.game.find_indian()
 
 def main():
     import sys

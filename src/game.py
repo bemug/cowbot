@@ -3,10 +3,7 @@ from aftermath import *
 from indian import *
 from typing import List, Optional
 from player import *
-from random import randint, choice
-
-
-BEER_PRICE: int = 10
+from random import randint, choice, uniform
 
 
 class Turn(Enum):
@@ -17,12 +14,16 @@ class Turn(Enum):
 class Game():
     def __init__(self) -> None:
         self.players: List[Player] = []
+        self.indians: List[Indian] = []
         self.turn = Turn.PLAYER
-        self.indian = None
-        self.exp: int = 0
 
-    def find_indian(self) -> None:
-        self.indian = Indian("cerf", "avisé", Gender.MALE, self.exp)
+    def find_indians(self) -> None:
+        #TODO generate combined/split indians with 5% chance of appearance
+        for player in self.players:
+            noised_foe_exp = player.foe_exp * uniform(0.8, 1.2)
+            self.indians.append(Indian("cerf", "avisé", Gender.MALE, noised_foe_exp))
+            #self.indians.append(Indian("renard", "apprivoisé", Gender.MALE, noised_foe_exp))
+            #self.indians.append(Indian("loutre", "malade", Gender.MALE, noised_foe_exp))
 
     def _change_turn(self) -> None:
         if self.turn == Turn.PLAYER:
@@ -31,16 +32,19 @@ class Game():
             self.turn = Turn.PLAYER
 
     def start_fight(self) -> None:
+        #Randomize first turn
         self.turn = choice(list(Turn))
+        self.find_indians()
 
     def process_fight(self) -> Aftermath:
         self._change_turn()
         player = self.players[randint(0, len(self.players) - 1)]
+        indian = self.indians[randint(0, len(self.indians) - 1)]
         if self.turn == Turn.PLAYER:
             source = player
-            target = self.indian
+            target = indian
         else:
-            source = self.indian
+            source = indian
             target = player
         from_hp: int = target.hp
         self._hit(source, target)
@@ -51,7 +55,10 @@ class Game():
         target.hp = max(target.hp - dmg, 0)
 
     def is_fight_over(self) -> bool:
-        return self.indian.is_dead()
+        for indian in self.indians:
+            if not indian.is_dead():
+                return False
+        return True
 
     def add_player(self, name: str) -> None:
         self.players.append(Player(name))
