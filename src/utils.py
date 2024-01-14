@@ -3,6 +3,7 @@ colors = {
     "green": "\x0309",
     "blue": "\x0302",
     "yellow": "\x0342",
+    "orange": "\x0307",
     "reset": "\x03",
 }
 
