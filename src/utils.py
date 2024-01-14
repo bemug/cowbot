@@ -1,8 +1,10 @@
+#See https://modern.ircdocs.horse/formatting.html for formatting
+#See https://defs.ircdocs.horse/info/formatting for client support
 colors = {
     "red": "\x0304",
     "green": "\x0309",
     "blue": "\x0302",
-    "yellow": "\x0342",
+    "yellow": "\x0342", #Default yellow is too bright on some white themes
     "orange": "\x0307",
     "reset": "\x03",
 }

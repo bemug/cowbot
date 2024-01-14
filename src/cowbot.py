@@ -36,6 +36,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         log: str = ""
         number_str = ""
 
+        #TODO use this 0 width whitespace in between nick to avoid highlighting people: ​
+        #See https://blanktext.net/
+
         self.game.start_fight()
 
         if len(self.game.indians) > 1:
