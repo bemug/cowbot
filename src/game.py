@@ -54,11 +54,14 @@ class Game():
         dmg: int = source._get_damage()
         target.hp = max(target.hp - dmg, 0)
 
-    def is_fight_over(self) -> bool:
-        for indian in self.indians:
-            if not indian.is_dead():
+    def are_they_dead(self, list) -> bool:
+        for elem in list:
+            if not elem.is_dead():
                 return False
         return True
+
+    def is_fight_over(self) -> bool:
+        return self.are_they_dead(self.indians) or self.are_they_dead(self.players)
 
     def add_player(self, name: str) -> None:
         self.players.append(Player(name))

@@ -63,8 +63,21 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             if am.target.is_dead():
                 self.connection.privmsg(target, f"{am.target} décède. ✝")
             sleep(1)
-        #TODO msg + loot
-        self.connection.privmsg(target, "Combat terminé.")
+        if self.game.are_they_dead(self.game.indians):
+            #TODO xp
+            self.connection.privmsg(target, "Victoire.")
+            #TODO loot
+        else: #all players dead
+            #TODO volent tiroir caisse
+            log = "Défaite. {} vole{} {}{} ${} dans le tiroir-caisse, et s'échappe{}.".format(
+                    list_str(self.game.indians),
+                    number_str,
+                    colors["yellow"],
+                    150, #TODO real value
+                    colors["reset"],
+                    number_str,
+                )
+            self.connection.privmsg(target, log)
 
     def _callback_cash(self, target, source, args: str) -> None:
         if len(args) != 1:
