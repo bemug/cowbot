@@ -17,6 +17,10 @@ class Game():
         self.indians: List[Indian] = []
         self.turn = Turn.PLAYER
 
+    def get_cash(self):
+        return sum([player.foe_exp for player in self.players])
+
+
     def find_indians(self) -> None:
         #TODO generate combined/split indians with 5% chance of appearance
         for player in self.players:
@@ -47,14 +51,13 @@ class Game():
         else:
             source = indian
             target = player
-        from_hp: int = target.hp
-        self._hit(source, target)
-        return Aftermath(source, target, from_hp, target.hp)
+        damage = self._hit(source, target)
+        return Aftermath(source, target, damage)
 
-    def get_end_fight_xp(self):
-        return pow(sum(indian.get_level() for indian in self.indians), 2) / len(self.players)
+    def get_end_fight_xp(self) -> int:
+        return int(pow(sum(indian.get_level() for indian in self.indians), 2) / len(self.players))
 
-    def end_fight(self):
+    def end_fight(self) -> int:
         delta_exp = self.get_end_fight_xp()
         for player in self.players:
             if self.are_they_dead(self.indians):
@@ -71,9 +74,10 @@ class Game():
             if player.hp <= 0:
                 player.hp = 1
 
-    def _hit(self, source, target) -> None:
+    def _hit(self, source, target) -> int:
         dmg: int = source.get_damage()
         target.hp = max(target.hp - dmg, 0)
+        return dmg
 
     def are_they_dead(self, list) -> bool: #TODO rename "did_win" and change calls
         for elem in list:

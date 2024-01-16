@@ -48,16 +48,11 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         while not self.game.is_fight_over():
             am: Aftermath = self.game.process_fight()
             #armor sign will be ⛊
-            log = "{} tire sur {} pour {}{}✷{} ({}{}♥{} → {}{}♥{}).".format(
+            log = "{} tire {}{}✷{} sur {} [{}{}/{}♥{}].".format(
                     str(am.source),
+                    colors["orange"], am.damage, colors["reset"],
                     str(am.target),
-                    colors["orange"],
-                    am.from_hp - am.to_hp,
-                    colors["reset"], colors["red"],
-                    am.from_hp,
-                    colors["reset"], colors["red"],
-                    am.to_hp,
-                    colors["reset"],
+                    colors["red"], am.target.hp, am.target.get_max_hp(), colors["reset"],
                 )
             self.connection.privmsg(target, log)
             if am.target.is_dead():
@@ -67,23 +62,34 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         #Backup exp for display
         levels = [player.get_level() for player in self.game.players]
         cash_change = self.game.end_fight()
+        total_cash = cash_change * len(self.game.indians)
 
         if cash_change >= 0:
-            self.connection.privmsg(target, f"Victoire. J'ai pris {cash_change * len(self.game.indians)}$ sur {list_str(self.game.indians)} pour les ajouter au tiroir-caisse.")
-            self.connection.privmsg(target, f"{cash_change}★ remporté par {list_str(self.game.players)}.")
+            log = "Victoire. {} possède{} {}{}${}. Hop dans le tiroir-caisse [{}{}${}].".format(
+                    list_str(self.game.indians),
+                    number_str,
+                    colors["yellow"], total_cash, colors["reset"],
+                    colors["yellow"], self.game.get_cash(), colors["reset"],
+                )
+            self.connection.privmsg(target, log)
+
             i=0
             for player in self.game.players:
                 if player.get_level() != levels[i]:
-                    self.connection.privmsg(target, f"{player} passe au niveau {player.get_level()}.")
+                    log = "{} passe au niveau {} [{}{}/{}★{}].".format(
+                            player,
+                            player.get_level(),
+                            colors["blue"], player.exp, player.get_max_exp(), colors["reset"],
+                        )
+                    self.connection.privmsg(target, log)
                 i += 1
             #TODO loot
         else:
-            log = "Défaite. {} vole{} {}{}${} dans le tiroir-caisse (X$ →X $), et s'échappe{}.".format(
+            log = "Défaite. {} vole{} {}{}${} dans le tiroir-caisse [{}{}${}], et s'échappe{}.".format(
                     list_str(self.game.indians),
                     number_str,
-                    colors["yellow"],
-                    -cash_change,
-                    colors["reset"],
+                    colors["yellow"], -cash_change, colors["reset"],
+                    colors["yellow"], self.game.get_cash(), colors["reset"],
                     number_str,
                 )
             self.connection.privmsg(target, log)
