@@ -1,12 +1,12 @@
 class Player:
     def __init__(self, name: str) -> None:
         self.name = name
-        self.exp = 0
+        self.exp = 1 #Level 1
         self.foe_exp = self.exp
         self.hp = self.get_max_hp()
 
     def get_level(self) -> int:
-        return int(self.exp ** (1. / 3)) + 1
+        return int(self.exp ** (1. / 3))
 
     def get_damage(self) -> int:
         return 4 + self.get_level()

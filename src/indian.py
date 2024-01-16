@@ -16,7 +16,7 @@ class Indian:
 
     def get_level(self) -> int:
         #Indian level up 5/4 faster than players
-        return int((self.exp * 5/4) ** (1. / 3)) + 1
+        return int((self.exp * 5/4) ** (1. / 3))
 
     def get_damage(self) -> int:
         return 2 + self.get_level()
