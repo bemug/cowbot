@@ -127,17 +127,19 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         print(e) #TODO debug
         message: str = e.arguments[0]
         if message.startswith('!'):
-            command: str = message.split(' ', 1)[0]
+            command: str = message.split(' ')[0]
             args: str = None
             try:
                 args: str = message.split(' ')[1:]
             except IndexError:
                 pass
             try:
-                self.commands[message.split(' ')[0]].callback(self, e.target, e.source.nick, args)
+                #Check it exists
+                self.commands[command]
             except KeyError:
                 self.connection.privmsg(e.target, f"Commande inconnue : {message}")
-        return
+                return
+            self.commands[command].callback(self, e.target, e.source.nick, args)
 
     def debug_start(self):
         self.game.add_player("zoologist")
