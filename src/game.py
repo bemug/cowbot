@@ -37,6 +37,7 @@ class Game():
         self.find_indians()
 
     def process_fight(self) -> Aftermath:
+        #TODO instead of turn use a list with all people, and shuffle it at start
         self._change_turn()
         player = self.players[randint(0, len(self.players) - 1)]
         indian = self.indians[randint(0, len(self.indians) - 1)]
@@ -50,11 +51,31 @@ class Game():
         self._hit(source, target)
         return Aftermath(source, target, from_hp, target.hp)
 
+    def get_end_fight_xp(self):
+        return pow(sum(indian.get_level() for indian in self.indians), 2) / len(self.players)
+
+    def end_fight(self):
+        delta_exp = self.get_end_fight_xp()
+        for player in self.players:
+            if self.are_they_dead(self.indians):
+                player.exp += delta_exp
+                player.foe_exp += delta_exp
+                return delta_exp
+            else:
+                player.foe_exp -= delta_exp
+                return delta_exp * -1
+
+    def clean_after_fight(self):
+        self.indians = []
+        for player in self.players:
+            if player.hp <= 0:
+                player.hp = 1
+
     def _hit(self, source, target) -> None:
-        dmg: int = source._get_damage()
+        dmg: int = source.get_damage()
         target.hp = max(target.hp - dmg, 0)
 
-    def are_they_dead(self, list) -> bool:
+    def are_they_dead(self, list) -> bool: #TODO rename "did_win" and change calls
         for elem in list:
             if not elem.is_dead():
                 return False

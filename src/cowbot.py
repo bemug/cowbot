@@ -48,7 +48,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         while not self.game.is_fight_over():
             am: Aftermath = self.game.process_fight()
             #armor sign will be ⛊
-            log = "{} tire sur {} pour {}{} ✷{} ({}{} ♥{} → {}{} ♥{}).".format(
+            log = "{} tire sur {} pour {}{}✷{} ({}{}♥{} → {}{}♥{}).".format(
                     str(am.source),
                     str(am.target),
                     colors["orange"],
@@ -61,23 +61,33 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                 )
             self.connection.privmsg(target, log)
             if am.target.is_dead():
-                self.connection.privmsg(target, f"{am.target} décède. ✝")
+                self.connection.privmsg(target, f"{am.target} est à terre.")
             sleep(1)
-        if self.game.are_they_dead(self.game.indians):
-            #TODO xp
-            self.connection.privmsg(target, "Victoire.")
+
+        #Backup exp for display
+        levels = [player.get_level() for player in self.game.players]
+        cash_change = self.game.end_fight()
+
+        if cash_change >= 0:
+            self.connection.privmsg(target, f"Victoire. J'ai pris {cash_change * len(self.game.indians)}$ sur {list_str(self.game.indians)} pour les ajouter au tiroir-caisse.")
+            self.connection.privmsg(target, f"{cash_change}★ remporté par {list_str(self.game.players)}.")
+            i=0
+            for player in self.game.players:
+                if player.get_level() != levels[i]:
+                    self.connection.privmsg(target, f"{player} passe au niveau {player.get_level()}.")
+                i += 1
             #TODO loot
-        else: #all players dead
-            #TODO volent tiroir caisse
-            log = "Défaite. {} vole{} {}{} ${} dans le tiroir-caisse, et s'échappe{}.".format(
+        else:
+            log = "Défaite. {} vole{} {}{}${} dans le tiroir-caisse (X$ →X $), et s'échappe{}.".format(
                     list_str(self.game.indians),
                     number_str,
                     colors["yellow"],
-                    150, #TODO real value
+                    -cash_change,
                     colors["reset"],
                     number_str,
                 )
             self.connection.privmsg(target, log)
+        self.game.clean_after_fight()
 
     def _callback_cash(self, target, source, args: str) -> None:
         if len(args) != 1:

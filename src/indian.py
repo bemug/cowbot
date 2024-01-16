@@ -12,17 +12,17 @@ class Indian:
         self.adjective = adjective
         self.gender = gender
         self.exp = exp
-        self.hp = self._get_max_hp()
+        self.hp = self.get_max_hp()
 
-    def _get_level(self) -> int:
+    def get_level(self) -> int:
         #Indian level up 5/4 faster than players
-        return int((self.exp * 5/4) ** (1. / 3))
+        return int((self.exp * 5/4) ** (1. / 3)) + 1
 
-    def _get_damage(self) -> int:
-        return 5 + self._get_level()
+    def get_damage(self) -> int:
+        return 2 + self.get_level()
 
-    def _get_max_hp(self) -> int:
-        return 15 + self._get_level()
+    def get_max_hp(self) -> int:
+        return 8 + self.get_level()
 
     def is_dead(self) -> bool:
         return self.hp <= 0
