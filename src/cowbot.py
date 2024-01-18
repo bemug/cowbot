@@ -65,7 +65,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         total_cash = cash_change * len(self.game.indians)
 
         if cash_change >= 0:
-            log = "Victoire. {} possède{} {}{}${}. Hop dans le tiroir-caisse [{}{}${}].".format(
+            log = "VICTOIRE. {} possède{} {}{}${}. Hop dans le tiroir-caisse [{}{}${}].".format(
                     list_str(self.game.indians),
                     number_str,
                     colors["yellow"], total_cash, colors["reset"],
@@ -85,7 +85,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                 i += 1
             #TODO loot
         else:
-            log = "Défaite. {} vole{} {}{}${} dans le tiroir-caisse [{}{}${}], et s'échappe{}.".format(
+            log = "DEFAITE. {} vole{} {}{}${} dans le tiroir-caisse [{}{}${}], et s'échappe{}.".format(
                     list_str(self.game.indians),
                     number_str,
                     colors["yellow"], -cash_change, colors["reset"],
