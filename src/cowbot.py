@@ -36,9 +36,6 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         log: str = ""
         number_str = ""
 
-        #TODO use this 0 width whitespace in between nick to avoid highlighting people: ​
-        #See https://blanktext.net/
-
         self.game.start_fight()
 
         if len(self.game.indians) > 1:
@@ -112,7 +109,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.connection.privmsg(target, "Joueur inconnu")
             return
         msg: str = "{} niveau {} : [{}{}/{}★{}] [{}{}/{}♥{}]".format(
-                player,
+                player.no_hl_str(),
                 player.get_level(),
                 colors["blue"], player.exp, player.get_max_exp(), colors["reset"],
                 colors["red"], player.hp, player.get_max_hp(), colors["reset"],
