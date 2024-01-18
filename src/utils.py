@@ -9,6 +9,8 @@ colors = {
     "reset": "\x03",
 }
 
+ERR: str = "BAH!"
+
 def list_str(list) -> str :
     if len(list) == 0:
         return ""

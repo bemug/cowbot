@@ -88,8 +88,13 @@ class Game():
     def is_fight_over(self) -> bool:
         return self.are_they_dead(self.indians) or self.are_they_dead(self.players)
 
-    def add_player(self, name: str) -> None:
-        self.players.append(Player(name))
+    def add_player(self, name: str) -> Player:
+        player: Player = self.find_player(name)
+        if player:
+            return None
+        player: Player = Player(name)
+        self.players.append(player)
+        return player
 
     def find_player(self, name: str) -> Player:
         return next((player for player in self.players if player.name == name), None)

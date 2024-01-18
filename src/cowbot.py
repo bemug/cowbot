@@ -29,8 +29,12 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         self.connection.privmsg(target, "Dites, j'ai entendu dire que vous n'aimiez pas trop les indiens ? Ils me mènent la vie dure ces temps-ci. Ils débarquent dans mon saloon et piquent dans la caisse. Peut être que vous pourriez en dessouder quelques-uns pour moi ? Je saurais me montrer redevable.")
 
     def _callback_join(self, target, source, args: str) -> None:
-        self.game.add_player(source)
-        self.connection.privmsg(target, f"join {source}.")
+        player: Player = self.game.add_player(source)
+        if not player:
+            player = self.game.find_player(source)
+            self.connection.privmsg(target, f"{ERR} Tu es déjà à l'intérieur du saloon {player.no_hl_str()}.")
+            return
+        self.connection.privmsg(target, f"Bienvenue dans le saloon {player.no_hl_str()}.")
 
     def _callback_fight(self, target, source, args: str) -> None:
         log: str = ""
@@ -106,7 +110,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
     def _callback_status(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source)
         if not player:
-            self.connection.privmsg(target, "Joueur inconnu")
+            self.connection.privmsg(target, "On ne se connait pas encore ? Entre d'abord dans le saloon.")
             return
         msg: str = "{} niveau {} : [{}{}/{}★{}] [{}{}/{}♥{}]".format(
                 player.no_hl_str(),
@@ -119,7 +123,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
     commands = {
         "!help": Command(_callback_help, "Affiche cette aide"),
         "!pitch": Command(_callback_pitch, "Conte l'histoire"),
-        "!join": Command(_callback_join, "Rejoins mon armée"),
+        "!join": Command(_callback_join, "Entre dans le saloon"),
         "!status": Command(_callback_status, "Affiche ton statut"),
         "!fight": Command(_callback_fight, "Lance un combat"),
         "!cash": Command(_callback_cash, "Change le cash dans le tiroir-caisse"),
