@@ -110,7 +110,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
     def _callback_status(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source)
         if not player:
-            self.connection.privmsg(target, "On ne se connait pas encore ? Entre d'abord dans le saloon.")
+            self.connection.privmsg(target, f"{ERR} On ne se connait pas encore ? Entre d'abord dans le saloon.")
             return
         msg: str = "{} niveau {} : [{}{}/{}★{}] [{}{}/{}♥{}]".format(
                 player.no_hl_str(),
