@@ -46,9 +46,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             am: Aftermath = self.game.process_fight()
             #armor sign will be ⛊
             log = "{} tire {}{}✷{} sur {} [{}{}/{}♥{}].".format(
-                    str(am.source),
+                    am.source.no_hl_str(),
                     colors["orange"], am.damage, colors["reset"],
-                    str(am.target),
+                    am.target.no_hl_str(),
                     colors["red"], am.target.hp, am.target.get_max_hp(), colors["reset"],
                 )
             self.connection.privmsg(target, log)

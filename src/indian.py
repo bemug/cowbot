@@ -29,3 +29,7 @@ class Indian:
 
     def __str__(self):
         return self.name.capitalize() + " " + self.adjective.capitalize()
+
+    def no_hl_str(self) -> str:
+        #Don't care for indians, TODO this will be factorized in mother class
+        return self.__str__()
