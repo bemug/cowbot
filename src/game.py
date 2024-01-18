@@ -90,3 +90,6 @@ class Game():
 
     def add_player(self, name: str) -> None:
         self.players.append(Player(name))
+
+    def find_player(self, name: str) -> Player:
+        return next((player for player in self.players if player.name == name), None)

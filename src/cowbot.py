@@ -106,11 +106,24 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         self.connection.privmsg(target, f"Il y a à présent {self.game.cash}$ dans le tiroir-caisse.")
 
+    def _callback_status(self, target, source, args: str) -> None:
+        player: Player = self.game.find_player(source)
+        if not player:
+            self.connection.privmsg(target, "Joueur inconnu")
+            return
+        msg: str = "{} niveau {} : [{}{}/{}★{}] [{}{}/{}♥{}]".format(
+                player,
+                player.get_level(),
+                colors["blue"], player.exp, player.get_max_exp(), colors["reset"],
+                colors["red"], player.hp, player.get_max_hp(), colors["reset"],
+            )
+        self.connection.privmsg(target, msg)
+
     commands = {
         "!help": Command(_callback_help, "Affiche cette aide"),
         "!pitch": Command(_callback_pitch, "Conte l'histoire"),
         "!join": Command(_callback_join, "Rejoins mon armée"),
-        #"!status": Command(_callback_status, "Affiche ton statut"),
+        "!status": Command(_callback_status, "Affiche ton statut"),
         "!fight": Command(_callback_fight, "Lance un combat"),
         "!cash": Command(_callback_cash, "Change le cash dans le tiroir-caisse"),
     }
