@@ -20,14 +20,11 @@ class Game():
     def get_cash(self):
         return sum([player.foe_exp for player in self.players])
 
-
     def find_indians(self) -> None:
         #TODO generate combined/split indians with 5% chance of appearance
         for player in self.players:
             noised_foe_exp = player.foe_exp * uniform(0.8, 1.2)
-            self.indians.append(Indian("cerf", "avisé", Gender.MALE, noised_foe_exp))
-            #self.indians.append(Indian("renard", "apprivoisé", Gender.MALE, noised_foe_exp))
-            #self.indians.append(Indian("loutre", "malade", Gender.MALE, noised_foe_exp))
+            self.indians.append(Indian(noised_foe_exp))
 
     def _change_turn(self) -> None:
         if self.turn == Turn.PLAYER:

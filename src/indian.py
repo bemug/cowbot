@@ -1,16 +1,14 @@
 from enum import Enum
-
-
-class Gender(Enum):
-    FEMALE = 0
-    MALE = 1
+from random import choice
 
 
 class Indian:
-    def __init__(self, name: str, adjective: str, gender: Gender, exp: int) -> None:
-        self.name = name
-        self.adjective = adjective
-        self.gender = gender
+    animals_file: str = "data/animals.txt"
+    adjectives_file: str = "data/adjectives.txt"
+
+    def __init__(self, exp: int) -> None:
+        self.name = choice(open(Indian.animals_file).readlines()).strip()
+        self.adjective = choice(open(Indian.adjectives_file).readlines()).strip()
         self.exp = exp
         self.hp = self.get_max_hp()
 
