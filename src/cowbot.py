@@ -32,9 +32,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         player: Player = self.game.add_player(source)
         if not player:
             player = self.game.find_player(source)
-            self.connection.privmsg(target, f"{ERR} Tu es déjà à l'intérieur du saloon {player.no_hl_str()}.")
+            self.connection.privmsg(target, f"{ERR} Tu es déjà à l'intérieur du saloon.")
             return
-        self.connection.privmsg(target, f"Bienvenue dans le saloon {player.no_hl_str()}.")
+        self.connection.privmsg(target, f"Bienvenue dans le saloon.")
 
     def _callback_fight(self, target, source, args: str) -> None:
         log: str = ""
