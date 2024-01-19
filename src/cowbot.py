@@ -85,7 +85,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             i=0
             for player in self.game.players:
                 if player.get_level() != levels[i]:
-                    log = "{} passe au niveau {} [{}{}/{}{}].".format(
+                    log = "{} passe au niveau {} [{}{}/{}{}{}].".format(
                             player,
                             player.get_level(),
                             colors["blue"], player.exp, player.get_max_exp(), icons["exp"], colors["reset"],
