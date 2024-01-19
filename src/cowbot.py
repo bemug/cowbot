@@ -138,7 +138,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.connection.privmsg(target, f"{ERR} Le joueur {source} n'existe pas.")
             return
         player.hp = player.get_max_hp()
-        self.connection.privmsg(target, f"{player} est soigné.")
+        self.connection.privmsg(target, "Joueur soigné.")
 
     commands = {
         "!help": Command(_callback_help, "Affiche l'aide"),
