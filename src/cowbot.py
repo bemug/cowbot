@@ -74,7 +74,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         total_cash = cash_change * len(self.game.indians)
 
         if cash_change > 0:
-            log = "VICTOIRE. {} possède{} {}{}{}{}. Hop dans le tiroir-caisse [{}{}{}{}].".format(
+            log = "VICTOIRE. {} possède{} {}{}{}{}, que je place dans le tiroir-caisse [{}{}{}{}].".format(
                     list_str(self.game.indians),
                     number_str,
                     colors["yellow"], total_cash, icons["cash"], colors["reset"],
