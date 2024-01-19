@@ -128,6 +128,18 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             )
         self.connection.privmsg(target, msg)
 
+    def _callback_heal(self, target, source, args: str) -> None:
+        try:
+            source = args[0]
+        except IndexError:
+            pass
+        player: Player = self.game.find_player(source)
+        if not player:
+            self.connection.privmsg(target, f"{ERR} Le joueur {source} n'existe pas.")
+            return
+        player.hp = player.get_max_hp()
+        self.connection.privmsg(target, f"{player} est soigné.")
+
     commands = {
         "!help": Command(_callback_help, "Affiche l'aide"),
         "!pitch": Command(_callback_pitch, "Conte l'histoire"),
@@ -139,6 +151,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         "!!help": Command(_callback_help_admin, "Affiche l'aide administrateur"),
         "!!fight": Command(_callback_fight, "Déclenche instantanément un combat"),
         "!!cash": Command(_callback_cash, "Change le cash dans le tiroir-caisse"),
+        "!!heal": Command(_callback_heal, "Soigne un joueur"),
     }
 
     def get_users(self):
