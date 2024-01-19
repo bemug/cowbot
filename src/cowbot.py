@@ -49,11 +49,11 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         while not self.game.is_fight_over():
             am: Aftermath = self.game.process_fight()
             #armor sign will be ⛊
-            log = "{} tire {}{}✷{} sur {} [{}{}/{}♥{}].".format(
+            log = "{} tire {}{}{}{} sur {} [{}{}/{}{}{}].".format(
                     am.source.no_hl_str(),
-                    colors["orange"], am.damage, colors["reset"],
+                    colors["orange"], am.damage, icons["dmg"],colors["reset"],
                     am.target.no_hl_str(),
-                    colors["red"], am.target.hp, am.target.get_max_hp(), colors["reset"],
+                    colors["red"], am.target.hp, am.target.get_max_hp(), icons["hp"], colors["reset"],
                 )
             self.connection.privmsg(target, log)
             if am.target.is_dead():
@@ -66,31 +66,31 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         total_cash = cash_change * len(self.game.indians)
 
         if cash_change >= 0:
-            log = "VICTOIRE. {} possède{} {}{}${}. Hop dans le tiroir-caisse [{}{}${}].".format(
+            log = "VICTOIRE. {} possède{} {}{}{}{}. Hop dans le tiroir-caisse [{}{}{}{}].".format(
                     list_str(self.game.indians),
                     number_str,
-                    colors["yellow"], total_cash, colors["reset"],
-                    colors["yellow"], self.game.get_cash(), colors["reset"],
+                    colors["yellow"], total_cash, icons["cash"], colors["reset"],
+                    colors["yellow"], self.game.get_cash(), icons["cash"], colors["reset"],
                 )
             self.connection.privmsg(target, log)
 
             i=0
             for player in self.game.players:
                 if player.get_level() != levels[i]:
-                    log = "{} passe au niveau {} [{}{}/{}★{}].".format(
+                    log = "{} passe au niveau {} [{}{}/{}{}].".format(
                             player,
                             player.get_level(),
-                            colors["blue"], player.exp, player.get_max_exp(), colors["reset"],
+                            colors["blue"], player.exp, player.get_max_exp(), icons["exp"], colors["reset"],
                         )
                     self.connection.privmsg(target, log)
                 i += 1
             #TODO loot
         else:
-            log = "DEFAITE. {} vole{} {}{}${} dans le tiroir-caisse [{}{}${}], et s'échappe{}.".format(
+            log = "DEFAITE. {} vole{} {}{}{}{} dans le tiroir-caisse [{}{}{}{}], et s'échappe{}.".format(
                     list_str(self.game.indians),
                     number_str,
-                    colors["yellow"], -cash_change, colors["reset"],
-                    colors["yellow"], self.game.get_cash(), colors["reset"],
+                    colors["yellow"], -cash_change, icons["cash"], colors["reset"],
+                    colors["yellow"], self.game.get_cash(), icons["cash"], colors["reset"],
                     number_str,
                 )
             self.connection.privmsg(target, log)
@@ -112,11 +112,11 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         if not player:
             self.connection.privmsg(target, f"{ERR} On ne se connait pas encore ? Entre d'abord dans le saloon.")
             return
-        msg: str = "{} niveau {} : [{}{}/{}★{}] [{}{}/{}♥{}]".format(
+        msg: str = "{} niveau {} : [{}{}/{}{}{}] [{}{}/{}{}{}]".format(
                 player.no_hl_str(),
                 player.get_level(),
-                colors["blue"], player.exp, player.get_max_exp(), colors["reset"],
-                colors["red"], player.hp, player.get_max_hp(), colors["reset"],
+                colors["blue"], player.exp, player.get_max_exp(), icons["exp"], colors["reset"],
+                colors["red"], player.hp, player.get_max_hp(), icons["hp"], colors["reset"],
             )
         self.connection.privmsg(target, msg)
 

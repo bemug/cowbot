@@ -9,6 +9,14 @@ colors = {
     "reset": "\x03",
 }
 
+icons = {
+    "hp": " ᴘᴠ",
+    "exp": " ᴇxᴘ",
+    "dmg": " ᴅᴍɢ",
+    "cash": " $",
+    "arm": " ᴀʀᴍ",
+}
+
 ERR: str = "BAH!"
 
 def list_str(list) -> str :
