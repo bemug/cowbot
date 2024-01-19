@@ -73,7 +73,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         cash_change = self.game.end_fight()
         total_cash = cash_change * len(self.game.indians)
 
-        if cash_change >= 0:
+        if cash_change > 0:
             log = "VICTOIRE. {} possède{} {}{}{}{}. Hop dans le tiroir-caisse [{}{}{}{}].".format(
                     list_str(self.game.indians),
                     number_str,
