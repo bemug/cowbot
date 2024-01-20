@@ -1,8 +1,9 @@
 from enum import Enum
 from random import choice
+from character import *
 
 
-class Indian:
+class Indian(Character):
     animals_file: str = "data/animals.txt"
     adjectives_file: str = "data/adjectives.txt"
 
@@ -22,12 +23,5 @@ class Indian:
     def get_max_hp(self) -> int:
         return 8 + self.get_level()
 
-    def is_dead(self) -> bool:
-        return self.hp <= 0
-
     def __str__(self):
         return self.name.capitalize() + " " + self.adjective.capitalize()
-
-    def no_hl_str(self) -> str:
-        #Don't care for indians, TODO this will be factorized in mother class
-        return self.__str__()

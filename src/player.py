@@ -1,4 +1,7 @@
-class Player:
+from character import *
+
+
+class Player(Character):
     def __init__(self, name: str) -> None:
         self.name = name
         self.exp = 1 #Level 1
@@ -20,11 +23,3 @@ class Player:
     def __str__(self):
         return self.name.capitalize()
 
-    def no_hl_str(self) -> str:
-        #Insert this 0 width whitespace to avoid highlighting people: ​
-        #See https://blanktext.net/
-        s: str = self.__str__()
-        return s[:1] + '​' + s[1:]
-
-    def is_dead(self):
-        return self.hp <= 0
