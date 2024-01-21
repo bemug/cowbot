@@ -24,25 +24,28 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         #TODO config file
         return nick == "zoologist"
 
+    def msg(self, target, msg):
+        self.connection.privmsg(target, msg)
+
     def _callback_help(self, target: int, source, args: str) -> None:
         for command in self.commands:
-            self.connection.privmsg(target, command + " : " + self.commands[command].help_message)
+            self.msg(target, command + " : " + self.commands[command].help_message)
 
     def _callback_admin_help(self, target: int, source, args: str) -> None:
         for command in self.admin_commands:
-            self.connection.privmsg(target, command + " : " + self.admin_commands[command].help_message)
+            self.msg(target, command + " : " + self.admin_commands[command].help_message)
 
     def _callback_pitch(self, target, source, args: str) -> None:
-        self.connection.privmsg(target, "Bienvenue dans mon saloon, étranger. Installez vous. J'ai là un excellent whisky, vous devriez le goûter.")
-        self.connection.privmsg(target, "Dites, j'ai entendu dire que vous n'aimiez pas trop les indiens ? Ils me mènent la vie dure ces temps-ci. Ils débarquent dans mon saloon et piquent dans la caisse. Peut être que vous pourriez en dessouder quelques-uns pour moi ? Je saurais me montrer redevable.")
+        self.msg(target, "Bienvenue dans mon saloon, étranger. Installez vous. J'ai là un excellent whisky, vous devriez le goûter.")
+        self.msg(target, "Dites, j'ai entendu dire que vous n'aimiez pas trop les indiens ? Ils me mènent la vie dure ces temps-ci. Ils débarquent dans mon saloon et piquent dans la caisse. Peut être que vous pourriez en dessouder quelques-uns pour moi ? Je saurais me montrer redevable.")
 
     def _callback_join(self, target, source, args: str) -> None:
         player: Player = self.game.add_player(source)
         if not player:
             player = self.game.find_player(source)
-            self.connection.privmsg(target, f"{ERR} Tu es déjà à l'intérieur du saloon.")
+            self.msg(target, f"{ERR} Tu es déjà à l'intérieur du saloon.")
             return
-        self.connection.privmsg(target, f"Bienvenue dans le saloon.")
+        self.msg(target, f"Bienvenue dans le saloon.")
 
     def _callback_admin_fight(self, target, source, args: str) -> None:
         log: str = ""
@@ -52,7 +55,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
         if len(self.game.indians) > 1:
             number_str = "nt"
-        self.connection.privmsg(target, f"{list_str(self.game.indians)} débarque{number_str} dans le saloon.")
+        self.msg(target, f"{list_str(self.game.indians)} débarque{number_str} dans le saloon.")
         sleep(1)
         while not self.game.is_fight_over():
             am: Aftermath = self.game.process_fight()
@@ -63,9 +66,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                     am.target.no_hl_str(),
                     colors["red"], am.target.hp, am.target.get_max_hp(), icons["hp"], colors["reset"],
                 )
-            self.connection.privmsg(target, log)
+            self.msg(target, log)
             if am.target.is_dead():
-                self.connection.privmsg(target, f"{am.target} est à terre.")
+                self.msg(target, f"{am.target} est à terre.")
             sleep(1)
 
         #Backup levels for display
@@ -79,7 +82,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                     colors["yellow"], cash_change, icons["cash"], colors["reset"],
                     colors["yellow"], self.game.get_cash(), icons["cash"], colors["reset"],
                 )
-            self.connection.privmsg(target, log)
+            self.msg(target, log)
 
             i=0
             for player in self.game.players:
@@ -89,7 +92,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                             player.level,
                             colors["blue"], player.exp, player.get_max_exp(), icons["exp"], colors["reset"],
                         )
-                    self.connection.privmsg(target, log)
+                    self.msg(target, log)
                 i += 1
             #TODO loot
         else:
@@ -100,24 +103,24 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                     colors["yellow"], self.game.get_cash(), icons["cash"], colors["reset"],
                     number_str,
                 )
-            self.connection.privmsg(target, log)
+            self.msg(target, log)
         self.game.clean_after_fight()
 
     def _callback_admin_cash(self, target, source, args: str) -> None:
         if len(args) != 1:
-            self.connection.privmsg(target, "!cash <cash>")
+            self.msg(target, "!cash <cash>")
             return
         try:
             self.game.cash = int(args[0])
         except ValueError:
-            self.connection.privmsg(target, f"'{args[0]}' n'est pas un nombre.")
+            self.msg(target, f"'{args[0]}' n'est pas un nombre.")
             return
-        self.connection.privmsg(target, f"Il y a à présent {self.game.cash}$ dans le tiroir-caisse.")
+        self.msg(target, f"Il y a à présent {self.game.cash}$ dans le tiroir-caisse.")
 
     def _callback_status(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source)
         if not player:
-            self.connection.privmsg(target, f"{ERR} On ne se connait pas encore ? Entre d'abord dans le saloon.")
+            self.msg(target, f"{ERR} On ne se connait pas encore ? Entre d'abord dans le saloon.")
             return
         msg: str = "{} niveau {} : [{}{}/{}{}{}] [{}{}/{}{}{}]".format(
                 player.no_hl_str(),
@@ -125,7 +128,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                 colors["blue"], player.exp, player.get_max_exp(), icons["exp"], colors["reset"],
                 colors["red"], player.hp, player.get_max_hp(), icons["hp"], colors["reset"],
             )
-        self.connection.privmsg(target, msg)
+        self.msg(target, msg)
 
     def _callback_admin_heal(self, target, source, args: str) -> None:
         try:
@@ -134,16 +137,16 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             pass
         player: Player = self.game.find_player(source)
         if not player:
-            self.connection.privmsg(target, f"{ERR} Le joueur {source} n'existe pas.")
+            self.msg(target, f"{ERR} Le joueur {source} n'existe pas.")
             return
         player.hp = player.get_max_hp()
-        self.connection.privmsg(target, "Joueur soigné.")
+        self.msg(target, "Joueur soigné.")
 
     def _callback_cash(self, target, source, args: str) -> None:
         log: str = "Le contenu du tiroir-caisse est actuellement de {}{}{}{}.".format(
             colors["yellow"], self.game.get_cash(), icons["cash"], colors["reset"],
         )
-        self.connection.privmsg(target, log)
+        self.msg(target, log)
 
     commands = {
         "!help": Command(_callback_help, "Affiche l'aide"),
@@ -196,7 +199,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             #Check it exists
             command_array[command]
         except KeyError:
-            self.connection.privmsg(e.target, f"{ERR} Commande inconnue : {message}")
+            self.msg(e.target, f"{ERR} Commande inconnue : {message}")
             return
         command_array[command].callback(self, e.target, e.source.nick, args)
 
