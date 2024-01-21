@@ -27,13 +27,55 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
     def msg(self, target, msg):
         self.connection.privmsg(target, msg)
 
+    def get_users(self):
+        users: List = list(self.channels.get(self.channel).users())
+        users.remove(self.connection.nickname)
+        return sorted(users)
+
+    def on_nicknameinuse(self, c, e):
+        c.nick(c.get_nickname() + "_")
+
+    def on_welcome(self, c, e):
+        c.join(self.channel)
+
+    def on_privmsg(self, c, e):
+        #Treat privmsg as nomal messages for now, but answer in public
+        e.target = self.channel
+        self.on_pubmsg(c, e)
+
+    def on_pubmsg(self, c, e):
+        print(e) #TODO debug
+        message: str = e.arguments[0]
+        if message.startswith("!!") and self.is_admin(e.source.nick):
+            command_array = self.admin_commands
+        elif message.startswith('!'):
+            command_array = self.commands
+        else:
+            return
+
+        command: str = message.split(' ')[0]
+        args: str = None
+        try:
+            args: str = message.split(' ')[1:]
+        except IndexError:
+            pass
+        try:
+            #Check it exists
+            command_array[command]
+        except KeyError:
+            self.msg(e.target, f"{ERR} Commande inconnue : {message}")
+            return
+        command_array[command].callback(self, e.target, e.source.nick, args)
+
+    def debug_start(self):
+        self.game.add_player("zoologist")
+
+
+    ### Player commands ###
+
     def _callback_help(self, target: int, source, args: str) -> None:
         for command in self.commands:
             self.msg(target, command + " : " + self.commands[command].help_message)
-
-    def _callback_admin_help(self, target: int, source, args: str) -> None:
-        for command in self.admin_commands:
-            self.msg(target, command + " : " + self.admin_commands[command].help_message)
 
     def _callback_pitch(self, target, source, args: str) -> None:
         self.msg(target, "Bienvenue dans mon saloon, étranger. Installez vous. J'ai là un excellent whisky, vous devriez le goûter.")
@@ -46,6 +88,32 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, f"{ERR} Tu es déjà à l'intérieur du saloon.")
             return
         self.msg(target, f"Bienvenue dans le saloon.")
+
+    def _callback_status(self, target, source, args: str) -> None:
+        player: Player = self.game.find_player(source)
+        if not player:
+            self.msg(target, f"{ERR} On ne se connait pas encore ? Entre d'abord dans le saloon.")
+            return
+        msg: str = "{} niveau {} : [{}{}/{}{}{}] [{}{}/{}{}{}]".format(
+                player.no_hl_str(),
+                player.level,
+                colors["blue"], player.exp, player.get_max_exp(), icons["exp"], colors["reset"],
+                colors["red"], player.hp, player.get_max_hp(), icons["hp"], colors["reset"],
+            )
+        self.msg(target, msg)
+
+    def _callback_cash(self, target, source, args: str) -> None:
+        log: str = "Le contenu du tiroir-caisse est actuellement de {}{}{}{}.".format(
+            colors["yellow"], self.game.get_cash(), icons["cash"], colors["reset"],
+        )
+        self.msg(target, log)
+
+
+    ### Admin commands ###
+
+    def _callback_admin_help(self, target: int, source, args: str) -> None:
+        for command in self.admin_commands:
+            self.msg(target, command + " : " + self.admin_commands[command].help_message)
 
     def _callback_admin_fight(self, target, source, args: str) -> None:
         log: str = ""
@@ -117,18 +185,6 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         self.msg(target, f"Il y a à présent {self.game.cash}$ dans le tiroir-caisse.")
 
-    def _callback_status(self, target, source, args: str) -> None:
-        player: Player = self.game.find_player(source)
-        if not player:
-            self.msg(target, f"{ERR} On ne se connait pas encore ? Entre d'abord dans le saloon.")
-            return
-        msg: str = "{} niveau {} : [{}{}/{}{}{}] [{}{}/{}{}{}]".format(
-                player.no_hl_str(),
-                player.level,
-                colors["blue"], player.exp, player.get_max_exp(), icons["exp"], colors["reset"],
-                colors["red"], player.hp, player.get_max_hp(), icons["hp"], colors["reset"],
-            )
-        self.msg(target, msg)
 
     def _callback_admin_heal(self, target, source, args: str) -> None:
         try:
@@ -141,12 +197,6 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         player.hp = player.get_max_hp()
         self.msg(target, "Joueur soigné.")
-
-    def _callback_cash(self, target, source, args: str) -> None:
-        log: str = "Le contenu du tiroir-caisse est actuellement de {}{}{}{}.".format(
-            colors["yellow"], self.game.get_cash(), icons["cash"], colors["reset"],
-        )
-        self.msg(target, log)
 
     def _callback_admin_level(self, target, source, args: str) -> None:
         try:
@@ -186,6 +236,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         player.exp = exp
         self.msg(target, f"Experience du joueur {player.level}.")
 
+
+    ### Commands lists ###
+
     commands = {
         "!help": Command(_callback_help, "Affiche l'aide"),
         "!pitch": Command(_callback_pitch, "Conte l'histoire"),
@@ -203,48 +256,6 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         "!!exp": Command(_callback_admin_exp, "Change l'experience d'un joueur"),
     }
 
-    def get_users(self):
-        users: List = list(self.channels.get(self.channel).users())
-        users.remove(self.connection.nickname)
-        return sorted(users)
-
-    def on_nicknameinuse(self, c, e):
-        c.nick(c.get_nickname() + "_")
-
-    def on_welcome(self, c, e):
-        c.join(self.channel)
-
-    def on_privmsg(self, c, e):
-        #Treat privmsg as nomal messages for now, but answer in public
-        e.target = self.channel
-        self.on_pubmsg(c, e)
-
-    def on_pubmsg(self, c, e):
-        print(e) #TODO debug
-        message: str = e.arguments[0]
-        if message.startswith("!!") and self.is_admin(e.source.nick):
-            command_array = self.admin_commands
-        elif message.startswith('!'):
-            command_array = self.commands
-        else:
-            return
-
-        command: str = message.split(' ')[0]
-        args: str = None
-        try:
-            args: str = message.split(' ')[1:]
-        except IndexError:
-            pass
-        try:
-            #Check it exists
-            command_array[command]
-        except KeyError:
-            self.msg(e.target, f"{ERR} Commande inconnue : {message}")
-            return
-        command_array[command].callback(self, e.target, e.source.nick, args)
-
-    def debug_start(self):
-        self.game.add_player("zoologist")
 
 def main():
     import sys
