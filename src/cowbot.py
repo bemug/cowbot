@@ -148,6 +148,44 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         )
         self.msg(target, log)
 
+    def _callback_admin_level(self, target, source, args: str) -> None:
+        try:
+            source = args[1]
+        except IndexError:
+            pass
+        player: Player = self.game.find_player(source)
+        if not player:
+            self.msg(target, f"{ERR} Le joueur {source} n'existe pas.")
+            return
+        try:
+            player.level = int(args[0])
+        except ValueError:
+            self.msg(target, f"{ERR} Le niveau doit être un nombre.")
+            return
+        #Reset exp to avoid issues (in case of leveling down for instance)
+        player.exp = 0
+        self.msg(target, f"Joueur au niveau {player.level}.")
+
+    def _callback_admin_exp(self, target, source, args: str) -> None:
+        try:
+            source = args[1]
+        except IndexError:
+            pass
+        player: Player = self.game.find_player(source)
+        if not player:
+            self.msg(target, f"{ERR} Le joueur {source} n'existe pas.")
+            return
+        try:
+            exp: int = int(args[0])
+        except ValueError:
+            self.msg(target, f"{ERR} L'experience doit être un nombre.")
+            return
+        if exp > player.get_max_exp():
+            self.msg(target, f"{ERR} L'experience de {player.no_hl_str()} ne peut dépasser {player.get_max_exp()}.")
+            return
+        player.exp = exp
+        self.msg(target, f"Experience du joueur {player.level}.")
+
     commands = {
         "!help": Command(_callback_help, "Affiche l'aide"),
         "!pitch": Command(_callback_pitch, "Conte l'histoire"),
@@ -161,6 +199,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         "!!fight": Command(_callback_admin_fight, "Déclenche instantanément un combat"),
         "!!cash": Command(_callback_admin_cash, "Change le cash dans le tiroir-caisse"),
         "!!heal": Command(_callback_admin_heal, "Soigne un joueur"),
+        "!!level": Command(_callback_admin_level, "Change le niveau d'un joueur"),
+        "!!exp": Command(_callback_admin_exp, "Change l'experience d'un joueur"),
     }
 
     def get_users(self):
