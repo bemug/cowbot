@@ -15,6 +15,8 @@ class Command():
 
 
 class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
+    msg_wait = 1
+
     def __init__(self, channel, nickname, server, port=6667):
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.channel = channel
@@ -124,7 +126,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         if len(self.game.indians) > 1:
             number_str = "nt"
         self.msg(target, f"{list_str(self.game.indians)} débarque{number_str} dans le saloon.")
-        sleep(1)
+        sleep(Cowbot.msg_wait)
         while not self.game.is_fight_over():
             am: Aftermath = self.game.process_fight()
             #armor sign will be ⛊
@@ -137,7 +139,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, log)
             if am.target.is_dead():
                 self.msg(target, f"{am.target} est à terre.")
-            sleep(1)
+            sleep(Cowbot.msg_wait)
 
         #Backup levels for display
         levels = [player.level for player in self.game.players]
@@ -184,7 +186,6 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, f"'{args[0]}' n'est pas un nombre.")
             return
         self.msg(target, f"Il y a à présent {self.game.cash}$ dans le tiroir-caisse.")
-
 
     def _callback_admin_heal(self, target, source, args: str) -> None:
         try:
