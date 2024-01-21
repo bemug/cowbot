@@ -6,16 +6,12 @@ class Player(Character):
         self.name = name
         self.exp = 1 #Level 1
         self.foe_exp = self.exp
+        self.base_hp = 14
         self.hp = self.get_max_hp()
+        self.base_damage = 4
 
     def get_level(self) -> int:
         return int(self.exp ** (1. / 3))
-
-    def get_damage(self) -> int:
-        return 4 + self.get_level()
-
-    def get_max_hp(self) -> int:
-        return 14 + self.get_level()
 
     def get_max_exp(self) -> int:
         return pow((self.get_level() + 1), 3)
