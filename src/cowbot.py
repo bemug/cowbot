@@ -69,7 +69,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             sleep(1)
 
         #Backup exp for display
-        levels = [player.get_level() for player in self.game.players]
+        levels = [player.level for player in self.game.players]
         cash_change = self.game.end_fight()
         total_cash = cash_change * len(self.game.indians)
 
@@ -84,10 +84,10 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
             i=0
             for player in self.game.players:
-                if player.get_level() != levels[i]:
+                if player.level != levels[i]:
                     log = "{} passe au niveau {} [{}{}/{}{}{}].".format(
                             player,
-                            player.get_level(),
+                            player.level,
                             colors["blue"], player.exp, player.get_max_exp(), icons["exp"], colors["reset"],
                         )
                     self.connection.privmsg(target, log)
@@ -122,7 +122,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         msg: str = "{} niveau {} : [{}{}/{}{}{}] [{}{}/{}{}{}]".format(
                 player.no_hl_str(),
-                player.get_level(),
+                player.level,
                 colors["blue"], player.exp, player.get_max_exp(), icons["exp"], colors["reset"],
                 colors["red"], player.hp, player.get_max_hp(), icons["hp"], colors["reset"],
             )

@@ -52,13 +52,13 @@ class Game():
         return Aftermath(source, target, damage)
 
     def get_end_fight_xp(self) -> int:
-        return int(pow(sum(indian.get_level() for indian in self.indians), 2) / len(self.players))
+        return int(pow(sum(indian.level for indian in self.indians), 2) / len(self.players))
 
     def end_fight(self) -> int:
         delta_exp = self.get_end_fight_xp()
         for player in self.players:
             if self.are_they_dead(self.indians):
-                player.exp += delta_exp
+                player.add_exp(delta_exp)
                 player.foe_exp += delta_exp
                 return delta_exp
             else:
