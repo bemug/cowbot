@@ -18,3 +18,6 @@ class Indian(Character):
         self.hp = self.get_max_hp()
         self.base_damage = 2
         self.add_exp(exp)
+
+    def get_kill_exp(self) -> int:
+        return self.level * Character.exp_multiplier

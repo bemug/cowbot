@@ -12,13 +12,15 @@ class Turn(Enum):
 
 
 class Game():
+    cash_divider = 10
+
     def __init__(self) -> None:
         self.players: List[Player] = []
         self.indians: List[Indian] = []
         self.turn = Turn.PLAYER
 
-    def get_cash(self):
-        return sum([player.foe_exp for player in self.players])
+    def get_cash(self) -> int:
+        return int(sum([player.foe_exp for player in self.players]) / Game.cash_divider)
 
     def find_indians(self) -> None:
         #TODO generate combined/split indians with 5% chance of appearance
@@ -51,19 +53,21 @@ class Game():
         damage = self._hit(source, target)
         return Aftermath(source, target, damage)
 
-    def get_end_fight_xp(self) -> int:
-        return int(pow(sum(indian.level for indian in self.indians), 2) / len(self.players))
+    def exp_to_cash(exp: int):
+        return int(exp / Game.cash_divider)
 
     def end_fight(self) -> int:
-        delta_exp = self.get_end_fight_xp()
-        for player in self.players:
-            if self.are_they_dead(self.indians):
-                player.add_exp(delta_exp)
-                player.foe_exp += delta_exp
-                return delta_exp
-            else:
-                player.foe_exp -= delta_exp
-                return delta_exp * -1
+        total_exp: int = sum(indian.get_kill_exp() for indian in self.indians)
+        exp: int = int(total_exp / len(self.players))
+        if self.are_they_dead(self.indians):
+            for player in self.players:
+                player.add_exp(exp)
+                player.foe_exp += exp
+        else:
+            for player in self.players:
+                player.foe_exp -= exp
+            total_xp *= -1
+        return Game.exp_to_cash(total_exp)
 
     def clean_after_fight(self):
         self.indians = []
@@ -76,7 +80,7 @@ class Game():
         target.hp = max(target.hp - dmg, 0)
         return dmg
 
-    def are_they_dead(self, list) -> bool: #TODO rename "did_win" and change calls
+    def are_they_dead(self, list) -> bool: #TODO rename "has_won" and change calls
         for elem in list:
             if not elem.is_dead():
                 return False

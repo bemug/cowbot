@@ -68,16 +68,15 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                 self.connection.privmsg(target, f"{am.target} est à terre.")
             sleep(1)
 
-        #Backup exp for display
+        #Backup levels for display
         levels = [player.level for player in self.game.players]
         cash_change = self.game.end_fight()
-        total_cash = cash_change * len(self.game.indians)
 
         if cash_change > 0:
             log = "VICTOIRE. {} possède{} {}{}{}{}, que je place dans le tiroir-caisse [{}{}{}{}].".format(
                     list_str(self.game.indians),
                     number_str,
-                    colors["yellow"], total_cash, icons["cash"], colors["reset"],
+                    colors["yellow"], cash_change, icons["cash"], colors["reset"],
                     colors["yellow"], self.game.get_cash(), icons["cash"], colors["reset"],
                 )
             self.connection.privmsg(target, log)

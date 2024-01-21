@@ -1,5 +1,6 @@
 class Character:
     level_up_speed = 4
+    exp_multiplier = 100
 
     def __init__(self):
         self.level = 1
@@ -24,7 +25,7 @@ class Character:
         return self.hp <= 0
 
     def get_max_exp(self) -> int:
-        return int(pow((self.level + 1), 3) / Character.level_up_speed * self.__class__.scale_factor)
+        return int(pow((self.level + 1), 3) / Character.level_up_speed * self.__class__.scale_factor * Character.exp_multiplier)
 
     def add_exp(self, xp: int) -> int:
         old_level: int = self.level
