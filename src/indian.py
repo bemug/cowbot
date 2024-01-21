@@ -14,9 +14,9 @@ class Indian(Character):
         self.name = choice(open(Indian.animals_file).readlines()).strip() + \
                 " " + \
                 choice(open(Indian.adjectives_file).readlines()).strip()
-        self.base_hp = 8
+        self.base_hp = 9
         self.hp = self.get_max_hp()
-        self.base_damage = 2
+        self.base_damage = 3
         self.add_exp(exp)
 
     def get_kill_exp(self) -> int:

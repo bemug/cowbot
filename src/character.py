@@ -16,10 +16,10 @@ class Character:
         return s[:1] + '​' + s[1:]
 
     def get_damage(self) -> int:
-        return self.base_damage + self.level
+        return self.base_damage + self.level - 1
 
     def get_max_hp(self) -> int:
-        return self.base_hp + self.level
+        return self.base_hp + self.level - 1
 
     def is_dead(self):
         return self.hp <= 0
