@@ -28,7 +28,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         for command in self.commands:
             self.connection.privmsg(target, command + " : " + self.commands[command].help_message)
 
-    def _callback_help_admin(self, target: int, source, args: str) -> None:
+    def _callback_admin_help(self, target: int, source, args: str) -> None:
         for command in self.admin_commands:
             self.connection.privmsg(target, command + " : " + self.admin_commands[command].help_message)
 
@@ -44,7 +44,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         self.connection.privmsg(target, f"Bienvenue dans le saloon.")
 
-    def _callback_fight(self, target, source, args: str) -> None:
+    def _callback_admin_fight(self, target, source, args: str) -> None:
         log: str = ""
         number_str = ""
 
@@ -103,7 +103,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.connection.privmsg(target, log)
         self.game.clean_after_fight()
 
-    def _callback_cash(self, target, source, args: str) -> None:
+    def _callback_admin_cash(self, target, source, args: str) -> None:
         if len(args) != 1:
             self.connection.privmsg(target, "!cash <cash>")
             return
@@ -127,7 +127,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             )
         self.connection.privmsg(target, msg)
 
-    def _callback_heal(self, target, source, args: str) -> None:
+    def _callback_admin_heal(self, target, source, args: str) -> None:
         try:
             source = args[0]
         except IndexError:
@@ -139,18 +139,25 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         player.hp = player.get_max_hp()
         self.connection.privmsg(target, "Joueur soigné.")
 
+    def _callback_cash(self, target, source, args: str) -> None:
+        log: str = "Le contenu du tiroir-caisse est actuellement de {}{}{}{}.".format(
+            colors["yellow"], self.game.get_cash(), icons["cash"], colors["reset"],
+        )
+        self.connection.privmsg(target, log)
+
     commands = {
         "!help": Command(_callback_help, "Affiche l'aide"),
         "!pitch": Command(_callback_pitch, "Conte l'histoire"),
         "!join": Command(_callback_join, "Entre dans le saloon"),
         "!status": Command(_callback_status, "Affiche ton statut"),
+        "!cash": Command(_callback_cash, "Affiche le contenu du tiroir-caisse"),
     }
 
     admin_commands = {
-        "!!help": Command(_callback_help_admin, "Affiche l'aide administrateur"),
-        "!!fight": Command(_callback_fight, "Déclenche instantanément un combat"),
-        "!!cash": Command(_callback_cash, "Change le cash dans le tiroir-caisse"),
-        "!!heal": Command(_callback_heal, "Soigne un joueur"),
+        "!!help": Command(_callback_admin_help, "Affiche l'aide administrateur"),
+        "!!fight": Command(_callback_admin_fight, "Déclenche instantanément un combat"),
+        "!!cash": Command(_callback_admin_cash, "Change le cash dans le tiroir-caisse"),
+        "!!heal": Command(_callback_admin_heal, "Soigne un joueur"),
     }
 
     def get_users(self):
