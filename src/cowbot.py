@@ -166,7 +166,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         c.join(self.channel)
 
     def on_privmsg(self, c, e):
-        self.do_command(e, e.arguments[0])
+        #Treat privmsg as nomal messages for now, but answer in public
+        e.target = self.channel
+        self.on_pubmsg(c, e)
 
     def on_pubmsg(self, c, e):
         print(e) #TODO debug
