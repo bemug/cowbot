@@ -5,6 +5,7 @@ from aftermath import *
 from game import *
 from indian import *
 from utils import *
+from datetime import datetime
 
 
 class Command():
@@ -39,6 +40,13 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def on_welcome(self, c, e):
         c.join(self.channel)
+
+    #Fired every 2m6s (yes) on libera.chat
+    def on_ping(self, c, e):
+        print("ping")
+        now = datetime.now()
+        current_time = now.strftime("%H:%M:%S")
+        print("Current Time =", current_time)
 
     def on_privmsg(self, c, e):
         #Treat privmsg as nomal messages for now, but answer in public
