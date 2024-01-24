@@ -7,6 +7,10 @@ from indian import *
 from utils import *
 from datetime import datetime
 
+def trace(msg):
+        now = datetime.now()
+        print("[" + str(now) + "] " + msg)
+
 
 class Command():
     #TODO replace first any with Cowbot
@@ -41,12 +45,38 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
     def on_welcome(self, c, e):
         c.join(self.channel)
 
-    #Fired every 2m6s (yes) on libera.chat
+    #Fired every ~3min on libera.chat
     def on_ping(self, c, e):
-        print("ping")
+        trace("Ping received")
+        #Target is the irc serveur, change it to our channel
+        e.target = self.channel
+
         now = datetime.now()
-        current_time = now.strftime("%H:%M:%S")
-        print("Current Time =", current_time)
+        hour_str = now.strftime("%Hh%M")
+        today_open: datetime = datetime.combine(now, Game.hour_open)
+        today_close: datetime = datetime.combine(now, Game.hour_close)
+        #Check opeing hours
+        if now > today_open and not self.game.opened:
+            self.game.open()
+            trace("Open")
+            self.msg(e.target, f"Il est {hour_str}, le saloon ouvre ses portes ☀️")
+        if now > today_close and self.game.opened:
+            self.game.close()
+            trace("Close")
+            #TODO today's earnings
+            self.msg(e.target, f"Il est {hour_str}, le saloon ferme 🌑")
+            #Check if a fight is available
+        if self.game.opened:
+            for fight_time in self.game.fight_times:
+                if now > fight_time:
+                    trace("Fight")
+                    self._fight(e.target)
+                    self.game.fight_times.pop(0)
+                    break
+
+    def on_join(self, c, e):
+        #As we join the channel, do the same thing as if we're pinged
+        self.on_ping(c, e)
 
     def on_privmsg(self, c, e):
         #Treat privmsg as nomal messages for now, but answer in public
@@ -126,6 +156,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, command + " : " + self.admin_commands[command].help_message)
 
     def _callback_admin_fight(self, target, source, args: str) -> None:
+        self._fight(target)
+
+    def _fight(self, target) -> None:
         log: str = ""
         number_str = ""
 

@@ -3,7 +3,8 @@ from aftermath import *
 from indian import *
 from typing import List, Optional
 from player import *
-from random import randint, choice, uniform
+from random import randint, choice, uniform, randrange
+from datetime import datetime, time
 
 
 class Turn(Enum):
@@ -13,11 +14,40 @@ class Turn(Enum):
 
 class Game():
     cash_divider = 10
+    hour_open = time(19, 33)
+    hour_close = time(19, 40)
 
     def __init__(self) -> None:
         self.players: List[Player] = []
         self.indians: List[Indian] = []
         self.turn = Turn.PLAYER
+        self.opened = True
+        #TODO fight object ?
+        self.fights_nb_per_day = 2
+        self.fight_times = []
+        self.schedule_fights() #TODO should remove once loading is done
+
+    def schedule_fights(self) -> None:
+        now = datetime.now()
+        today_open: datetime = datetime.combine(now, Game.hour_open)
+        today_close: datetime = datetime.combine(now, Game.hour_close)
+        #Cut opening times in fights_nb_per_day number of periods
+        time_period: deltatime = (today_close - today_open) / self.fights_nb_per_day
+        #Schedule a fight at a random time in each period
+        self.fight_times.clear()
+        for i in range(0, self.fights_nb_per_day):
+            start: timestamp = (today_open + i * time_period).timestamp()
+            end: timestamp = (today_open + (i + 1) * time_period).timestamp()
+            self.fight_times.append(datetime.fromtimestamp(randrange(start, end)))
+        print(self.fight_times)
+
+    #TODO remove and replace by time compare with hour_open and hour_close
+    def open(self):
+        self.schedule_fights()
+        self.opened = True
+
+    def close(self):
+        self.opened = False
 
     def get_cash(self) -> int:
         return int(sum([player.foe_exp for player in self.players]) / Game.cash_divider)
