@@ -14,8 +14,8 @@ class Turn(Enum):
 
 class Game():
     cash_divider = 10
-    hour_open = time(19, 33)
-    hour_close = time(19, 40)
+    hour_open = time(9, 30)
+    hour_close = time(16, 30)
 
     def __init__(self) -> None:
         self.players: List[Player] = []
