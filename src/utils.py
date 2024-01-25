@@ -33,6 +33,9 @@ def list_str(list) -> str :
 
 
 def trace(msg):
-        now = datetime.now()
-        print("[" + str(now) + "] " + msg)
+    #Remove irc colors from traces
+    for color in colors.values():
+        msg = msg.replace(color, "")
+    now = datetime.now()
+    print("[" + str(now) + "] " + msg)
 
