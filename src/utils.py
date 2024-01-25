@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 #See https://modern.ircdocs.horse/formatting.html for formatting
 #See https://defs.ircdocs.horse/info/formatting for client support
 colors = {
@@ -27,3 +30,9 @@ def list_str(list) -> str :
     ret_str = ", ".join(str(elem) for elem in list)
     last_sep = ret_str.rfind(", ")
     return ret_str[:last_sep] + " et" + ret_str[last_sep + 1:]
+
+
+def trace(msg):
+        now = datetime.now()
+        print("[" + str(now) + "] " + msg)
+

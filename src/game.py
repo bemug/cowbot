@@ -5,6 +5,7 @@ from typing import List, Optional
 from player import *
 from random import randint, choice, uniform, randrange
 from datetime import datetime, time
+from utils import *
 
 
 class Turn(Enum):
@@ -39,7 +40,7 @@ class Game():
             start: timestamp = (today_open + i * time_period).timestamp()
             end: timestamp = (today_open + (i + 1) * time_period).timestamp()
             self.fight_times.append(datetime.fromtimestamp(randrange(start, end)))
-        print(self.fight_times)
+        trace("Scheduled fights: " + '; '.join(str(fight) for fight in self.fight_times))
 
     def is_open_hour():
         now = datetime.now()
