@@ -53,26 +53,24 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
         now = datetime.now()
         hour_str = now.strftime("%Hh%M")
-        today_open: datetime = datetime.combine(now, Game.hour_open)
-        today_close: datetime = datetime.combine(now, Game.hour_close)
-        #Check opeing hours
-        if now > today_open and not self.game.opened:
+        #Check opening hours
+        if not self.game.opened and Game.is_open_hour():
             self.game.open()
             trace("Open")
             self.msg(e.target, f"Il est {hour_str}, le saloon ouvre ses portes ☀️")
-        if now > today_close and self.game.opened:
-            self.game.close()
-            trace("Close")
-            #TODO today's earnings
-            self.msg(e.target, f"Il est {hour_str}, le saloon ferme 🌑")
-            #Check if a fight is available
-        if self.game.opened:
+        #Check if a fight is available before closing, to not miss any fights
+        if self.game.opened: #Skip missed fights on closed hours
             for fight_time in self.game.fight_times:
-                if now > fight_time:
+                if now > fight_time: #TODO use same reference of time, put 'now' in game
                     trace("Fight")
                     self._fight(e.target)
                     self.game.fight_times.pop(0)
                     break
+        if self.game.opened and not Game.is_open_hour():
+            self.game.close()
+            trace("Close")
+            #TODO today's earnings
+            self.msg(e.target, f"Il est {hour_str}, le saloon ferme 🌑")
 
     def on_join(self, c, e):
         #As we join the channel, do the same thing as if we're pinged

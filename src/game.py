@@ -21,7 +21,7 @@ class Game():
         self.players: List[Player] = []
         self.indians: List[Indian] = []
         self.turn = Turn.PLAYER
-        self.opened = True
+        self.opened = Game.is_open_hour()
         #TODO fight object ?
         self.fights_nb_per_day = 2
         self.fight_times = []
@@ -40,6 +40,12 @@ class Game():
             end: timestamp = (today_open + (i + 1) * time_period).timestamp()
             self.fight_times.append(datetime.fromtimestamp(randrange(start, end)))
         print(self.fight_times)
+
+    def is_open_hour():
+        now = datetime.now()
+        today_open: datetime = datetime.combine(now, Game.hour_open)
+        today_close: datetime = datetime.combine(now, Game.hour_close)
+        return now > today_open and now < today_close
 
     #TODO remove and replace by time compare with hour_open and hour_close
     def open(self):
