@@ -4,7 +4,7 @@ from indian import *
 from typing import List, Optional
 from player import *
 from random import randint, choice, uniform, randrange
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from utils import *
 
 
@@ -17,6 +17,7 @@ class Game():
     cash_divider = 10
     hour_open = time(9, 30)
     hour_close = time(16, 30)
+    fight_timeout = timedelta(minutes=30)
 
     def __init__(self) -> None:
         self.players: List[Player] = []
@@ -41,6 +42,21 @@ class Game():
             end: timestamp = (today_open + (i + 1) * time_period).timestamp()
             self.fight_times.append(datetime.fromtimestamp(randrange(start, end)))
         trace("Scheduled fights: " + '; '.join(str(fight) for fight in self.fight_times))
+
+    def handle_fight_times(self) -> bool:
+        now = datetime.now()
+        #Iterate over a copy so we can remove items safely
+        for fight_time in self.fight_times[:]:
+            if now > fight_time: #TODO use same reference of time, put 'now' in game
+                self.fight_times.remove(fight_time)
+                print(now - fight_time)
+                print(Game.fight_timeout)
+                if now - fight_time > Game.fight_timeout:
+                    trace("Discarding expired fight " + str(fight_time))
+                    continue
+                trace("Selecting fight " + str(fight_time))
+                return True
+        return False
 
     def is_open_hour():
         now = datetime.now()

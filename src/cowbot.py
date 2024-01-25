@@ -44,8 +44,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
     #Fired every ~3min on libera.chat
     def on_ping(self, c, e):
-        trace("Ping from " + e.target)
-        #Target is the irc serveur, change it to our channel
+        trace("Got pinged")
+        #Target is the irc server, change it to our channel
         e.target = self.channel
 
         now = datetime.now()
@@ -57,12 +57,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(e.target, f"Il est {hour_str}, le saloon ouvre ses portes ☀️")
         #Check if a fight is available before closing, to not miss any fights
         if self.game.opened: #Skip missed fights on closed hours
-            for fight_time in self.game.fight_times:
-                if now > fight_time: #TODO use same reference of time, put 'now' in game
-                    trace("Starting fight")
-                    self._fight(e.target)
-                    self.game.fight_times.pop(0)
-                    break
+            if self.game.handle_fight_times():
+                self._fight(e.target)
         if self.game.opened and not Game.is_open_hour():
             self.game.close()
             trace("Closing game")
