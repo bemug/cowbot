@@ -49,8 +49,6 @@ class Game():
         for fight_time in self.fight_times[:]:
             if now > fight_time: #TODO use same reference of time, put 'now' in game
                 self.fight_times.remove(fight_time)
-                print(now - fight_time)
-                print(Game.fight_timeout)
                 if now - fight_time > Game.fight_timeout:
                     trace("Discarding expired fight " + str(fight_time))
                     continue
