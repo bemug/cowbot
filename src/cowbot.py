@@ -268,6 +268,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         player.exp = exp
         self.msg(target, f"Experience du joueur {player.level}.")
 
+    def _callback_admin_icons(self, target, source, args: str) -> None:
+        self.msg(target, "Icones : "  + ''.join(icon for icon in icons.values()))
 
     ### Commands lists ###
 
@@ -286,6 +288,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         "!!heal": Command(_callback_admin_heal, "Soigne un joueur"),
         "!!level": Command(_callback_admin_level, "Change le niveau d'un joueur"),
         "!!exp": Command(_callback_admin_exp, "Change l'experience d'un joueur"),
+        "!!icons": Command(_callback_admin_icons, "Affiche les icones"),
     }
 
 
