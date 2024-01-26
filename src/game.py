@@ -77,7 +77,9 @@ class Game():
         #TODO generate combined/split indians with 5% chance of appearance
         for player in self.players:
             noised_foe_exp = player.foe_exp * uniform(0.8, 1.2)
-            self.indians.append(Indian(noised_foe_exp))
+            indian: Indian = Indian(noised_foe_exp)
+            trace("Adding " + str(indian) + " foe level " + str(indian.level) + " to fight with " + str(noised_foe_exp) + " exp")
+            self.indians.append(indian)
 
     def _change_turn(self) -> None:
         if self.turn == Turn.PLAYER:
@@ -112,10 +114,12 @@ class Game():
         exp: int = int(total_exp / len(self.players))
         if self.are_they_dead(self.indians):
             for player in self.players:
+                trace("Add " + str(exp) + " for exp and foe_exp to " + str(player))
                 player.add_exp(exp)
                 player.foe_exp += exp
         else:
             for player in self.players:
+                trace("Substracting " + str(exp) + " foe_exp to " + str(player))
                 player.foe_exp -= exp
             total_xp *= -1
         return Game.exp_to_cash(total_exp)
@@ -124,6 +128,7 @@ class Game():
         self.indians = []
         for player in self.players:
             if player.hp <= 0:
+                trace("Set " + str(player) + " to 1")
                 player.hp = 1
 
     def _hit(self, source, target) -> int:
