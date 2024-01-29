@@ -18,6 +18,7 @@ class Game():
     hour_open = time(9, 30)
     hour_close = time(16, 30)
     fight_timeout = timedelta(minutes=30)
+    tick_heal = timedelta(minutes=15)
 
     def __init__(self) -> None:
         self.players: List[Player] = []
@@ -27,7 +28,9 @@ class Game():
         #TODO fight object ?
         self.fights_nb_per_day = 2
         self.fight_times = []
-        self.schedule_fights() #TODO should remove once loading is done
+        self.schedule_fights() #TODO should remove once loading is done if bot is reloaded today
+        self.heal_times = []
+        self.schedule_heals() #TODO same as above
 
     def schedule_fights(self) -> None:
         now = datetime.now()
@@ -43,7 +46,7 @@ class Game():
             self.fight_times.append(datetime.fromtimestamp(randrange(start, end)))
         trace("Scheduled fights: " + '; '.join(str(fight) for fight in self.fight_times))
 
-    def handle_fight_times(self) -> bool:
+    def is_fight_time(self) -> bool:
         now = datetime.now()
         #Iterate over a copy so we can remove items safely
         for fight_time in self.fight_times[:]:
@@ -56,6 +59,34 @@ class Game():
                 return True
         return False
 
+    def schedule_heals(self):
+        now = datetime.now()
+        today_open: datetime = datetime.combine(now, Game.hour_open)
+        today_close: datetime = datetime.combine(now, Game.hour_close)
+        heal_time = today_open + Game.tick_heal
+        self.heal_times.clear()
+        while heal_time <= today_close:
+            self.heal_times.append(heal_time)
+            heal_time += Game.tick_heal
+        trace("Scheduled heals: " + '; '.join(str(heal) for heal in self.heal_times))
+
+    def is_heal_time(self) -> bool:
+        now = datetime.now()
+        #Iterate over a copy so we can remove items safely
+        for heal_time in self.heal_times[:]:
+            if now > heal_time:
+                self.heal_times.remove(heal_time)
+                #Don't discard aything, we want the player to receive its missing health even if we miss a fight inbetween.
+                #That's a compensation incase the game crashed.
+                trace("Heal " + str(heal_time))
+                return True
+        return False
+
+    def heal_players(self, hp: int = 1) -> None:
+        #TODO only players INSIDE the game
+        for player in self.players:
+            player.hp = min(player.hp + hp, player.get_max_hp())
+
     def is_open_hour():
         now = datetime.now()
         today_open: datetime = datetime.combine(now, Game.hour_open)
@@ -65,6 +96,7 @@ class Game():
     #TODO remove and replace by time compare with hour_open and hour_close
     def open(self):
         self.schedule_fights()
+        self.schedule_heals()
         self.opened = True
 
     def close(self):

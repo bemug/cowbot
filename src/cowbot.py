@@ -55,8 +55,10 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.game.open()
             self.msg(e.target, f"Il est {Game.hour_open.strftime(fmt)}, le saloon ouvre ses portes 🌅")
         #Check if a fight is available before closing, to not miss any fights
-        if self.game.opened: #Skip missed fights on closed hours
-            if self.game.handle_fight_times():
+        if self.game.opened: #Skip missed fights on closed hours, and don't heal
+            if self.game.is_heal_time():
+                self.game.heal_players()
+            if self.game.is_fight_time():
                 self._fight(e.target)
         if self.game.opened and not Game.is_open_hour():
             self.game.close()
