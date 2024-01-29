@@ -121,7 +121,7 @@ class Game():
             for player in self.players:
                 trace("Substracting " + str(exp) + " foe_exp to " + str(player))
                 player.foe_exp -= exp
-            total_xp *= -1
+            total_exp *= -1
         return Game.exp_to_cash(total_exp)
 
     def clean_after_fight(self):
