@@ -30,7 +30,7 @@ class Character:
     def add_exp(self, xp: int) -> int:
         old_level: int = self.level
         self.exp += xp
-        while self.exp > self.get_max_exp():
+        while self.exp >= self.get_max_exp():
             self.exp -= self.get_max_exp()
             self.level += 1
         return self.level - old_level
