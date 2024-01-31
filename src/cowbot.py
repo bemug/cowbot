@@ -197,7 +197,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                         )
                     self.msg(target, log)
                 i += 1
-            #TODO loot
+
+            log = "Dépouille : " + '; '.join(str(loot) for loot in self.game.loot)
+            self.msg(target, log)
         else:
             log = "DEFAITE. {} vole{} {}{}{}{} dans le tiroir-caisse [{}{}{}{}], et s'échappe{}.".format(
                     list_str(self.game.indians),

@@ -13,6 +13,9 @@ class Player(Character):
         self.base_hp = 15
         self.hp = self.get_max_hp()
         self.base_damage = 5
+        self.inventory = []
+        self.weapon = None
+        self.armor = None
 
     def __str__(self):
         return self.name.capitalize()

@@ -3,6 +3,7 @@ from aftermath import *
 from indian import *
 from typing import List, Optional
 from player import *
+from weapon import *
 from random import randint, choice, uniform, randrange
 from datetime import datetime, time, timedelta
 from utils import *
@@ -31,6 +32,7 @@ class Game():
         self.schedule_fights() #TODO should remove once loading is done if bot is reloaded today
         self.heal_times = []
         self.schedule_heals() #TODO same as above
+        self.loot = []
 
     def schedule_fights(self) -> None:
         now = datetime.now()
@@ -141,7 +143,7 @@ class Game():
     def exp_to_cash(exp: int):
         return int(exp / Game.cash_divider)
 
-    def end_fight(self) -> int:
+    def give_exp(self) -> int:
         total_exp: int = sum(indian.get_kill_exp() for indian in self.indians)
         exp: int = int(total_exp / len(self.players))
         if self.are_they_dead(self.indians):
@@ -155,6 +157,14 @@ class Game():
                 player.foe_exp -= exp
             total_exp *= -1
         return Game.exp_to_cash(total_exp)
+
+    def generate_loot(self) -> None:
+        self.loot = []
+        self.loot.append(Weapon("Colt", 1, 0))
+
+    def end_fight(self) -> int:
+        self.generate_loot()
+        return self.give_exp()
 
     def clean_after_fight(self):
         self.indians = []
