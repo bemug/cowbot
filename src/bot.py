@@ -150,29 +150,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                         )
                     self.msg(target, log)
 
-            items = []
-            log = "Dépouille : "
-            for i, loot in enumerate(self.game.loot, 1):
-                if isinstance(loot, Weapon):
-                    items.append("[{}] {} : {}, {}".format(
-                            str(i),
-                            str(loot),
-                            decor_str(str(loot.dmg), decorations["dmg"]),
-                            decor_str(str(loot.crit), decorations["crit"]),
-                        )
-                     )
-                elif isinstance(loot, Armor):
-                    items.append("[{}] {} : {}, {}".format(
-                            str(i),
-                            str(loot),
-                            decor_str(str(loot.arm), decorations["arm"]),
-                            decor_str(str(loot.miss), decorations["miss"]),
-                        )
-                     )
-                else:
-                    trace("Unknown loot type, ignoring.")
-            log += " ; ".join(items)
-            self.msg(target, log)
+            self._show_loot(target)
         else:
             log = "DEFAITE. {} vole{} {} dans le tiroir-caisse ({}), et s'échappe{}.".format(
                     list_str(self.game.indians),
@@ -183,6 +161,31 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                 )
             self.msg(target, log)
         self.game.clean_after_fight()
+
+    def _show_loot(self, target):
+        items = []
+        log = "Dépouille : "
+        for i, loot in enumerate(self.game.loot, 1):
+            if isinstance(loot, Weapon):
+                items.append("[{}] {} : {}, {}".format(
+                        str(i),
+                        str(loot),
+                        decor_str(str(loot.dmg), decorations["dmg"]),
+                        decor_str(str(loot.crit), decorations["crit"]),
+                    )
+                 )
+            elif isinstance(loot, Armor):
+                items.append("[{}] {} : {}, {}".format(
+                        str(i),
+                        str(loot),
+                        decor_str(str(loot.arm), decorations["arm"]),
+                        decor_str(str(loot.miss), decorations["miss"]),
+                    )
+                 )
+            else:
+                trace("Unknown loot type, ignoring.")
+        log += " ; ".join(items)
+        self.msg(target, log)
 
 
     ### Player commands ###
@@ -223,10 +226,13 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, log)
 
     def _callback_loot(self, target, source, args: str) -> None:
+        if len(args) == 0:
+            self._show_loot(target)
+            return
         try:
             index = int(args[0])
         except ValueError:
-            self.msg(target, f"{ERR} Tu dois specifier le numéro de l'objet à ramasser.")
+            self.msg(target, f"{ERR} '' n'est pas un numéro d'objet de la dépouille.")
             return
         index -= 1
         player: Player = self.game.find_player(source)
