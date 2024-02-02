@@ -118,7 +118,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                     am.source.no_hl_str(),
                     decor_str(str(am.damage), decorations["dmg"]),
                     am.target.no_hl_str(),
-                    decor_str(f"{str(am.damage)}/{am.target.get_max_hp()}", decorations["hp"]),
+                    decor_str(f"{am.target.hp}/{am.target.get_max_hp()}", decorations["hp"]),
                 )
             self.msg(target, log)
             if am.target.is_dead():
@@ -143,7 +143,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                     log = "{} passe au niveau {} ({}).".format(
                             player,
                             player.level,
-                            decor_str(f"{str(player.exp)}/{str(player.get_max_exp())}", decorations["exp"]),
+                            decor_str(f"{player.exp}/{player.get_max_exp()}", decorations["exp"]),
                         )
                     self.msg(target, log)
 
@@ -208,8 +208,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         msg: str = "Cowboy {} niveau {} : {}, {}".format(
                 player.no_hl_str(),
                 player.level,
-                decor_str(f"{str(player.exp)}/{str(player.get_max_exp())}", decorations["exp"]),
-                decor_str(f"{str(player.hp)}/{str(player.get_max_hp())}", decorations["hp"])
+                decor_str(f"{player.exp}/{player.get_max_exp()}", decorations["exp"]),
+                decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"])
             )
         self.msg(target, msg)
 
