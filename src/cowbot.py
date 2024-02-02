@@ -126,17 +126,17 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         if not player:
             self.msg(target, f"{ERR} On ne se connait pas encore ? Entre d'abord dans le saloon.")
             return
-        msg: str = "{} niveau {} : [{}{}/{}{}{}] [{}{}/{}{}{}]".format(
+        msg: str = "{} niveau {} : [{}] [{}]".format(
                 player.no_hl_str(),
                 player.level,
-                colors["blue"], player.exp, player.get_max_exp(), icons["exp"], colors["reset"],
-                colors["red"], player.hp, player.get_max_hp(), icons["hp"], colors["reset"],
+                decor_str(f"{str(player.exp)}/{str(player.get_max_exp())}", decorations["exp"]),
+                decor_str(f"{str(player.hp)}/{str(player.get_max_hp())}", decorations["hp"])
             )
         self.msg(target, msg)
 
     def _callback_cash(self, target, source, args: str) -> None:
-        log: str = "Le contenu du tiroir-caisse est actuellement de {}{}{}{}.".format(
-            colors["yellow"], self.game.get_cash(), icons["cash"], colors["reset"],
+        log: str = "Le contenu du tiroir-caisse est actuellement de {}.".format(
+            decor_str(str(self.game.get_cash()), decorations["cash"])
         )
         self.msg(target, log)
 
@@ -163,11 +163,11 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         while not self.game.is_fight_over():
             am: Aftermath = self.game.process_fight()
             #armor sign will be ⛊
-            log = "{} tire {}{}{}{} sur {} [{}{}/{}{}{}].".format(
+            log = "{} tire {} sur {} [{}].".format(
                     am.source.no_hl_str(),
-                    colors["orange"], am.damage, icons["dmg"],colors["reset"],
+                    decor_str(str(am.damage), decorations["dmg"]),
                     am.target.no_hl_str(),
-                    colors["red"], am.target.hp, am.target.get_max_hp(), icons["hp"], colors["reset"],
+                    decor_str(f"{str(am.damage)}/{am.target.get_max_hp()}", decorations["hp"]),
                 )
             self.msg(target, log)
             if am.target.is_dead():
@@ -179,21 +179,21 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         cash_change = self.game.end_fight()
 
         if cash_change > 0:
-            log = "VICTOIRE. {} possède{} {}{}{}{}, que je place dans le tiroir-caisse [{}{}{}{}].".format(
+            log = "VICTOIRE. {} possède{} {}, que je place dans le tiroir-caisse [{}].".format(
                     list_str(self.game.indians),
                     number_str,
-                    colors["yellow"], cash_change, icons["cash"], colors["reset"],
-                    colors["yellow"], self.game.get_cash(), icons["cash"], colors["reset"],
+                    decor_str(str(cash_change), decorations["cash"]),
+                    decor_str(str(self.game.get_cash()), decorations["cash"]),
                 )
             self.msg(target, log)
 
             i=0
             for player in self.game.players:
                 if player.level != levels[i]:
-                    log = "{} passe au niveau {} [{}{}/{}{}{}].".format(
+                    log = "{} passe au niveau {} [{}].".format(
                             player,
                             player.level,
-                            colors["blue"], player.exp, player.get_max_exp(), icons["exp"], colors["reset"],
+                            decor_str(f"{str(player.exp)}/{str(player.get_max_exp())}", decorations["exp"]),
                         )
                     self.msg(target, log)
                 i += 1
@@ -201,11 +201,11 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             log = "Dépouille : " + '; '.join(str(loot) for loot in self.game.loot)
             self.msg(target, log)
         else:
-            log = "DEFAITE. {} vole{} {}{}{}{} dans le tiroir-caisse [{}{}{}{}], et s'échappe{}.".format(
+            log = "DEFAITE. {} vole{} {} dans le tiroir-caisse [{}], et s'échappe{}.".format(
                     list_str(self.game.indians),
                     number_str,
-                    colors["yellow"], -cash_change, icons["cash"], colors["reset"],
-                    colors["yellow"], self.game.get_cash(), icons["cash"], colors["reset"],
+                    decor_str(str(cash_change), decorations["cash"]),
+                    decor_str(str(self.game.get_cash()), decorations["cash"]),
                     number_str,
                 )
             self.msg(target, log)
