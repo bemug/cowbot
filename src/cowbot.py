@@ -110,7 +110,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
         if len(self.game.indians) > 1:
             number_str = "nt"
-        self.msg(target, f"{list_str(self.game.indians)} débarque{number_str} dans le saloon.")
+        self.msg(target, f"{list_str(self.game.indians)} débarque{number_str} dans le saloon {list_str(self.game.players)} !")
         sleep(Cowbot.msg_wait)
         while not self.game.is_fight_over():
             am: Aftermath = self.game.process_fight()
