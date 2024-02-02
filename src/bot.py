@@ -199,6 +199,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, "Dites, j'ai entendu dire que vous n'aimiez pas trop les indiens ? Ils me mènent la vie dure ces temps-ci. Ils débarquent dans mon saloon et piquent dans la caisse. Peut être que vous pourriez en dessouder quelques-uns pour moi ? Je saurais me montrer redevable.")
 
     def _callback_join(self, target, source, args: str) -> None:
+        #TODO remove and add player in not found in find_player
         player: Player = self.game.add_player(source)
         if not player:
             player = self.game.find_player(source)
@@ -232,19 +233,44 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         try:
             index = int(args[0])
         except ValueError:
-            self.msg(target, f"{ERR} '' n'est pas un numéro d'objet de la dépouille.")
+            self.msg(target, f"{ERR} '{args[0]}' n'est pas un numéro d'objet de la dépouille.")
+            return
+        if index <= 0:
+            self.msg(target, f"{ERR} On compte à partir de 1 dans le Far West.")
             return
         index -= 1
         player: Player = self.game.find_player(source)
-        object = self.game.loot_to_inventory(player, index)
-        if object == None:
+        item = self.game.do_loot(player, index)
+        if item == None:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans la dépouille.")
             return
-        self.msg(target, f"{object} ramassé.")
+        self.msg(target, f"{item} ramassé.")
 
     def _callback_inventory(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source)
         self.msg(target, "Inventaire : " + ", ".join(str(obj) for obj in player.inventory))
+
+    #TODO refactor with callback_loot
+    def _callback_drop(self, target, source, args: str) -> None:
+        if len(args) != 1:
+            self.msg(target, "!drop <index>")
+            return
+        try:
+            index = int(args[0])
+        except ValueError:
+            self.msg(target, f"{ERR} 'args[0]' n'est pas un numéro d'objet de ton inventaire.")
+            return
+        if index <= 0:
+            self.msg(target, f"{ERR} On compte à partir de 1 dans le Far West.")
+            return
+        index -= 1
+        player: Player = self.game.find_player(source)
+        item = self.game.do_drop(player, index)
+        if item == None:
+            self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
+            return
+        self.msg(target, f"{item} déposé.")
+
 
     ### Admin commands ###
 
@@ -325,10 +351,11 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         "!help": Command(_callback_help, "Affiche l'aide"),
         "!pitch": Command(_callback_pitch, "Conte l'histoire"),
         "!join": Command(_callback_join, "Entre dans le saloon"),
-        "!status": Command(_callback_status, "Affiche ton statut"),
         "!cash": Command(_callback_cash, "Affiche le contenu du tiroir-caisse"),
-        "!loot": Command(_callback_loot, "Prend un objet d'une dépouille pour la placer dans ton inventaire"),
+        "!status": Command(_callback_status, "Affiche ton statut"),
         "!inventory": Command(_callback_inventory, "Affiche ton inventaire"),
+        "!loot": Command(_callback_loot, "Prend un objet d'une dépouille pour la placer dans ton inventaire"),
+        "!drop": Command(_callback_drop, "Place un objet de ton inventaire dans la dépouille"),
     }
 
     admin_commands = {

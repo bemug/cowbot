@@ -1,7 +1,7 @@
-from object import *
+from item import *
 
 
-class Weapon(Object):
+class Weapon(Item):
     def __init__(self, name: str, dmg: int, crit: int) -> None:
         super().__init__(name)
         self.dmg = dmg

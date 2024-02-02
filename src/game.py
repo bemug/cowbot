@@ -27,7 +27,7 @@ class Game():
         self.indians: List[Indian] = []
         self.turn = Turn.PLAYER
         self.opened = Game.is_open_hour()
-        #TODO fight object ?
+        #TODO fight item ?
         self.fights_nb_per_day = 2
         self.fight_times = []
         self.schedule_fights() #TODO should remove once loading is done if bot is reloaded today
@@ -200,15 +200,29 @@ class Game():
     def find_player(self, name: str) -> Player:
         return next((player for player in self.players if player.name == name), None)
 
-    def loot_to_inventory(self, player: Player, loot_index: int) -> Object :
+    def do_loot(self, player: Player, loot_index: int) -> Item :
         try:
-            object = self.loot[loot_index]
+            item = self.loot[loot_index]
         except IndexError:
             return None
-        player.inventory.append(object)
-        replace_by_none(self.loot, object)
-        return object
+        if item == None:
+            return None
+        append_in_none(player.inventory, item)
+        replace_by_none(self.loot, item)
+        trace(f"Loot : {self.loot}")
+        trace(f"{player} inventory : {player.inventory}")
+        return item
 
-
-def replace_by_none(list, elem):
-    list[:] = [None if x == elem else x for x in list]
+    #TODO factorize with do_loot
+    def do_drop(self, player: Player, loot_index: int) -> Item :
+        try:
+            item = player.inventory[loot_index]
+        except IndexError:
+            return None
+        if item == None:
+            return None
+        append_in_none(self.loot, item)
+        replace_by_none(player.inventory, item)
+        trace(f"Loot : {self.loot}")
+        trace(f"{player} inventory : {player.inventory}")
+        return item

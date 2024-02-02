@@ -43,3 +43,13 @@ def trace(msg):
     now = datetime.now()
     print("[" + str(now) + "] " + msg)
 
+
+def replace_by_none(list, elem):
+    list[:] = [None if x == elem else x for x in list]
+
+def append_in_none(list, elem):
+    for i, value in enumerate(list[:]):
+        if value == None:
+            list[i] = elem
+            return
+    list.append(elem)
