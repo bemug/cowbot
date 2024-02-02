@@ -222,6 +222,20 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         )
         self.msg(target, log)
 
+    def _callback_loot(self, target, source, args: str) -> None:
+        try:
+            index = int(args[0])
+        except ValueError:
+            self.msg(target, f"{ERR} Tu dois specifier le numéro de l'objet à ramasser.")
+            return
+        index -= 1
+        try:
+            object = self.game.loot[index]
+        except IndexError:
+            self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans la dépouille.")
+            return
+        self.msg(target, f"{self.game.loot[index]} ramassé.")
+
 
     ### Admin commands ###
 
@@ -304,6 +318,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         "!join": Command(_callback_join, "Entre dans le saloon"),
         "!status": Command(_callback_status, "Affiche ton statut"),
         "!cash": Command(_callback_cash, "Affiche le contenu du tiroir-caisse"),
+        "!loot": Command(_callback_loot, "Prend un objet d'une dépouille pour la placer dans ton inventaire"),
     }
 
     admin_commands = {
