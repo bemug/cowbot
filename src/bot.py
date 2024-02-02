@@ -104,7 +104,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _fight(self, target) -> None:
         log: str = ""
-        number_str = ""
+        number_str: str = ""
+        step: int = 1
 
         self.game.start_fight()
 
@@ -114,7 +115,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         sleep(Cowbot.msg_wait)
         while not self.game.is_fight_over():
             am: Aftermath = self.game.process_fight()
-            log = "{} tire {} sur {}. Reste {}.".format(
+            log = "{}. {} tire {} sur {}. Reste {}.".format(
+                    step,
                     am.source.no_hl_str(),
                     decor_str(str(am.damage), decorations["dmg"]),
                     am.target.no_hl_str(),
@@ -123,6 +125,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, log)
             if am.target.is_dead():
                 self.msg(target, f"{am.target} est à terre.")
+            step += 1
             sleep(Cowbot.msg_wait)
 
         #Backup levels for display
