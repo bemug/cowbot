@@ -288,7 +288,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, f"{ERR} L'experience de {player.no_hl_str()} ne peut dépasser {player.get_max_exp()}.")
             return
         player.exp = exp
-        self.msg(target, f"Experience du joueur {player.level}.")
+        self.msg(target, f"Experience du joueur {player.exp}.")
 
     def _callback_admin_icons(self, target, source, args: str) -> None:
         self.msg(target, "Icones : "  + ''.join(icon for icon in icons.values()))
