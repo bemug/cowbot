@@ -102,54 +102,6 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
     def debug_start(self):
         self.game.add_player("zoologist")
 
-
-    ### Player commands ###
-
-    def _callback_help(self, target: int, source, args: str) -> None:
-        for command in self.commands:
-            self.msg(target, command + " : " + self.commands[command].help_message)
-
-    def _callback_pitch(self, target, source, args: str) -> None:
-        self.msg(target, "Bienvenue dans mon saloon, étranger. Installez vous. J'ai là un excellent whisky, vous devriez le goûter.")
-        self.msg(target, "Dites, j'ai entendu dire que vous n'aimiez pas trop les indiens ? Ils me mènent la vie dure ces temps-ci. Ils débarquent dans mon saloon et piquent dans la caisse. Peut être que vous pourriez en dessouder quelques-uns pour moi ? Je saurais me montrer redevable.")
-
-    def _callback_join(self, target, source, args: str) -> None:
-        player: Player = self.game.add_player(source)
-        if not player:
-            player = self.game.find_player(source)
-            self.msg(target, f"{ERR} Tu es déjà à l'intérieur du saloon.")
-            return
-        self.msg(target, f"Bienvenue dans le saloon.")
-
-    def _callback_status(self, target, source, args: str) -> None:
-        player: Player = self.game.find_player(source)
-        if not player:
-            self.msg(target, f"{ERR} On ne se connait pas encore ? Entre d'abord dans le saloon.")
-            return
-        msg: str = "{} niveau {} : [{}] [{}]".format(
-                player.no_hl_str(),
-                player.level,
-                decor_str(f"{str(player.exp)}/{str(player.get_max_exp())}", decorations["exp"]),
-                decor_str(f"{str(player.hp)}/{str(player.get_max_hp())}", decorations["hp"])
-            )
-        self.msg(target, msg)
-
-    def _callback_cash(self, target, source, args: str) -> None:
-        log: str = "Le contenu du tiroir-caisse est actuellement de {}.".format(
-            decor_str(str(self.game.get_cash()), decorations["cash"])
-        )
-        self.msg(target, log)
-
-
-    ### Admin commands ###
-
-    def _callback_admin_help(self, target: int, source, args: str) -> None:
-        for command in self.admin_commands:
-            self.msg(target, command + " : " + self.admin_commands[command].help_message)
-
-    def _callback_admin_fight(self, target, source, args: str) -> None:
-        self._fight(target)
-
     def _fight(self, target) -> None:
         log: str = ""
         number_str = ""
@@ -217,6 +169,54 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                 )
             self.msg(target, log)
         self.game.clean_after_fight()
+
+
+    ### Player commands ###
+
+    def _callback_help(self, target: int, source, args: str) -> None:
+        for command in self.commands:
+            self.msg(target, command + " : " + self.commands[command].help_message)
+
+    def _callback_pitch(self, target, source, args: str) -> None:
+        self.msg(target, "Bienvenue dans mon saloon, étranger. Installez vous. J'ai là un excellent whisky, vous devriez le goûter.")
+        self.msg(target, "Dites, j'ai entendu dire que vous n'aimiez pas trop les indiens ? Ils me mènent la vie dure ces temps-ci. Ils débarquent dans mon saloon et piquent dans la caisse. Peut être que vous pourriez en dessouder quelques-uns pour moi ? Je saurais me montrer redevable.")
+
+    def _callback_join(self, target, source, args: str) -> None:
+        player: Player = self.game.add_player(source)
+        if not player:
+            player = self.game.find_player(source)
+            self.msg(target, f"{ERR} Tu es déjà à l'intérieur du saloon.")
+            return
+        self.msg(target, f"Bienvenue dans le saloon.")
+
+    def _callback_status(self, target, source, args: str) -> None:
+        player: Player = self.game.find_player(source)
+        if not player:
+            self.msg(target, f"{ERR} On ne se connait pas encore ? Entre d'abord dans le saloon.")
+            return
+        msg: str = "{} niveau {} : [{}] [{}]".format(
+                player.no_hl_str(),
+                player.level,
+                decor_str(f"{str(player.exp)}/{str(player.get_max_exp())}", decorations["exp"]),
+                decor_str(f"{str(player.hp)}/{str(player.get_max_hp())}", decorations["hp"])
+            )
+        self.msg(target, msg)
+
+    def _callback_cash(self, target, source, args: str) -> None:
+        log: str = "Le contenu du tiroir-caisse est actuellement de {}.".format(
+            decor_str(str(self.game.get_cash()), decorations["cash"])
+        )
+        self.msg(target, log)
+
+
+    ### Admin commands ###
+
+    def _callback_admin_help(self, target: int, source, args: str) -> None:
+        for command in self.admin_commands:
+            self.msg(target, command + " : " + self.admin_commands[command].help_message)
+
+    def _callback_admin_fight(self, target, source, args: str) -> None:
+        self._fight(target)
 
     def _callback_admin_cash(self, target, source, args: str) -> None:
         if len(args) != 1:
