@@ -221,8 +221,32 @@ class Game():
             return None
         if item == None:
             return None
+        #Check if object is equipped, and if it is, unequip it
+        #TODO tell player we unequipped
+        if player.weapon == item:
+            trace(f"Removing {item} as equipped weapon")
+            player.weapon = None
+        if player.armor == item:
+            trace(f"Removing {item} as equipped armor")
+            player.armor = None
         append_in_none(self.loot, item)
         replace_by_none(player.inventory, item)
         trace(f"Loot : {self.loot}")
         trace(f"{player} inventory : {player.inventory}")
         return item
+
+    #TODO refactor too
+    def do_equip(self, player: Player, loot_index: int) -> Item :
+        try:
+            item = player.inventory[loot_index]
+        except IndexError:
+            return None
+        if item == None:
+            return None
+        if isinstance(item, Weapon):
+            player.weapon = item
+            return item
+        elif isinstance(item, Armor):
+            player.armor = item
+            return item
+        return None

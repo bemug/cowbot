@@ -273,6 +273,27 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         self.msg(target, f"{item} déposé.")
 
+    #TODO refactor too
+    def _callback_equip(self, target, source, args: str) -> None:
+        if len(args) != 1:
+            self.msg(target, "!equip <index>")
+            return
+        try:
+            index = int(args[0])
+        except ValueError:
+            self.msg(target, f"{ERR} 'args[0]' n'est pas un numéro d'objet de ton inventaire.")
+            return
+        if index <= 0:
+            self.msg(target, f"{ERR} On compte à partir de 1 dans le Far West.")
+            return
+        index -= 1
+        player: Player = self.game.find_player(source)
+        item = self.game.do_equip(player, index)
+        if item == None:
+            self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
+            return
+        self.msg(target, f"{item} équipé.")
+
 
     ### Admin commands ###
 
@@ -358,6 +379,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         "!inventory": Command(_callback_inventory, "Affiche ton inventaire"),
         "!loot": Command(_callback_loot, "Prend un objet d'une dépouille pour la placer dans ton inventaire"),
         "!drop": Command(_callback_drop, "Place un objet de ton inventaire dans la dépouille"),
+        "!equip": Command(_callback_equip, "Equipe un objet de ton inventaire"),
     }
 
     admin_commands = {
