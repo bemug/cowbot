@@ -12,13 +12,13 @@ colors_reset : str = "\x03" #Reset
 #See https://modern.ircdocs.horse/formatting.html for formatting
 #See https://defs.ircdocs.horse/info/formatting for client support
 decorations = {
-    "hp" : Decoration("\x0304", " PV"), #Red
-    "exp" : Decoration("\x0302", " EXP"), #Blue
-    "dmg" : Decoration("\x0307", " DGT"), #Orange
+    "hp" : Decoration("\x0304", " pv"), #Red
+    "exp" : Decoration("\x0302", " exp"), #Blue
+    "dmg" : Decoration("\x0307", " dgt"), #Orange
     "cash" : Decoration("\x0342", " $"), #Custom yellow, as default is too bright on some white themes
-    "arm" : Decoration("\x0314", " ARM"), #Grey
-    "crit" : Decoration("\x0304", " %CRIT"), #Red
-    "miss" : Decoration("\x0303", " %ESQ"), #Green
+    "arm" : Decoration("\x0314", " arm"), #Grey
+    "crit" : Decoration("\x0304", " %crit"), #Red
+    "miss" : Decoration("\x0303", " %esq"), #Green
 }
 
 

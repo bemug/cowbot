@@ -162,7 +162,6 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         sleep(Cowbot.msg_wait)
         while not self.game.is_fight_over():
             am: Aftermath = self.game.process_fight()
-            #armor sign will be ⛊
             log = "{} tire {} sur {} [{}].".format(
                     am.source.no_hl_str(),
                     decor_str(str(am.damage), decorations["dmg"]),
