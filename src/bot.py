@@ -114,7 +114,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         sleep(Cowbot.msg_wait)
         while not self.game.is_fight_over():
             am: Aftermath = self.game.process_fight()
-            log = "{} tire {} sur {} [{}].".format(
+            log = "{} tire {} sur {}. Reste {}.".format(
                     am.source.no_hl_str(),
                     decor_str(str(am.damage), decorations["dmg"]),
                     am.target.no_hl_str(),
@@ -130,7 +130,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         cash_change = self.game.end_fight()
 
         if cash_change > 0:
-            log = "VICTOIRE. {} possède{} {}, que je place dans le tiroir-caisse [{}].".format(
+            log = "VICTOIRE. {} possède{} {}, que je place dans le tiroir-caisse ({}).".format(
                     list_str(self.game.indians),
                     number_str,
                     decor_str(str(cash_change), decorations["cash"]),
@@ -140,7 +140,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
             for i, player in enumerate(self.game.players):
                 if player.level != levels[i]:
-                    log = "{} passe au niveau {} [{}].".format(
+                    log = "{} passe au niveau {} ({}).".format(
                             player,
                             player.level,
                             decor_str(f"{str(player.exp)}/{str(player.get_max_exp())}", decorations["exp"]),
@@ -171,7 +171,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             log += " ; ".join(items)
             self.msg(target, log)
         else:
-            log = "DEFAITE. {} vole{} {} dans le tiroir-caisse [{}], et s'échappe{}.".format(
+            log = "DEFAITE. {} vole{} {} dans le tiroir-caisse ({}), et s'échappe{}.".format(
                     list_str(self.game.indians),
                     number_str,
                     decor_str(str(cash_change), decorations["cash"]),
@@ -205,7 +205,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         if not player:
             self.msg(target, f"{ERR} On ne se connait pas encore ? Entre d'abord dans le saloon.")
             return
-        msg: str = "{} niveau {} : [{}] [{}]".format(
+        msg: str = "Cowboy {} niveau {} : {}, {}".format(
                 player.no_hl_str(),
                 player.level,
                 decor_str(f"{str(player.exp)}/{str(player.get_max_exp())}", decorations["exp"]),
