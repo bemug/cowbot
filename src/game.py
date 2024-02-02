@@ -206,5 +206,9 @@ class Game():
         except IndexError:
             return None
         player.inventory.append(object)
-        self.loot.remove(object)
+        replace_by_none(self.loot, object)
         return object
+
+
+def replace_by_none(list, elem):
+    list[:] = [None if x == elem else x for x in list]
