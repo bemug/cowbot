@@ -199,3 +199,12 @@ class Game():
 
     def find_player(self, name: str) -> Player:
         return next((player for player in self.players if player.name == name), None)
+
+    def loot_to_inventory(self, player: Player, loot_index: int) -> Object :
+        try:
+            object = self.loot[loot_index]
+        except IndexError:
+            return None
+        player.inventory.append(object)
+        self.loot.remove(object)
+        return object

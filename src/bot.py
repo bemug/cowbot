@@ -229,12 +229,12 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, f"{ERR} Tu dois specifier le numéro de l'objet à ramasser.")
             return
         index -= 1
-        try:
-            object = self.game.loot[index]
-        except IndexError:
+        player: Player = self.game.find_player(source)
+        object = self.game.loot_to_inventory(player, index)
+        if object == None:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans la dépouille.")
             return
-        self.msg(target, f"{self.game.loot[index]} ramassé.")
+        self.msg(target, f"{object} ramassé.")
 
 
     ### Admin commands ###
