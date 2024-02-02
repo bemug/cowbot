@@ -236,6 +236,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         self.msg(target, f"{object} ramassé.")
 
+    def _callback_inventory(self, target, source, args: str) -> None:
+        player: Player = self.game.find_player(source)
+        self.msg(target, "Inventaire : " + ", ".join(str(obj) for obj in player.inventory))
 
     ### Admin commands ###
 
@@ -319,6 +322,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         "!status": Command(_callback_status, "Affiche ton statut"),
         "!cash": Command(_callback_cash, "Affiche le contenu du tiroir-caisse"),
         "!loot": Command(_callback_loot, "Prend un objet d'une dépouille pour la placer dans ton inventaire"),
+        "!inventory": Command(_callback_inventory, "Affiche ton inventaire"),
     }
 
     admin_commands = {
