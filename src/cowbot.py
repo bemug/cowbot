@@ -187,8 +187,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                 )
             self.msg(target, log)
 
-            i=0
-            for player in self.game.players:
+            for i, player in enumerate(self.game.players):
                 if player.level != levels[i]:
                     log = "{} passe au niveau {} [{}].".format(
                             player,
@@ -196,7 +195,6 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                             decor_str(f"{str(player.exp)}/{str(player.get_max_exp())}", decorations["exp"]),
                         )
                     self.msg(target, log)
-                i += 1
 
             log = "Dépouille : " + '; '.join(str(loot) for loot in self.game.loot)
             self.msg(target, log)
