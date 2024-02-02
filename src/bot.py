@@ -101,6 +101,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def debug_start(self):
         self.game.add_player("zoologist")
+        self.game.loot.append(Weapon("Colt", 1, 0))
+        self.game.loot.append(Armor("Stetson en laine", 1, 0))
 
     def _fight(self, target) -> None:
         log: str = ""
