@@ -150,13 +150,24 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             items = []
             log = "Dépouille : "
             for i, loot in enumerate(self.game.loot, 1):
-                items.append("[{}] {} : {}, {}".format(
-                        str(i),
-                        str(loot),
-                        decor_str(str(loot.dmg), decorations["dmg"]),
-                        decor_str(str(loot.crit), decorations["crit"]),
-                    )
-                 )
+                if isinstance(loot, Weapon):
+                    items.append("[{}] {} : {}, {}".format(
+                            str(i),
+                            str(loot),
+                            decor_str(str(loot.dmg), decorations["dmg"]),
+                            decor_str(str(loot.crit), decorations["crit"]),
+                        )
+                     )
+                elif isinstance(loot, Armor):
+                    items.append("[{}] {} : {}, {}".format(
+                            str(i),
+                            str(loot),
+                            decor_str(str(loot.arm), decorations["arm"]),
+                            decor_str(str(loot.miss), decorations["miss"]),
+                        )
+                     )
+                else:
+                    trace("Unknown loot type, ignoring.")
             log += " ; ".join(items)
             self.msg(target, log)
         else:

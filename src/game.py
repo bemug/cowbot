@@ -4,6 +4,7 @@ from indian import *
 from typing import List, Optional
 from player import *
 from weapon import *
+from armor import *
 from random import randint, choice, uniform, randrange
 from datetime import datetime, time, timedelta
 from utils import *
@@ -161,6 +162,7 @@ class Game():
     def generate_loot(self) -> None:
         self.loot = []
         self.loot.append(Weapon("Colt", 1, 0))
+        self.loot.append(Armor("Stetson en laine", 1, 0))
 
     def end_fight(self) -> int:
         self.generate_loot()
