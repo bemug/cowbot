@@ -182,21 +182,20 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _show_loot(self, target):
         log = "Dépouille : "
-        for i, item in enumerate(self.game.loot, 1):
+        for i, item in enumerate(self.game.loot):
             if item != None:
                 log += f"[{i}] {self._str_item(item)} ; "
         self.msg(target, log)
 
-    def _parse_index(self, target, str_index: str) -> int:
+    def _parse_uint(self, target, str_index: str) -> int:
         try:
             index = int(str_index)
         except ValueError:
-            self.msg(target, f"{ERR} '{str_index}' n'est pas un numéro d'objet de la dépouille.")
-            return -1
-        if index <= 0:
-            self.msg(target, f"{ERR} On compte à partir de 1 dans le Far West.")
-            return -1
-        index -= 1
+            self.msg(target, f"{ERR} '{str_index}' doit être un nombre.")
+            raise ValueError
+        if index < 0:
+            self.msg(target, f"{ERR} '{str_index}' doit être positif.")
+            raise ValueError
         return index
 
 
@@ -244,7 +243,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
     def _callback_inventory(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source)
         log = "Inventaire : "
-        for i, item in enumerate(player.inventory, 1):
+        for i, item in enumerate(player.inventory):
             if item != None:
                 str_equipped = ""
                 if player.has_equipped(item):
@@ -256,8 +255,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         if len(args) == 0:
             self._show_loot(target)
             return
-        index = self._parse_index(target, args[0])
-        if index == -1:
+        try:
+            index = self._parse_uint(target, args[0])
+        except ValueError:
             return
         player: Player = self.game.find_player(source)
         item = self.game.do_loot(player, index)
@@ -270,8 +270,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         if len(args) != 1:
             self.msg(target, "!drop <index>")
             return
-        index = self._parse_index(target, args[0])
-        if index == -1:
+        try:
+            index = self._parse_uint(target, args[0])
+        except ValueError:
             return
         player: Player = self.game.find_player(source)
         item = self.game.do_drop(player, index)
@@ -285,8 +286,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         if len(args) != 1:
             self.msg(target, "!equip <index>")
             return
-        index = self._parse_index(target, args[0])
-        if index == -1:
+        try:
+            index = self._parse_uint(target, args[0])
+        except ValueError:
             return
         player: Player = self.game.find_player(source)
         item = self.game.do_equip(player, index)
@@ -311,9 +313,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, "!cash <cash>")
             return
         try:
-            self.game.cash = int(args[0])
+            self.game.cash = self._parse_uint(target, args[0])
         except ValueError:
-            self.msg(target, f"'{args[0]}' n'est pas un nombre.")
             return
         self.msg(target, f"Il y a à présent {self.game.cash}$ dans le tiroir-caisse.")
 
@@ -339,9 +340,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, f"{ERR} Le joueur {source} n'existe pas.")
             return
         try:
-            player.level = int(args[0])
+            player.level = self._parse_uint(target, args[0])
         except ValueError:
-            self.msg(target, f"{ERR} Le niveau doit être un nombre.")
             return
         #Reset exp to avoid issues (in case of leveling down for instance)
         player.exp = 0
@@ -357,9 +357,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, f"{ERR} Le joueur {source} n'existe pas.")
             return
         try:
-            exp: int = int(args[0])
+            exp: int = self._parse_uint(target, args[0])
         except ValueError:
-            self.msg(target, f"{ERR} L'experience doit être un nombre.")
             return
         if exp > player.get_max_exp():
             self.msg(target, f"{ERR} L'experience de {player.no_hl_str()} ne peut dépasser {player.get_max_exp()}.")
