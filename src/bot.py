@@ -164,29 +164,27 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, log)
         self.game.clean_after_fight()
 
+    def _str_item(self, item):
+        if isinstance(item, Weapon):
+            return "{} {} {}".format(
+                    str(item),
+                    decor_str(str(item.dmg), decorations["dmg"]),
+                    decor_str(str(item.crit), decorations["crit"]),
+                )
+        elif isinstance(item, Armor):
+            return "{} {} {}".format(
+                    str(item),
+                    decor_str(str(item.arm), decorations["arm"]),
+                    decor_str(str(item.miss), decorations["miss"]),
+                )
+        else:
+            trace("Unknown item type, ignoring.")
+
     def _show_loot(self, target):
-        items = []
         log = "Dépouille : "
-        for i, loot in enumerate(self.game.loot, 1):
-            if isinstance(loot, Weapon):
-                items.append("[{}] {} : {}, {}".format(
-                        str(i),
-                        str(loot),
-                        decor_str(str(loot.dmg), decorations["dmg"]),
-                        decor_str(str(loot.crit), decorations["crit"]),
-                    )
-                 )
-            elif isinstance(loot, Armor):
-                items.append("[{}] {} : {}, {}".format(
-                        str(i),
-                        str(loot),
-                        decor_str(str(loot.arm), decorations["arm"]),
-                        decor_str(str(loot.miss), decorations["miss"]),
-                    )
-                 )
-            else:
-                trace("Unknown loot type, ignoring.")
-        log += " ; ".join(items)
+        for i, item in enumerate(self.game.loot, 1):
+            if item != None:
+                log += f"[{i}] {self._str_item(item)} ; "
         self.msg(target, log)
 
 
@@ -246,11 +244,18 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         if item == None:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans la dépouille.")
             return
-        self.msg(target, f"{item} ramassé.")
+        self.msg(target, f"{self._str_item(item)} ramassé.")
 
     def _callback_inventory(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source)
-        self.msg(target, "Inventaire : " + ", ".join(str(obj) for obj in player.inventory))
+        log = "Inventaire : "
+        for i, item in enumerate(player.inventory, 1):
+            if item != None:
+                str_equipped = ""
+                if player.has_equipped(item):
+                    str_equipped = "[E]"
+                log += f"[{i}]{str_equipped} {self._str_item(item)} ; "
+        self.msg(target, log)
 
     #TODO refactor with callback_loot
     def _callback_drop(self, target, source, args: str) -> None:
@@ -271,7 +276,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         if item == None:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
             return
-        self.msg(target, f"{item} déposé.")
+        self.msg(target, f"{self._str_item(item)} déposé.")
 
     #TODO refactor too
     def _callback_equip(self, target, source, args: str) -> None:
@@ -292,7 +297,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         if item == None:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
             return
-        self.msg(target, f"{item} équipé.")
+        self.msg(target, f"{self._str_item(item)} équipé.")
 
 
     ### Admin commands ###

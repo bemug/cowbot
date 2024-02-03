@@ -20,3 +20,5 @@ class Player(Character):
     def __str__(self):
         return self.name.capitalize()
 
+    def has_equipped(self, item):
+        return self.weapon == item or self.armor == item
