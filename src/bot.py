@@ -212,12 +212,15 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         if not player:
             self.msg(target, f"{ERR} On ne se connait pas encore ? Entre d'abord dans le saloon.")
             return
-        msg: str = "Cowboy {} niveau {} : {}, {}".format(
+        msg: str = "Cowboy {} niveau {} : {} {}.".format(
                 player.no_hl_str(),
                 player.level,
                 decor_str(f"{player.exp}/{player.get_max_exp()}", decorations["exp"]),
-                decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"])
+                decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"]),
             )
+        if player.weapon != None or player.armor != None:
+            msg += " Equipement : " + " et ".join(filter(None, ([self._str_item(player.weapon), self._str_item(player.armor)]))) + "."
+
         self.msg(target, msg)
 
     def _callback_cash(self, target, source, args: str) -> None:
