@@ -207,23 +207,25 @@ class Game():
         trace(f"{player} inventory : {player.inventory}")
         return item
 
-    def do_drop(self, player: Player, loot_index: int) -> Item :
+    def do_drop(self, player: Player, loot_index: int) -> [Item, bool] :
+        unequipped: bool = False
         item = player.inventory[loot_index]
         if item == None:
             raise IndexError
         #Check if object is equipped, and if it is, unequip it
-        #TODO tell player we unequipped
         if player.weapon == item:
             trace(f"Removing {item} as equipped weapon")
             player.weapon = None
+            unequipped = True
         if player.armor == item:
             trace(f"Removing {item} as equipped armor")
             player.armor = None
+            unequipped = True
         append_in_none(self.loot, item)
         replace_by_none(player.inventory, item)
         trace(f"Loot : {self.loot}")
         trace(f"{player} inventory : {player.inventory}")
-        return item
+        return item, unequipped
 
     def do_equip(self, player: Player, loot_index: int) -> Item :
         item = player.inventory[loot_index]

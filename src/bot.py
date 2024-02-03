@@ -267,11 +267,14 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         player: Player = self.game.find_player(source, True)
         try:
-            item = self.game.do_drop(player, index)
+            item, unequipped = self.game.do_drop(player, index)
         except IndexError:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
             return
-        self.msg(target, f"{self._str_item(item)} déposé.")
+        str_unequipped = ""
+        if unequipped:
+            str_unequipped = "d'abord déséquipé, et "
+        self.msg(target, f"{self._str_item(item)} {str_unequipped}déposé.")
 
     def _callback_equip(self, target, source, args: str) -> None:
         if len(args) != 1:
