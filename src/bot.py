@@ -187,6 +187,18 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                 log += f"[{i}] {self._str_item(item)} ; "
         self.msg(target, log)
 
+    def _parse_index(self, target, str_index: str) -> int:
+        try:
+            index = int(str_index)
+        except ValueError:
+            self.msg(target, f"{ERR} '{str_index}' n'est pas un numéro d'objet de la dépouille.")
+            return -1
+        if index <= 0:
+            self.msg(target, f"{ERR} On compte à partir de 1 dans le Far West.")
+            return -1
+        index -= 1
+        return index
+
 
     ### Player commands ###
 
@@ -244,15 +256,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         if len(args) == 0:
             self._show_loot(target)
             return
-        try:
-            index = int(args[0])
-        except ValueError:
-            self.msg(target, f"{ERR} '{args[0]}' n'est pas un numéro d'objet de la dépouille.")
+        index = self._parse_index(target, args[0])
+        if index == -1:
             return
-        if index <= 0:
-            self.msg(target, f"{ERR} On compte à partir de 1 dans le Far West.")
-            return
-        index -= 1
         player: Player = self.game.find_player(source)
         item = self.game.do_loot(player, index)
         if item == None:
@@ -260,43 +266,31 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         self.msg(target, f"{self._str_item(item)} ramassé.")
 
-    #TODO refactor with callback_loot
     def _callback_drop(self, target, source, args: str) -> None:
         if len(args) != 1:
             self.msg(target, "!drop <index>")
             return
-        try:
-            index = int(args[0])
-        except ValueError:
-            self.msg(target, f"{ERR} 'args[0]' n'est pas un numéro d'objet de ton inventaire.")
+        index = self._parse_index(target, args[0])
+        if index == -1:
             return
-        if index <= 0:
-            self.msg(target, f"{ERR} On compte à partir de 1 dans le Far West.")
-            return
-        index -= 1
         player: Player = self.game.find_player(source)
         item = self.game.do_drop(player, index)
+        #TODO raise exception for errors
         if item == None:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
             return
         self.msg(target, f"{self._str_item(item)} déposé.")
 
-    #TODO refactor too
     def _callback_equip(self, target, source, args: str) -> None:
         if len(args) != 1:
             self.msg(target, "!equip <index>")
             return
-        try:
-            index = int(args[0])
-        except ValueError:
-            self.msg(target, f"{ERR} 'args[0]' n'est pas un numéro d'objet de ton inventaire.")
+        index = self._parse_index(target, args[0])
+        if index == -1:
             return
-        if index <= 0:
-            self.msg(target, f"{ERR} On compte à partir de 1 dans le Far West.")
-            return
-        index -= 1
         player: Player = self.game.find_player(source)
         item = self.game.do_equip(player, index)
+        #TODO raise exception for errors
         if item == None:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
             return
