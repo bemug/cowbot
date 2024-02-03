@@ -100,7 +100,6 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         command_array[command].callback(self, e.target, e.source.nick, args)
 
     def debug_start(self):
-        self.game.add_player("zoologist")
         self.game.loot.append(Weapon("Colt", 1, 0))
         self.game.loot.append(Armor("Stetson en laine", 1, 0))
 
@@ -211,18 +210,10 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_join(self, target, source, args: str) -> None:
         #TODO remove and add player in not found in find_player
-        player: Player = self.game.add_player(source)
-        if not player:
-            player = self.game.find_player(source)
-            self.msg(target, f"{ERR} Tu es déjà à l'intérieur du saloon.")
-            return
         self.msg(target, f"Bienvenue dans le saloon.")
 
     def _callback_status(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source)
-        if not player:
-            self.msg(target, f"{ERR} On ne se connait pas encore ? Entre d'abord dans le saloon.")
-            return
         msg: str = "Cowboy {} niveau {} : {} {}.".format(
                 player.no_hl_str(),
                 player.level,
