@@ -251,8 +251,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         except ValueError:
             return
         player: Player = self.game.find_player(source)
-        item = self.game.do_loot(player, index)
-        if item == None:
+        try:
+            item = self.game.do_loot(player, index)
+        except IndexError:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans la dépouille.")
             return
         self.msg(target, f"{self._str_item(item)} ramassé.")
@@ -266,9 +267,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         except ValueError:
             return
         player: Player = self.game.find_player(source)
-        item = self.game.do_drop(player, index)
-        #TODO raise exception for errors
-        if item == None:
+        try:
+            item = self.game.do_drop(player, index)
+        except IndexError:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
             return
         self.msg(target, f"{self._str_item(item)} déposé.")
@@ -282,9 +283,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         except ValueError:
             return
         player: Player = self.game.find_player(source)
-        item = self.game.do_equip(player, index)
-        #TODO raise exception for errors
-        if item == None:
+        try:
+            item = self.game.do_equip(player, index)
+        except IndexError:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
             return
         self.msg(target, f"{self._str_item(item)} équipé.")

@@ -198,12 +198,9 @@ class Game():
         return player
 
     def do_loot(self, player: Player, loot_index: int) -> Item :
-        try:
-            item = self.loot[loot_index]
-        except IndexError:
-            return None
+        item = self.loot[loot_index]
         if item == None:
-            return None
+            raise IndexError
         append_in_none(player.inventory, item)
         replace_by_none(self.loot, item)
         trace(f"Loot : {self.loot}")
@@ -212,12 +209,9 @@ class Game():
 
     #TODO factorize with do_loot
     def do_drop(self, player: Player, loot_index: int) -> Item :
-        try:
-            item = player.inventory[loot_index]
-        except IndexError:
-            return None
+        item = player.inventory[loot_index]
         if item == None:
-            return None
+            raise IndexError
         #Check if object is equipped, and if it is, unequip it
         #TODO tell player we unequipped
         if player.weapon == item:
@@ -234,12 +228,9 @@ class Game():
 
     #TODO refactor too
     def do_equip(self, player: Player, loot_index: int) -> Item :
-        try:
-            item = player.inventory[loot_index]
-        except IndexError:
-            return None
+        item = player.inventory[loot_index]
         if item == None:
-            return None
+            raise IndexError
         if isinstance(item, Weapon):
             player.weapon = item
             return item
