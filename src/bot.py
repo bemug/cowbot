@@ -229,6 +229,17 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         )
         self.msg(target, log)
 
+    def _callback_inventory(self, target, source, args: str) -> None:
+        player: Player = self.game.find_player(source)
+        log = "Inventaire : "
+        for i, item in enumerate(player.inventory, 1):
+            if item != None:
+                str_equipped = ""
+                if player.has_equipped(item):
+                    str_equipped = "[E]"
+                log += f"[{i}]{str_equipped} {self._str_item(item)} ; "
+        self.msg(target, log)
+
     def _callback_loot(self, target, source, args: str) -> None:
         if len(args) == 0:
             self._show_loot(target)
@@ -248,17 +259,6 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans la dépouille.")
             return
         self.msg(target, f"{self._str_item(item)} ramassé.")
-
-    def _callback_inventory(self, target, source, args: str) -> None:
-        player: Player = self.game.find_player(source)
-        log = "Inventaire : "
-        for i, item in enumerate(player.inventory, 1):
-            if item != None:
-                str_equipped = ""
-                if player.has_equipped(item):
-                    str_equipped = "[E]"
-                log += f"[{i}]{str_equipped} {self._str_item(item)} ; "
-        self.msg(target, log)
 
     #TODO refactor with callback_loot
     def _callback_drop(self, target, source, args: str) -> None:
