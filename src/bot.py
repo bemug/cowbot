@@ -287,6 +287,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         except IndexError:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
             return
+        except ValueError:
+            self.msg(target, f"{ERR} Tu ne peux pas équipper ça.")
+            return
         self.msg(target, f"{self._str_item(item)} équipé.")
 
 

@@ -207,7 +207,6 @@ class Game():
         trace(f"{player} inventory : {player.inventory}")
         return item
 
-    #TODO factorize with do_loot
     def do_drop(self, player: Player, loot_index: int) -> Item :
         item = player.inventory[loot_index]
         if item == None:
@@ -226,7 +225,6 @@ class Game():
         trace(f"{player} inventory : {player.inventory}")
         return item
 
-    #TODO refactor too
     def do_equip(self, player: Player, loot_index: int) -> Item :
         item = player.inventory[loot_index]
         if item == None:
@@ -237,4 +235,4 @@ class Game():
         elif isinstance(item, Armor):
             player.armor = item
             return item
-        return None
+        raise ValueError
