@@ -209,11 +209,10 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, "Dites, j'ai entendu dire que vous n'aimiez pas trop les indiens ? Ils me mènent la vie dure ces temps-ci. Ils débarquent dans mon saloon et piquent dans la caisse. Peut être que vous pourriez en dessouder quelques-uns pour moi ? Je saurais me montrer redevable.")
 
     def _callback_join(self, target, source, args: str) -> None:
-        #TODO remove and add player in not found in find_player
         self.msg(target, f"Bienvenue dans le saloon.")
 
     def _callback_status(self, target, source, args: str) -> None:
-        player: Player = self.game.find_player(source)
+        player: Player = self.game.find_player(source, True)
         msg: str = "Cowboy {} niveau {} : {} {}.".format(
                 player.no_hl_str(),
                 player.level,
@@ -232,7 +231,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, log)
 
     def _callback_inventory(self, target, source, args: str) -> None:
-        player: Player = self.game.find_player(source)
+        player: Player = self.game.find_player(source, True)
         log = "Inventaire : "
         for i, item in enumerate(player.inventory):
             if item != None:
@@ -250,7 +249,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             index = self._parse_uint(target, args[0])
         except ValueError:
             return
-        player: Player = self.game.find_player(source)
+        player: Player = self.game.find_player(source, True)
         try:
             item = self.game.do_loot(player, index)
         except IndexError:
@@ -266,7 +265,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             index = self._parse_uint(target, args[0])
         except ValueError:
             return
-        player: Player = self.game.find_player(source)
+        player: Player = self.game.find_player(source, True)
         try:
             item = self.game.do_drop(player, index)
         except IndexError:
@@ -282,7 +281,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             index = self._parse_uint(target, args[0])
         except ValueError:
             return
-        player: Player = self.game.find_player(source)
+        player: Player = self.game.find_player(source, True)
         try:
             item = self.game.do_equip(player, index)
         except IndexError:

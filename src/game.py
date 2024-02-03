@@ -189,9 +189,9 @@ class Game():
     def is_fight_over(self) -> bool:
         return self.are_they_dead(self.indians) or self.are_they_dead(self.players)
 
-    def find_player(self, name: str) -> Player:
+    def find_player(self, name: str, create: bool = False) -> Player:
         player : Player = next((player for player in self.players if player.name == name), None)
-        if not player:
+        if not player and create:
             trace(f"Player {name} not found, adding to players list")
             player: Player = Player(name)
             self.players.append(player)
