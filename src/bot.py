@@ -196,7 +196,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             log = "DEFAITE. {} vole{} {} dans le tiroir-caisse ({}), et s'échappe{}.".format(
                     list_str(self.game.indians),
                     number_str,
-                    decor_str(str(cash_change), decorations["cash"]),
+                    decor_str(str(-cash_change), decorations["cash"]),
                     decor_str(str(self.game.get_cash()), decorations["cash"]),
                     number_str,
                 )
