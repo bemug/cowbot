@@ -180,13 +180,13 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _str_item(self, item):
         if isinstance(item, Weapon):
-            return "{} {} {}".format(
+            return "{} {} ; {}".format(
                     str(item),
                     decor_str(str(item.dmg), decorations["dmg"]),
                     decor_str(str(item.crit), decorations["crit"]),
                 )
         elif isinstance(item, Armor):
-            return "{} {} {}".format(
+            return "{} {} ; {}".format(
                     str(item),
                     decor_str(str(item.arm), decorations["arm"]),
                     decor_str(str(item.miss), decorations["miss"]),
@@ -198,7 +198,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         log = "Dépouille : "
         for i, item in enumerate(self.game.loot):
             if item != None:
-                log += f"[{i}] {self._str_item(item)} ; "
+                log += f"[{i}] {self._str_item(item)}  "
         self.msg(target, log)
 
     def _parse_uint(self, target, str_index: str) -> int:
@@ -228,14 +228,14 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_status(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source, True)
-        msg: str = "Cowboy {} niveau {} : {} {}.".format(
-                player.no_hl_str(),
+        msg: str = "Cowboy niv. {} : {} ; {} ; {}.".format(
                 player.level,
-                decor_str(f"{player.exp}/{player.get_max_exp()}", decorations["exp"]),
                 decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"]),
+                decor_str(f"{player.get_damage()}", decorations["dmg"]),
+                decor_str(f"{player.exp}/{player.get_max_exp()}", decorations["exp"]),
             )
         if player.weapon != None or player.armor != None:
-            msg += " Equipement : " + " et ".join(filter(None, ([self._str_item(player.weapon), self._str_item(player.armor)]))) + "."
+            msg += "  Equipement : " + " et ".join(filter(None, ([self._str_item(player.weapon), self._str_item(player.armor)]))) + "."
 
         self.msg(target, msg)
 
@@ -253,7 +253,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                 str_equipped = ""
                 if player.has_equipped(item):
                     str_equipped = "[E]"
-                log += f"[{i}]{str_equipped} {self._str_item(item)} ; "
+                log += f"[{i}]{str_equipped} {self._str_item(item)}  "
         self.msg(target, log)
 
     def _callback_loot(self, target, source, args: str) -> None:
