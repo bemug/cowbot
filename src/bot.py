@@ -67,8 +67,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
     ### Game FSM and display ###
 
     def debug_start(self):
-        self.game.loot.append(Weapon("Colt", 1, 0))
-        self.game.loot.append(Armor("Stetson en laine", 1, 0))
+        self.game.loot.append(Weapon("Colt", 1, 50))
+        self.game.loot.append(Armor("Stetson en laine", 2, 50))
 
     def _process_time(self, c, e):
         fmt= "%Hh%M"
@@ -130,17 +130,42 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, f"{list_str(self.game.indians)} débarque{number_str} dans le saloon {list_str(self.game.players)} !")
         sleep(Cowbot.msg_wait)
         while not self.game.is_fight_over():
+            #Fight
             am: Aftermath = self.game.process_fight()
-            log = "{}. {} tire {} sur {}. Reste {}.".format(
-                    step,
-                    am.source.no_hl_str(),
-                    decor_str(str(am.damage), decorations["dmg"]),
-                    am.target.no_hl_str(),
-                    decor_str(f"{am.target.hp}/{am.target.get_max_hp()}", decorations["hp"]),
-                )
+
+            #Construct log
+            log = f"{am.source.no_hl_str()} tire sur {am.target.no_hl_str()} : "
+
+            did_crit: bool = am.source.weapon and am.critical != 1
+            did_miss: bool = am.source.armor and am.miss != 1
+
+            formula = decor_str(str(am.damage), decorations["dmg"])
+            if did_crit:
+                formula += " × " + decor_str(str(am.critical), decorations["crit"], False)
+            if am.armor > 0:
+                formula += " - " + decor_str(str(am.armor), decorations["arm"])
+            if did_miss:
+                formula = "(" + formula + ") × " + decor_str(str(am.miss), decorations["miss"], False)
+            formula += " = " + decor_str(str(am.hit), decorations["hp"])
+            log += formula
+
+            if did_crit or did_miss:
+                log += ", avec "
+            with_crit = None
+            with_miss = None
+            if did_crit:
+                with_crit = decor_str(str(am.source.weapon.crit), decorations["crit"])
+            if did_miss:
+                with_miss = decor_str(str(am.source.armor.miss), decorations["miss"])
+            log += " et ".join(filter(None, [with_crit, with_miss]))
+
+            log += ". Reste {}.".format(decor_str(f"{am.target.hp}/{am.target.get_max_hp()}", decorations["hp"]))
+
             self.msg(target, log)
+
             if am.target.is_dead():
                 self.msg(target, f"{am.target} est à terre.")
+
             step += 1
             sleep(Cowbot.msg_wait)
 

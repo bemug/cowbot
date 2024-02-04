@@ -13,7 +13,7 @@ colors_reset : str = "\x03" #Reset
 #See https://defs.ircdocs.horse/info/formatting for client support
 decorations = {
     "hp" : Decoration("\x0304", " pv"), #Red
-    "exp" : Decoration("\x0302", " exp"), #Blue
+    "exp" : Decoration("\x0302", " xp"), #Blue
     "dmg" : Decoration("\x0307", " dgt"), #Orange
     "cash" : Decoration("\x0342", " $"), #Custom yellow, as default is too bright on some white themes
     "arm" : Decoration("\x0314", " arm"), #Grey
@@ -22,8 +22,11 @@ decorations = {
 }
 
 
-def decor_str(str: str, decor : Decoration) -> str :
-    return decor.color + str + decor.icon + colors_reset
+def decor_str(str: str, decor : Decoration, icon = True) -> str :
+    decor_icon = ""
+    if icon:
+        decor_icon = decor.icon
+    return decor.color + str + decor_icon + colors_reset
 
 
 def list_str(list) -> str :

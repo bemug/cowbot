@@ -162,8 +162,8 @@ class Game():
 
     def generate_loot(self) -> None:
         self.loot = []
-        self.loot.append(Weapon("Colt", 1, 0))
-        self.loot.append(Armor("Stetson en laine", 1, 0))
+        self.loot.append(Weapon("Colt", 1, 50))
+        self.loot.append(Armor("Stetson en laine", 1, 50))
 
     def end_fight(self) -> int:
         self.generate_loot()
