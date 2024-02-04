@@ -134,7 +134,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             am: Aftermath = self.game.process_fight()
 
             #Construct log
-            log = f"{am.source.no_hl_str()} tire sur {am.target.no_hl_str()} : "
+            log = f"{step}. {am.source.no_hl_str()} tire sur {am.target.no_hl_str()} : "
 
             did_crit: bool = am.source.weapon and am.critical != 1
             did_miss: bool = am.source.armor and am.miss != 1
