@@ -140,8 +140,7 @@ class Game():
         else:
             source = indian
             target = player
-        damage = source.hit(target)
-        return Aftermath(source, target, damage)
+        return source.hit(target)
 
     def exp_to_cash(exp: int):
         return int(exp / Game.cash_divider)

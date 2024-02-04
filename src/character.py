@@ -1,3 +1,6 @@
+from aftermath import *
+
+
 class Character:
     level_up_speed = 4
     exp_multiplier = 100
@@ -43,9 +46,10 @@ class Character:
     def hit(self, target):
         base_dmg: int = self.get_damage()
         weapon_dmg = self.weapon.dmg if self.weapon else 0
+        total_dmg = base_dmg + weapon_dmg
         armor = self.armor.arm if self.armor != None else 0
         critical = 1
         miss = 1
         hit: int = ((base_dmg + weapon_dmg) * critical - armor) * miss
         target.hp = max(target.hp - hit, 0)
-        return hit
+        return Aftermath(self, target, total_dmg, armor, critical, miss)
