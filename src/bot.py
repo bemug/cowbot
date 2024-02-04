@@ -179,6 +179,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         self.game.clean_after_fight()
 
     def _str_item(self, item):
+        if item == None:
+            return
         if isinstance(item, Weapon):
             return "{} {} ; {}".format(
                     str(item),
