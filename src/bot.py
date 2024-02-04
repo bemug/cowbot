@@ -18,6 +18,9 @@ class Command():
 class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
     msg_wait = 1
 
+
+    ### IRC callbacks ###
+
     def __init__(self, channel, nickname, server, port=6667):
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.channel = channel
@@ -46,7 +49,28 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
     def on_ping(self, c, e):
         #Target is the irc server, change it to our channel
         e.target = self.channel
+        self._process_time(c, e)
 
+    def on_join(self, c, e):
+        #As we join the channel, do the same thing as if we're pinged
+        self.on_ping(c, e)
+
+    def on_privmsg(self, c, e):
+        #Treat privmsg as nomal messages for now, but answer in public
+        e.target = self.channel
+        self.on_pubmsg(c, e)
+
+    def on_pubmsg(self, c, e):
+        self._process_command(c, e)
+
+
+    ### Game FSM and display ###
+
+    def debug_start(self):
+        self.game.loot.append(Weapon("Colt", 1, 0))
+        self.game.loot.append(Armor("Stetson en laine", 1, 0))
+
+    def _process_time(self, c, e):
         fmt= "%Hh%M"
         #Check opening hours
         if not self.game.opened and Game.is_open_hour():
@@ -65,16 +89,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             #TODO today's earnings
             self.msg(e.target, f"Il est {Game.hour_close.strftime(fmt)}, le saloon ferme 🌠")
 
-    def on_join(self, c, e):
-        #As we join the channel, do the same thing as if we're pinged
-        self.on_ping(c, e)
-
-    def on_privmsg(self, c, e):
-        #Treat privmsg as nomal messages for now, but answer in public
-        e.target = self.channel
-        self.on_pubmsg(c, e)
-
-    def on_pubmsg(self, c, e):
+    def _process_command(self, c, e):
         message: str = e.arguments[0]
         if message.startswith("!!") and self.is_admin(e.source.nick):
             command_array = self.admin_commands
@@ -97,10 +112,6 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(e.target, f"{ERR} Commande inconnue : {message}")
             return
         command_array[command].callback(self, e.target, e.source.nick, args)
-
-    def debug_start(self):
-        self.game.loot.append(Weapon("Colt", 1, 0))
-        self.game.loot.append(Armor("Stetson en laine", 1, 0))
 
     def _fight(self, target) -> None:
         log: str = ""
