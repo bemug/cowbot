@@ -17,7 +17,7 @@ decorations = {
     "dmg" : Decoration("\x0307", " dgt"), #Orange
     "cash" : Decoration("\x0342", " $"), #Custom yellow, as default is too bright on some white themes
     "arm" : Decoration("\x0314", " arm"), #Grey
-    "crit" : Decoration("\x0304", " %crit"), #Red
+    "crit" : Decoration("\x0305", " %crit"), #Brown
     "miss" : Decoration("\x0303", " %esq"), #Green
 }
 
