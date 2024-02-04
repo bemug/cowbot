@@ -118,7 +118,12 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         number_str: str = ""
         step: int = 1
 
-        self.game.start_fight()
+        try:
+            self.game.start_fight()
+        except RuntimeError:
+            #TODO steal money instead
+            self.msg(target, f"Il n'y a personne pour defendre le saloon !")
+            return
 
         if len(self.game.indians) > 1:
             number_str = "nt"

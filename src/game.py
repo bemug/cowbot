@@ -109,6 +109,8 @@ class Game():
         return int(sum([player.foe_exp for player in self.players]) / Game.cash_divider)
 
     def find_indians(self) -> None:
+        if len(self.players) <= 0:
+            raise RuntimeError
         #TODO generate combined/split indians with 5% chance of appearance
         for player in self.players:
             noised_foe_exp = player.foe_exp * uniform(0.8, 1.2)
@@ -124,8 +126,8 @@ class Game():
 
     def start_fight(self) -> None:
         #Randomize first turn
-        self.turn = choice(list(Turn))
         self.find_indians()
+        self.turn = choice(list(Turn))
 
     def process_fight(self) -> Aftermath:
         #TODO instead of turn use a list with all people, and shuffle it at start
