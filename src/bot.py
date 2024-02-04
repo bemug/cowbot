@@ -68,7 +68,9 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def debug_start(self):
         self.game.loot.append(Weapon("Colt", 1, 50))
+        self.game.loot.append(Weapon("Revolver", 2, 0))
         self.game.loot.append(Armor("Stetson en laine", 2, 50))
+        self.game.loot.append(Armor("Stetson en feutre", 3, 0))
 
     def _process_time(self, c, e):
         fmt= "%Hh%M"
@@ -204,22 +206,20 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         self.game.clean_after_fight()
 
     def _str_item(self, item):
+        ret = None
         if item == None:
-            return
+            return None
         if isinstance(item, Weapon):
-            return "{} {} ; {}".format(
-                    str(item),
-                    decor_str(str(item.dmg), decorations["dmg"]),
-                    decor_str(str(item.crit), decorations["crit"]),
-                )
+            ret = str(item) + " : " + decor_str(str(item.dmg), decorations["dmg"])
+            if item.crit > 0:
+                ret += " ; " + decor_str(str(item.crit), decorations["crit"])
         elif isinstance(item, Armor):
-            return "{} {} ; {}".format(
-                    str(item),
-                    decor_str(str(item.arm), decorations["arm"]),
-                    decor_str(str(item.miss), decorations["miss"]),
-                )
+            ret = str(item) + " : " + decor_str(str(item.arm), decorations["arm"])
+            if item.miss > 0:
+                ret += " ; " + decor_str(str(item.miss), decorations["miss"])
         else:
             trace("Unknown item type, ignoring.")
+        return ret
 
     def _show_loot(self, target):
         log = "Dépouille : "
