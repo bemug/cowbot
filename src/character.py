@@ -5,6 +5,8 @@ class Character:
     def __init__(self):
         self.level = 1
         self.exp = 0
+        self.weapon = None
+        self.armor = None
 
     def __str__(self):
         return self.name.capitalize()
@@ -34,3 +36,16 @@ class Character:
             self.exp -= self.get_max_exp()
             self.level += 1
         return self.level - old_level
+
+    def has_equipped(self, item):
+        return self.weapon == item or self.armor == item
+
+    def hit(self, target):
+        base_dmg: int = self.get_damage()
+        weapon_dmg = self.weapon.dmg if self.weapon else 0
+        armor = self.armor.arm if self.armor != None else 0
+        critical = 1
+        miss = 1
+        hit: int = ((base_dmg + weapon_dmg) * critical - armor) * miss
+        target.hp = max(target.hp - hit, 0)
+        return hit

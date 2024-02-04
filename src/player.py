@@ -14,11 +14,3 @@ class Player(Character):
         self.hp = self.get_max_hp()
         self.base_damage = 5
         self.inventory = []
-        self.weapon = None
-        self.armor = None
-
-    def __str__(self):
-        return self.name.capitalize()
-
-    def has_equipped(self, item):
-        return self.weapon == item or self.armor == item

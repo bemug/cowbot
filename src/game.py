@@ -138,7 +138,7 @@ class Game():
         else:
             source = indian
             target = player
-        damage = self._hit(source, target)
+        damage = source.hit(target)
         return Aftermath(source, target, damage)
 
     def exp_to_cash(exp: int):
@@ -174,11 +174,6 @@ class Game():
             if player.hp <= 0:
                 trace("Set " + str(player) + " to 1")
                 player.hp = 1
-
-    def _hit(self, source, target) -> int:
-        dmg: int = source.get_damage()
-        target.hp = max(target.hp - dmg, 0)
-        return dmg
 
     def are_they_dead(self, list) -> bool: #TODO rename "has_won" and change calls
         for elem in list:
