@@ -44,7 +44,6 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
     #Fired every ~3min on libera.chat
     def on_ping(self, c, e):
-        trace("Got pinged")
         #Target is the irc server, change it to our channel
         e.target = self.channel
 
