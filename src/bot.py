@@ -222,10 +222,10 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         return ret
 
     def _show_loot(self, target):
-        log = "Dépouille : "
+        log = "Dépouille :"
         for i, item in enumerate(self.game.loot):
             if item != None:
-                log += f"[{i}] {self._str_item(item)}  "
+                log += f"  [{i}] {self._str_item(item)}"
         self.msg(target, log)
 
     def _parse_uint(self, target, str_index: str) -> int:
@@ -274,13 +274,13 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_inventory(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source, True)
-        log = "Inventaire : "
+        log = "Inventaire :"
         for i, item in enumerate(player.inventory):
             if item != None:
                 str_equipped = ""
                 if player.has_equipped(item):
                     str_equipped = "[E]"
-                log += f"[{i}]{str_equipped} {self._str_item(item)}  "
+                log += f"  [{i}]{str_equipped} {self._str_item(item)}"
         self.msg(target, log)
 
     def _callback_loot(self, target, source, args: str) -> None:
