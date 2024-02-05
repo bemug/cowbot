@@ -206,19 +206,17 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         self.game.clean_after_fight()
 
     def _str_item(self, item):
-        ret = None
         if item == None:
             return None
         if isinstance(item, Weapon):
-            ret = str(item) + " : " + decor_str(str(item.dmg), decorations["dmg"])
-            if item.crit > 0:
-                ret += " ; " + decor_str(str(item.crit), decorations["crit"])
+            decor = [decorations["dmg"], decorations["crit"]]
         elif isinstance(item, Armor):
-            ret = str(item) + " : " + decor_str(str(item.arm), decorations["arm"])
-            if item.miss > 0:
-                ret += " ; " + decor_str(str(item.miss), decorations["miss"])
+            decor = [decorations["arm"], decorations["miss"]]
         else:
             trace("Unknown item type, ignoring.")
+        ret = str(item) + " : " + decor_str(str(item.attr1), decor[0])
+        if item.attr2 > 0:
+            ret += " ; " + decor_str(str(item.attr2), decor[1])
         return ret
 
     def _show_loot(self, target):

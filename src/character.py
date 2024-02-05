@@ -49,13 +49,13 @@ class Character:
         base_dmg: int = self.get_damage()
         weapon_dmg = self.weapon.dmg if self.weapon else 0
         total_dmg = base_dmg + weapon_dmg
-        armor = target.armor.arm if target.armor != None else 0
-        armor = target.armor.arm if target.armor != None else 0
+        armor = target.armor.attr1 if target.armor != None else 0
+        armor = target.armor.attr1 if target.armor != None else 0
         crit = 1
         miss = 1
-        if self.weapon and random() < (self.weapon.crit / 100):
+        if self.weapon and random() < (self.weapon.attr2 / 100):
             crit = Character.crit_multiplier
-        if target.armor and random() < (target.armor.miss / 100):
+        if target.armor and random() < (target.armor.attr2 / 100):
             miss = Character.miss_multiplier
         hit: int = int(((base_dmg + weapon_dmg) * crit - armor) * miss)
         target.hp = int(max(target.hp - hit, 0))
