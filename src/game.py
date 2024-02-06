@@ -5,15 +5,10 @@ from typing import List, Optional
 from player import *
 from weapon import *
 from armor import *
-from random import randint, choice, uniform, randrange
+from random import randint, choice, uniform, randrange, shuffle
 from datetime import datetime, time, timedelta
 from utils import *
 from lootable import *
-
-
-class Turn(Enum):
-    PLAYER = 0
-    INDIAN = 1
 
 
 class Game():
@@ -26,7 +21,6 @@ class Game():
     def __init__(self) -> None:
         self.players: List[Player] = []
         self.indians: List[Indian] = []
-        self.turn = Turn.PLAYER
         self.opened = Game.is_open_hour()
         #TODO fight item ?
         self.fights_nb_per_day = 2
@@ -35,6 +29,8 @@ class Game():
         self.heal_times = []
         self.schedule_heals() #TODO same as above
         self.loot = []
+        self.fight_order = []
+        self.fighter_id = -1
 
     def schedule_fights(self) -> None:
         now = datetime.now()
@@ -119,28 +115,22 @@ class Game():
             trace("Adding " + str(indian) + " foe level " + str(indian.level) + " to fight with " + str(noised_foe_exp) + " exp")
             self.indians.append(indian)
 
-    def _change_turn(self) -> None:
-        if self.turn == Turn.PLAYER:
-            self.turn = Turn.INDIAN
-        else:
-            self.turn = Turn.PLAYER
-
     def start_fight(self) -> None:
-        #Randomize first turn
         self.find_indians()
-        self.turn = choice(list(Turn))
+        self.fight_order = self.players + self.indians
+        shuffle(self.fight_order)
+        trace(f"Fight order: " + ", ".join(str(fighter) for fighter in self.fight_order))
+        self.fighter_id = -1 #First process fight call will make it 0
 
     def process_fight(self) -> Aftermath:
-        #TODO instead of turn use a list with all people, and shuffle it at start
-        self._change_turn()
-        player = self.players[randint(0, len(self.players) - 1)]
-        indian = self.indians[randint(0, len(self.indians) - 1)]
-        if self.turn == Turn.PLAYER:
-            source = player
-            target = indian
+        self.fighter_id = (self.fighter_id + 1) % len(self.fight_order)
+        source = self.fight_order[self.fighter_id]
+        if isinstance(source, Player):
+            target_list = self.indians
         else:
-            source = indian
-            target = player
+            target_list = self.players
+        #TODO have higher chance to pick someone at your level
+        target = target_list[randint(0, len(target_list) - 1)]
         return source.hit(target)
 
     def exp_to_cash(exp: int):
