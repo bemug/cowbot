@@ -9,14 +9,15 @@ from datetime import datetime
 
 
 class Command():
-    #TODO replace first any with Cowbot
+    #TODO replace first any with Bot
     def __init__(self, callback: Callable[[Any, Any, Any, Any], Coroutine[Any, Any, None]], help_message: str) -> None:
         self.callback = callback
         self.help_message = help_message
 
 
-class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
+class Bot(irc.bot.SingleServerIRCBot): #type: ignore
     msg_wait = 1
+    after_fight_wait = timedelta(milliseconds=10)
 
 
     ### IRC callbacks ###
@@ -25,6 +26,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.channel = channel
         self.game = Game()
+        self.last_fight_time = datetime.now()
 
     def is_admin(self, nick):
         #TODO config file
@@ -100,6 +102,12 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         else:
             return
 
+        now = datetime.now()
+        if now - self.last_fight_time < Bot.after_fight_wait:
+            remaining_time = self.last_fight_time + Bot.after_fight_wait - now
+            trace(f"Dropped '{str(e.arguments)}' as received in wait time. Remaining '{remaining_time}'")
+            return
+
         trace("Command received: " + str(e))
         command: str = message.split(' ')[0]
         args: str = None
@@ -130,7 +138,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
         if len(self.game.indians) > 1:
             number_str = "nt"
         self.msg(target, f"{list_str(self.game.indians)} débarque{number_str} dans le saloon {list_str(self.game.players)} !")
-        sleep(Cowbot.msg_wait)
+        sleep(Bot.msg_wait)
         while not self.game.is_fight_over():
             #Fight
             am: Aftermath = self.game.process_fight()
@@ -169,7 +177,7 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                 self.msg(target, f"{am.target} est à terre.")
 
             step += 1
-            sleep(Cowbot.msg_wait)
+            sleep(Bot.msg_wait)
 
         #Backup levels for display
         levels = [player.level for player in self.game.players]
@@ -204,6 +212,8 @@ class Cowbot(irc.bot.SingleServerIRCBot): #type: ignore
                 )
             self.msg(target, log)
         self.game.clean_after_fight()
+        #Start a time to ignore all new messages that came inbetween the fight sleeps
+        self.last_fight_time = datetime.now()
 
     def _str_item(self, item):
         if item == None:
@@ -451,7 +461,7 @@ def main():
     channel = sys.argv[2]
     nickname = sys.argv[3]
 
-    bot = Cowbot(channel, nickname, server, port) #type: ignore
+    bot = Bot(channel, nickname, server, port) #type: ignore
 
     bot.debug_start()
 
