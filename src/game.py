@@ -8,6 +8,7 @@ from armor import *
 from random import randint, choice, uniform, randrange
 from datetime import datetime, time, timedelta
 from utils import *
+from lootable import *
 
 
 class Turn(Enum):
@@ -150,20 +151,24 @@ class Game():
         exp: int = int(total_exp / len(self.players))
         if self.are_they_dead(self.indians):
             for player in self.players:
-                trace("Add " + str(exp) + " for exp and foe_exp to " + str(player))
+                trace("Added " + str(exp) + " for 'exp' and 'foe_exp' to " + str(player))
                 player.add_exp(exp)
                 player.foe_exp += exp
         else:
             for player in self.players:
-                trace("Substracting " + str(exp) + " foe_exp to " + str(player))
+                trace("Substracting " + str(exp) + " 'foe_exp' to " + str(player))
                 player.foe_exp -= exp
             total_exp *= -1
         return Game.exp_to_cash(total_exp)
 
     def generate_loot(self) -> None:
         self.loot = []
-        self.loot.append(Weapon("Colt", 1, 50))
-        self.loot.append(Armor("Stetson en laine", 1, 50))
+        for indian in self.indians:
+            trace(f"Generating loot from {indian}")
+            for loot in loots:
+                item = loot.generate_item(indian.level)
+                if item != None:
+                    self.loot.append(item)
 
     def end_fight(self) -> int:
         self.generate_loot()

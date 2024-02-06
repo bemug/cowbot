@@ -1,3 +1,4 @@
+from utils import *
 from random import random, uniform
 
 ### If you describe yourself as a 'mathematician' close this file immediately
@@ -8,10 +9,9 @@ from random import random, uniform
 class PeakCurve():
     random_max_draw : int = 100000
 
-#TODO add traces
-    def __init__(self, start, peak, end, peak_value) -> None:
+    def __init__(self, start, peak, end, peak_value = 1) -> None:
         #Explicitely allow start == peak and peak == end, for single side grownth
-        if start > peak or peak < end:
+        if start > peak or peak > end:
             raise ValueError
         if peak_value < 0 or peak_value > 1:
             raise ValueError
@@ -28,16 +28,19 @@ class PeakCurve():
             #Avoid asymptotic behaviors in case start == peak or peak == end
             return peak_value
         elif value < self.peak:
-            return (self.peak_value / (self.peak - self.start)) * value - (self.start /(self.peak - self.start) * peak_value)
+            return (self.peak_value / (self.peak - self.start)) * value - (self.start /(self.peak - self.start) * self.peak_value)
         else:
-            return -(self.peak_value / (self.end - self.peak)) * value + (self.end /(self.end - self.peak)) * peak_value)
+            return -(self.peak_value / (self.end - self.peak)) * value + (self.end /(self.end - self.peak) * self.peak_value)
 
     def random_in_bounds(self):
         return uniform(self.start, self.end)
 
     def draw_at(self, value):
-        #Random can return 0 if we're very lucky, this is a feature
-        return random() < self.get_probability(value)
+        rand = random()
+        prob = self.get_probability(value)
+        ret = rand < prob
+        trace(f"Drew '{rand}' against p(x)='{prob}', with x = {value} and x ∈ [{self.start};{self.end}] & max(x) = {self.peak} : {str(ret)}")
+        return ret
 
     def draw(self) -> float:
         for i in range(PeakCurve.random_max_draw):
