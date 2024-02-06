@@ -14,7 +14,7 @@ class Character:
         self.armor = None
 
     def __str__(self):
-        return self.name.capitalize()
+        return self.name
 
     def no_hl_str(self) -> str:
         #Insert this 0 width whitespace to avoid highlighting people: ​
