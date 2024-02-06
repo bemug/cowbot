@@ -141,7 +141,7 @@ class Game():
         exp: int = int(total_exp / len(self.players))
         if self.are_they_dead(self.indians):
             for player in self.players:
-                trace("Added " + str(exp) + " for 'exp' and 'foe_exp' to " + str(player))
+                trace("Added " + str(exp) + " to 'exp' and 'foe_exp' for " + str(player))
                 player.add_exp(exp)
                 player.foe_exp += exp
         else:
@@ -155,8 +155,8 @@ class Game():
         self.loot = []
         for indian in self.indians:
             trace(f"Generating loot from {indian}")
-            for loot in loots:
-                item = loot.generate_item(indian.level)
+            for lootable in lootables:
+                item = lootable.generate_item(indian.level)
                 if item != None:
                     self.loot.append(item)
 
