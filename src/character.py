@@ -2,7 +2,7 @@ from aftermath import *
 from random import random
 
 class Character:
-    level_up_speed = 4
+    level_up_speed = 10
     exp_multiplier = 100
     crit_multiplier = 1.5
     miss_multiplier = 0
