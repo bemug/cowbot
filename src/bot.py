@@ -265,8 +265,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         player: Player = self.game.find_player(source, True)
         msg: str = "Cowboy niv. {} : {} ; {} ; {}.".format(
                 player.level,
-                decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"]),
                 decor_str(f"{player.get_damage()}", decorations["dmg"]),
+                decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"]),
                 decor_str(f"{player.exp}/{player.get_max_exp()}", decorations["exp"]),
             )
         if player.weapon != None or player.armor != None:
