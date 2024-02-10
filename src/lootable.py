@@ -28,9 +28,9 @@ lootables = (
         #Weapons
         #Require at least level 2 to spawn
         Lootable("Pistolet de poche Derringer", Weapon, PeakCurve(2,2,5),        [1],     [PeakCurve(0,0,6)]),
-        Lootable("Revolver Colt",               Weapon, PeakCurve(2,10,15),      [3],     [PeakCurve(0,0,10)),
+        Lootable("Revolver Colt",               Weapon, PeakCurve(2,10,15),      [3],     [PeakCurve(0,0,10)]),
         Lootable("Revolver Remington",          Weapon, PeakCurve(2,11,15),      [2,5],   [PeakCurve(0,0,8),  PeakCurve(0,0,10)]),
-        Lootable("Revolver S&W",                Weapon, PeakCurve(8,16,20),      [5],     [PeakCurve(0,0,6)),
+        Lootable("Revolver S&W",                Weapon, PeakCurve(8,16,20),      [5],     [PeakCurve(0,0,6)]),
         Lootable("Pistolet Volcanic",           Weapon, PeakCurve(8,17,20),      [3,10],  [PeakCurve(0,0,10), PeakCurve(0,0,10)]),
         Lootable("Fusil Spencer",               Weapon, PeakCurve(14,20,22),     [6,0],   [PeakCurve(0,0,10), PeakCurve(0,0,10)]),
         Lootable("Fusil Sharps",                Weapon, PeakCurve(14,21,22),     [4,15],  [PeakCurve(0,0,15), PeakCurve(0,0,10)]),
@@ -41,9 +41,9 @@ lootables = (
         ### Armors
         #Require at least level 4 to spawn
         Lootable("Open crease",      Armor, PeakCurve(4,4,7),        [1],    [PeakCurve(0,0,4)]),
-        Lootable("Cattleman crease", Armor, PeakCurve(4,11,15),      [2],    [PeakCurve(0,0,8)),
+        Lootable("Cattleman crease", Armor, PeakCurve(4,11,15),      [2],    [PeakCurve(0,0,8)]),
         Lootable("Cutter crease",    Armor, PeakCurve(4,12,15),      [1,2],  [PeakCurve(0,0,6),  PeakCurve(0,0,8)]),
-        Lootable("Ridgetop crease",  Armor, PeakCurve(9,16,20),      [4],    [PeakCurve(0,0,4)),
+        Lootable("Ridgetop crease",  Armor, PeakCurve(9,16,20),      [4],    [PeakCurve(0,0,4)]),
         Lootable("Dakota crease",    Armor, PeakCurve(9,17,20),      [2,5],  [PeakCurve(0,0,8),  PeakCurve(0,0,8)]),
         Lootable("Montana crease",   Armor, PeakCurve(15,20,22),     [5,0],  [PeakCurve(0,0,8),  PeakCurve(0,0,8)]),
         Lootable("Gus crease",       Armor, PeakCurve(15,21,23),     [3,7],  [PeakCurve(0,0,13), PeakCurve(0,0,8)]),
