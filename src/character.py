@@ -56,6 +56,6 @@ class Character:
             crit = Character.crit_multiplier
         if target.armor and random() < (target.armor.attr2 / 100):
             miss = Character.miss_multiplier
-        hit: int = int(((base_dmg + weapon_dmg) * crit - armor) * miss)
-        target.hp = int(max(target.hp - hit, 0))
+        hit: int = (int((base_dmg + weapon_dmg) * crit) - armor) * miss
+        target.hp = max(target.hp - hit, 0)
         return Aftermath(self, target, total_dmg, armor, crit, miss, hit)

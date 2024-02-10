@@ -15,9 +15,9 @@ class Indian(Character):
                 " " + \
                 choice(open(Indian.adjectives_file).readlines()).strip()
         self.base_hp = 9
-        self.hp = self.get_max_hp()
         self.base_damage = 3
         self.add_exp(exp)
+        self.hp = self.get_max_hp() #After add_exp
 
     def get_kill_exp(self) -> int:
         return self.level * Character.exp_multiplier
