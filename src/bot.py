@@ -230,7 +230,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         return ret
 
     def _show_loot(self, target):
-        log = "Dépouille :"
+        log = "Dépouille →"
         for i, item in enumerate(self.game.loot):
             if item != None:
                 log += f"  [{i}] {self._str_item(item)}"
@@ -263,14 +263,14 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_status(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source, True)
-        msg: str = "Cowboy niv. {} : {} ; {} ; {}.".format(
+        msg: str = "Cowboy niv. {} → {} ; {} ; {}.".format(
                 player.level,
                 decor_str(f"{player.get_damage()}", decorations["dmg"]),
                 decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"]),
                 decor_str(f"{player.exp}/{player.get_max_exp()}", decorations["exp"]),
             )
         if player.weapon != None or player.armor != None:
-            msg += "  Equipement : " + " et ".join(filter(None, ([self._str_item(player.weapon), self._str_item(player.armor)]))) + "."
+            msg += "  Equipement → " + " et ".join(filter(None, ([self._str_item(player.weapon), self._str_item(player.armor)]))) + "."
 
         self.msg(target, msg)
 
@@ -282,7 +282,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_inventory(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source, True)
-        log = "Inventaire :"
+        log = "Inventaire →"
         for i, item in enumerate(player.inventory):
             if item != None:
                 str_equipped = ""
@@ -449,7 +449,7 @@ def main():
     import sys
 
     if len(sys.argv) != 4:
-        print("Usage: cowbot <server[:port]> <channel> <nickname>")
+        print("Usage: bot <server[:port]> <channel> <nickname>")
         sys.exit(1)
 
     s = sys.argv[1].split(":", 1)
