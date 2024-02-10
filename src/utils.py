@@ -1,5 +1,6 @@
 from enum import Enum
 from datetime import datetime
+import subprocess
 
 class Decoration:
     def __init__(self, color: str, icon: str):
@@ -56,3 +57,15 @@ def append_in_none(list, elem):
             list[i] = elem
             return
     list.append(elem)
+
+def git_version():
+    try:
+        #SHA1 and date
+        version = subprocess.check_output(['git', 'show', '--no-patch', '--format=%ci : %h']).decode('ascii').strip()
+        #Dirty status
+        dirty = subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=no']).decode('ascii').strip()
+        if dirty:
+            version += "-dirty"
+    except:
+        version = "Unknown version"
+    return version

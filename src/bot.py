@@ -345,6 +345,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         self.msg(target, f"{self._str_item(item)} équipé.")
 
+    def _callback_version(self, target, source, args: str) -> None:
+        self.msg(target, git_version())
+
 
     ### Admin commands ###
 
@@ -428,7 +431,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         "!loot": Command(_callback_loot, "Prend un objet d'une dépouille pour la placer dans ton inventaire"),
         "!drop": Command(_callback_drop, "Place un objet de ton inventaire dans la dépouille"),
         "!equip": Command(_callback_equip, "Equipe un objet de ton inventaire"),
-        #TODO !version calling git show --no-patch --format="%h %ci" subprocess or failing if no git
+        "!version": Command(_callback_version, "Affiche la version du jeu"),
     }
 
     admin_commands = {
