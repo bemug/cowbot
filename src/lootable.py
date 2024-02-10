@@ -17,17 +17,17 @@ class Lootable():
             return
         trace(f"Attempt to loot '{self}' (lvl. {value})")
         if self.loot_chance.draw_at(value):
-            attr0 = self.attr_list[0]
+            attr1 = self.attr_list[0]
             try:
-                attr1 = self.attr_list[1]
+                attr2 = self.attr_list[1]
             except IndexError:
-                attr1 = 0
-            attr0 += int(self.attr_chance[0].draw())
+                attr2 = 0
+            attr1 += int(self.attr_chance[0].draw())
             try:
-                attr1 += int(self.attr_chance[1].draw())
+                attr2 += int(self.attr_chance[1].draw())
             except IndexError:
                 pass
-            return self.type(self.name, attr0, attr1)
+            return self.type(self.name, attr1, attr2)
 
     def __str__(self) -> str:
         return self.name

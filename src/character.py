@@ -47,9 +47,8 @@ class Character:
 
     def hit(self, target):
         base_dmg: int = self.get_damage()
-        weapon_dmg = self.weapon.dmg if self.weapon else 0
+        weapon_dmg = self.weapon.attr1 if self.weapon else 0
         total_dmg = base_dmg + weapon_dmg
-        armor = target.armor.attr1 if target.armor != None else 0
         armor = target.armor.attr1 if target.armor != None else 0
         crit = 1
         miss = 1
