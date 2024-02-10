@@ -26,7 +26,7 @@ class PeakCurve():
             return 0
         if value == self.peak:
             #Avoid asymptotic behaviors in case start == peak or peak == end
-            return peak_value
+            return self.peak_value
         elif value < self.peak:
             return (self.peak_value / (self.peak - self.start)) * value - (self.start /(self.peak - self.start) * self.peak_value)
         else:
