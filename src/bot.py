@@ -231,10 +231,13 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _show_loot(self, target):
         log = "Dépouille →"
+        items_log = ""
         for i, item in enumerate(self.game.loot):
             if item != None:
-                log += f"  [{i}] {self._str_item(item)}"
-        self.msg(target, log)
+                items_log += f"  [{i}] {self._str_item(item)}"
+        if items_log == "":
+            log += " Vide"
+        self.msg(target, log + items_log)
 
     def _parse_uint(self, target, str_index: str) -> int:
         try:
@@ -283,13 +286,16 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
     def _callback_inventory(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source, True)
         log = "Inventaire →"
+        items_log = ""
         for i, item in enumerate(player.inventory):
             if item != None:
                 str_equipped = ""
                 if player.has_equipped(item):
                     str_equipped = "[E]"
-                log += f"  [{i}]{str_equipped} {self._str_item(item)}"
-        self.msg(target, log)
+                items_log += f"  [{i}]{str_equipped} {self._str_item(item)}"
+        if items_log == "":
+            log += " Vide"
+        self.msg(target, log + items_log)
 
     def _callback_loot(self, target, source, args: str) -> None:
         if len(args) == 0:
