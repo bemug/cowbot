@@ -39,12 +39,13 @@ class PeakCurve():
         rand = random()
         prob = self.get_probability(value)
         ret = rand < prob
-        trace(f"Drew '{rand}' against p(x)='{prob}', with x = {value} and x ∈ [{self.start};{self.end}] & max(x) = {self.peak} : {str(ret)}")
+        trace(f"Drew '{rand:.3f}' against p(x)='{prob:.3f}', with x = {value:.3f} and x ∈ [{self.start};{self.end}] & x-peak = {self.peak} : {str(ret)}")
         return ret
 
     def draw(self) -> float:
         for i in range(PeakCurve.random_max_draw):
             value = self.random_in_bounds()
             if self.draw_at(value):
-                return value
-        raise RuntimeError
+                return value - self.start
+        trace("Can't find a value in curve, check your curve values immediately")
+        return 0
