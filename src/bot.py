@@ -264,8 +264,15 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, "Bienvenue dans mon saloon, étranger. Installez vous. J'ai là un excellent whisky, vous devriez le goûter.")
         self.msg(target, "Dites, j'ai entendu dire que vous n'aimiez pas trop les indiens ? Ils me mènent la vie dure ces temps-ci. Ils débarquent dans mon saloon et piquent dans la caisse. Peut être que vous pourriez en dessouder quelques-uns pour moi ? Je saurais me montrer redevable.")
 
-    def _callback_join(self, target, source, args: str) -> None:
+    def _callback_enter(self, target, source, args: str) -> None:
+        player: Player = self.game.find_player(source, True)
+        player.ingame = True
         self.msg(target, f"Bienvenue dans le saloon.")
+
+    def _callback_leave(self, target, source, args: str) -> None:
+        player: Player = self.game.find_player(source, True)
+        player.ingame = False
+        self.msg(target, f"A la prochaine cowboy.")
 
     def _callback_status(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source, True)
@@ -433,7 +440,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
     commands = {
         "!help": Command(_callback_help, "Affiche l'aide"),
         "!pitch": Command(_callback_pitch, "Conte l'histoire"),
-        "!join": Command(_callback_join, "Entre dans le saloon"),
+        "!enter": Command(_callback_enter, "Entre dans le saloon"),
+        "!leave": Command(_callback_leave, "Quitte le saloon"),
         "!cash": Command(_callback_cash, "Affiche le contenu du tiroir-caisse"),
         "!status": Command(_callback_status, "Affiche ton statut"),
         "!inventory": Command(_callback_inventory, "Affiche ton inventaire"),

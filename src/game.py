@@ -88,9 +88,9 @@ class Game():
         return False
 
     def heal_players(self, hp: int = 1) -> None:
-        #TODO only players INSIDE the game
         for player in self.players:
-            player.hp = min(player.hp + hp, player.get_max_hp())
+            if player.ingame:
+                player.hp = min(player.hp + hp, player.get_max_hp())
 
     def is_open_hour():
         now = datetime.now()
@@ -111,14 +111,18 @@ class Game():
         return int(sum([player.foe_exp for player in self.players]) / Game.cash_divider)
 
     def find_foes(self) -> None:
-        if len(self.players) <= 0:
+        if sum([player.ingame for player in self.players]) <= 0:
             raise RuntimeError
         #TODO generate combined/split foes with 5% chance of appearance
         for player in self.players:
-            noised_foe_exp = player.foe_exp * uniform(0.8, 1.2)
-            foe: Foe = Foe(noised_foe_exp)
-            trace("Adding " + str(foe) + " foe level " + str(foe.level) + " to fight with " + str(noised_foe_exp) + " exp")
-            self.foes.append(foe)
+            if player.ingame:
+                #TODO peakcurve
+                noised_foe_exp = player.foe_exp * uniform(0.8, 1.2)
+                foe: Foe = Foe(noised_foe_exp)
+                self.foes.append(foe)
+                trace(f"Player {player} : add {str(foe)} level {str(foe.level)} with {str(noised_foe_exp)} exp")
+            else:
+                trace(f"Player {player} is not ingame, skipping")
 
     def start_fight(self) -> None:
         self.find_foes()
