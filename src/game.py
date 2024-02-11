@@ -243,7 +243,8 @@ class Game():
             for player in game.players:
                 player.ingame = False
             #If fights or heal were yesterday, reschedule
-            if datetime.now() - game.last_scheduled > timedelta(days=1):
+            fmt = "%Y-%m-%d"
+            if datetime.now().strftime(fmt) != game.last_scheduled.strftime(fmt):
                 trace("Save file belongs to yesterday or older, schedule new events and heal players")
                 game.schedule()
                 for player in game.players:
