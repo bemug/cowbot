@@ -41,10 +41,11 @@ class Game():
         today_open: datetime = datetime.combine(now, Game.hour_open)
         today_close: datetime = datetime.combine(now, Game.hour_close)
         #Cut opening times in fights_nb_per_day number of periods
-        time_period: deltatime = (today_close - today_open) / self.fights_nb_per_day
+        fights_nb = self.fights_nb_per_day * Game.speed
+        time_period: deltatime = (today_close - today_open) / fights_nb
         #Schedule a fight at a random time in each period
         self.fight_times.clear()
-        for i in range(0, self.fights_nb_per_day * Game.speed):
+        for i in range(0, fights_nb):
             start: timestamp = (today_open + i * time_period).timestamp()
             end: timestamp = (today_open + (i + 1) * time_period).timestamp()
             self.fight_times.append(datetime.fromtimestamp(randrange(start, end)))
