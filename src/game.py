@@ -15,6 +15,7 @@ class Game():
     hour_close = time(16, 30)
     fight_timeout = timedelta(minutes=30)
     tick_heal = timedelta(minutes=15)
+    speed = 1
 
     def __init__(self) -> None:
         self.players: List[Player] = []
@@ -43,7 +44,7 @@ class Game():
         time_period: deltatime = (today_close - today_open) / self.fights_nb_per_day
         #Schedule a fight at a random time in each period
         self.fight_times.clear()
-        for i in range(0, self.fights_nb_per_day):
+        for i in range(0, self.fights_nb_per_day * Game.speed):
             start: timestamp = (today_open + i * time_period).timestamp()
             end: timestamp = (today_open + (i + 1) * time_period).timestamp()
             self.fight_times.append(datetime.fromtimestamp(randrange(start, end)))
@@ -66,11 +67,12 @@ class Game():
         now = datetime.now()
         today_open: datetime = datetime.combine(now, Game.hour_open)
         today_close: datetime = datetime.combine(now, Game.hour_close)
-        heal_time = today_open + Game.tick_heal
+        tick_heal = Game.tick_heal / Game.speed
+        heal_time = today_open + tick_heal
         self.heal_times.clear()
         while heal_time <= today_close:
             self.heal_times.append(heal_time)
-            heal_time += Game.tick_heal
+            heal_time += tick_heal
         trace("Scheduled heals: " + '; '.join(str(heal) for heal in self.heal_times))
 
     def is_heal_time(self) -> bool:
