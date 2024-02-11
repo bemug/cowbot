@@ -1,12 +1,15 @@
 from enum import Enum
 from datetime import datetime
 import subprocess
+import pickle
+import pathlib
 
 class Decoration:
     def __init__(self, color: str, icon: str):
         self.color = color
         self.icon = icon
 
+save_dir = str(pathlib.Path(__file__).parent.resolve()) + "/../saves"
 
 ERR: str = "BAH!"
 colors_reset : str = "\x03" #Reset
@@ -69,3 +72,10 @@ def git_version():
     except:
         version = "Unknown version"
     return version
+
+def save(obj):
+    pathlib.Path(save_dir).mkdir(exist_ok=True)
+    pickle.dump(obj, open(save_dir + "/save.pkl", "wb"))
+
+def load():
+    return pickle.load(open(save_dir + "/save.pkl", "rb"))
