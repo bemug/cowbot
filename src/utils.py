@@ -9,7 +9,7 @@ class Decoration:
         self.color = color
         self.icon = icon
 
-save_dir = str(pathlib.Path(__file__).parent.resolve()) + "/../saves"
+save_path = pathlib.Path(str(pathlib.Path(__file__).parent.resolve()) + "/../saves")
 
 ERR: str = "BAH!"
 colors_reset : str = "\x03" #Reset
@@ -73,9 +73,14 @@ def git_version():
         version = "Unknown version"
     return version
 
-def save_save(obj):
-    pathlib.Path(save_dir).mkdir(exist_ok=True)
-    pickle.dump(obj, open(save_dir + "/save.pkl", "wb"))
+def save_save(obj, prefix):
+    save_path.mkdir(exist_ok=True)
+    now = datetime.now()
+    fmt = "%Y-%m-%d"
+    pickle.dump(obj, open(f"{str(save_path)}/{prefix}-{now.strftime(fmt)}.pkl", "wb"))
 
-def load_save():
-    return pickle.load(open(save_dir + "/save.pkl", "rb"))
+def load_save(prefix):
+    last_save = list(save_path.glob(f"{prefix}-*.pkl"))[0]
+    trace(f"Loading file {last_save.name}")
+    return pickle.load(open(str(last_save), "rb"))
+

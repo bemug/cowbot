@@ -235,8 +235,8 @@ class Game():
 
     def load():
         try:
-            game = load_save()
-            trace("Save " + str(game.last_save) + " loaded")
+            game = load_save("game")
+            trace(f"Last game save was at {str(game.last_save)}")
             #We have no idea when the save will be loaded
             game.opened = Game.is_open_hour()
             #Kick out all players
@@ -249,11 +249,11 @@ class Game():
                 game.schedule()
                 for player in game.players:
                     player.hp = player.get_max_hp()
-        except FileNotFoundError:
+        except (FileNotFoundError, IndexError):
             trace("No saves found, creating a new game")
             game = Game()
         return game
 
     def save(game):
         game.last_save = datetime.now()
-        save_save(game)
+        save_save(game, "game")
