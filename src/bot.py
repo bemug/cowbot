@@ -3,7 +3,7 @@ from time import sleep
 from typing import Any, Callable, Coroutine
 from aftermath import *
 from game import *
-from indian import *
+from foe import *
 from utils import *
 from datetime import datetime
 
@@ -138,9 +138,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, f"Il n'y a personne pour defendre le saloon !")
             return
 
-        if len(self.game.indians) > 1:
+        if len(self.game.foes) > 1:
             number_str = "nt"
-        self.msg(target, f"{list_str(self.game.indians)} débarque{number_str} dans le saloon {list_str(self.game.players)} !")
+        self.msg(target, f"{list_str(self.game.foes)} débarque{number_str} dans le saloon {list_str(self.game.players)} !")
         sleep(Bot.msg_wait)
         while not self.game.is_fight_over():
             #Fight
@@ -188,7 +188,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
         if cash_change > 0:
             log = "VICTOIRE. {} possède{} {}, que je place dans le tiroir-caisse ({}).".format(
-                    list_str(self.game.indians),
+                    list_str(self.game.foes),
                     number_str,
                     decor_str(str(cash_change), decorations["cash"]),
                     decor_str(str(self.game.get_cash()), decorations["cash"]),
@@ -207,7 +207,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self._show_loot(target)
         else:
             log = "DEFAITE. {} vole{} {} dans le tiroir-caisse ({}), et s'échappe{}.".format(
-                    list_str(self.game.indians),
+                    list_str(self.game.foes),
                     number_str,
                     decor_str(str(-cash_change), decorations["cash"]),
                     decor_str(str(self.game.get_cash()), decorations["cash"]),

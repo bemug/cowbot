@@ -3,17 +3,17 @@ from random import choice
 from character import *
 
 
-class Indian(Character):
+class Foe(Character):
     animals_file: str = "data/animals.txt"
     adjectives_file: str = "data/adjectives.txt"
-    #Indian level up faster than players
+    #Foe level up faster than players
     scale_factor = 4/5
 
     def __init__(self, exp: int) -> None:
         super().__init__()
-        self.name = choice(open(Indian.animals_file).readlines()).strip() + \
+        self.name = choice(open(Foe.animals_file).readlines()).strip() + \
                 " " + \
-                choice(open(Indian.adjectives_file).readlines()).strip()
+                choice(open(Foe.adjectives_file).readlines()).strip()
         self.base_hp = 9
         self.base_damage = 3
         self.add_exp(exp)

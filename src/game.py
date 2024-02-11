@@ -1,4 +1,4 @@
-from indian import *
+from foe import *
 from typing import List, Optional
 from player import *
 from weapon import *
@@ -19,7 +19,7 @@ class Game():
 
     def __init__(self) -> None:
         self.players: List[Player] = []
-        self.indians: List[Indian] = []
+        self.foes: List[Foe] = []
         self.opened = Game.is_open_hour()
         #TODO fight item ?
         self.fights_nb_per_day = 2
@@ -110,19 +110,19 @@ class Game():
     def get_cash(self) -> int:
         return int(sum([player.foe_exp for player in self.players]) / Game.cash_divider)
 
-    def find_indians(self) -> None:
+    def find_foes(self) -> None:
         if len(self.players) <= 0:
             raise RuntimeError
-        #TODO generate combined/split indians with 5% chance of appearance
+        #TODO generate combined/split foes with 5% chance of appearance
         for player in self.players:
             noised_foe_exp = player.foe_exp * uniform(0.8, 1.2)
-            indian: Indian = Indian(noised_foe_exp)
-            trace("Adding " + str(indian) + " foe level " + str(indian.level) + " to fight with " + str(noised_foe_exp) + " exp")
-            self.indians.append(indian)
+            foe: Foe = Foe(noised_foe_exp)
+            trace("Adding " + str(foe) + " foe level " + str(foe.level) + " to fight with " + str(noised_foe_exp) + " exp")
+            self.foes.append(foe)
 
     def start_fight(self) -> None:
-        self.find_indians()
-        self.fight_order = self.players + self.indians
+        self.find_foes()
+        self.fight_order = self.players + self.foes
         shuffle(self.fight_order)
         trace(f"Fight order: " + ", ".join(str(fighter) for fighter in self.fight_order))
         self.fighter_id = -1 #First process fight call will make it 0
@@ -131,7 +131,7 @@ class Game():
         self.fighter_id = (self.fighter_id + 1) % len(self.fight_order)
         source = self.fight_order[self.fighter_id]
         if isinstance(source, Player):
-            target_list = self.indians
+            target_list = self.foes
         else:
             target_list = self.players
         #TODO have higher chance to pick someone at your level
@@ -142,9 +142,9 @@ class Game():
         return int(exp / Game.cash_divider)
 
     def give_exp(self) -> int:
-        total_exp: int = sum(indian.get_kill_exp() for indian in self.indians)
+        total_exp: int = sum(foe.get_kill_exp() for foe in self.foes)
         exp: int = int(total_exp / len(self.players))
-        if self.are_they_dead(self.indians):
+        if self.are_they_dead(self.foes):
             for player in self.players:
                 trace("Added " + str(exp) + " to 'exp' and 'foe_exp' for " + str(player))
                 player.add_exp(exp)
@@ -158,10 +158,10 @@ class Game():
 
     def generate_loot(self) -> None:
         self.loot = []
-        for indian in self.indians:
-            trace(f"Generating loot from {indian}")
+        for foe in self.foes:
+            trace(f"Generating loot from {foe}")
             for lootable in lootables:
-                item = lootable.generate_item(indian.level)
+                item = lootable.generate_item(foe.level)
                 if item != None:
                     self.loot.append(item)
 
@@ -170,7 +170,7 @@ class Game():
         return self.give_exp()
 
     def clean_after_fight(self):
-        self.indians = []
+        self.foes = []
         for player in self.players:
             if player.hp <= 0:
                 trace("Set " + str(player) + " to 1")
@@ -183,7 +183,7 @@ class Game():
         return True
 
     def is_fight_over(self) -> bool:
-        return self.are_they_dead(self.indians) or self.are_they_dead(self.players)
+        return self.are_they_dead(self.foes) or self.are_they_dead(self.players)
 
     def find_player(self, name: str, create: bool = False) -> Player:
         player : Player = next((player for player in self.players if player.name == name), None)
