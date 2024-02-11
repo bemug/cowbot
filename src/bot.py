@@ -85,8 +85,10 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         if self.game.opened: #Skip missed fights on closed hours, and don't heal
             if self.game.is_heal_time():
                 self.game.heal_players()
+                Game.save(self.game)
             if self.game.is_fight_time():
                 self._fight(e.target)
+                Game.save(self.game)
         if self.game.opened and not Game.is_open_hour():
             self.game.close()
             trace("Closing game")
