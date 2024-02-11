@@ -1,5 +1,3 @@
-from enum import Enum
-from aftermath import *
 from indian import *
 from typing import List, Optional
 from player import *
@@ -25,12 +23,17 @@ class Game():
         #TODO fight item ?
         self.fights_nb_per_day = 2
         self.fight_times = []
-        self.schedule_fights() #TODO should remove once loading is done if bot is reloaded today
         self.heal_times = []
-        self.schedule_heals() #TODO same as above
+        self.schedule()
         self.loot = []
         self.fight_order = []
         self.fighter_id = -1
+        self.last_save = datetime.now()
+
+    def schedule(self) -> None:
+        self.schedule_fights()
+        self.schedule_heals()
+        self.last_scheduled = datetime.now()
 
     def schedule_fights(self) -> None:
         now = datetime.now()
@@ -229,3 +232,27 @@ class Game():
             player.armor = item
             return item
         raise ValueError
+
+    def load():
+        try:
+            game = load_save()
+            trace("Save " + str(game.last_save) + " loaded")
+            #We have no idea when the save will be loaded
+            game.opened = Game.is_open_hour()
+            #Kick out all players
+            for player in game.players:
+                player.ingame = False
+            #If fights or heal were yesterday, reschedule
+            if datetime.now() - game.last_scheduled > timedelta(days=1):
+                trace("Save file belongs to yesterday or older, schedule new events and heal players")
+                game.schedule()
+                for player in game.players:
+                    player.hp = player.get_max_hp()
+        except FileNotFoundError:
+            trace("No saves found, creating a new game")
+            game = Game()
+        return game
+
+    def save(game):
+        game.last_save = datetime.now()
+        save_save(game)

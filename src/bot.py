@@ -25,12 +25,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
     def __init__(self, channel, nickname, server, port=6667):
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.channel = channel
-        try:
-            self.game = load()
-            #TODO Kick out all players
-            #TODO if fights or heal were yesterday, reschedule
-        except FileNotFoundError:
-            self.game = Game()
+        self.game = Game.load()
         self.last_fight_time = datetime.now()
 
     def is_admin(self, nick):
@@ -127,7 +122,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(e.target, f"{ERR} Commande inconnue : {message}")
             return
         command_array[command].callback(self, e.target, e.source.nick, args)
-        save(self.game)
+        Game.save(self.game)
 
     def _fight(self, target) -> None:
         log: str = ""

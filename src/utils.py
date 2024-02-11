@@ -73,9 +73,9 @@ def git_version():
         version = "Unknown version"
     return version
 
-def save(obj):
+def save_save(obj):
     pathlib.Path(save_dir).mkdir(exist_ok=True)
     pickle.dump(obj, open(save_dir + "/save.pkl", "wb"))
 
-def load():
+def load_save():
     return pickle.load(open(save_dir + "/save.pkl", "rb"))
