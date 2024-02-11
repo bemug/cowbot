@@ -30,4 +30,4 @@ pip -r requirements/dev.txt
 mypy --strict src/*.py
 ```
 
-<sub><sup>Cowboy icons created by shmai - <a href="https://www.flaticon.com/free-icons/cowboy" title="cowboy icons">Flaticon</a></sub></sup>
+<sub><sup>Cowbot icon created by shmai - <a href="https://www.flaticon.com/authors/shmai" title="shmai on Flaticon">Flaticon</a></sub></sup>
