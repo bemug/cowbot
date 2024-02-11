@@ -1,6 +1,6 @@
-<p align="center">
-  <img alt="Cowbot icon" src="https://github.com/bemug/cowbot/assets/5015627/6c55b1d9-b2eb-464f-861a-4ef1461e8e02" width="125" />
-</p>
+<div align="center">
+  <img alt="Cowbot icon" src="https://github.com/bemug/cowbot/assets/5015627/6c55b1d9-b2eb-464f-861a-4ef1461e8e02" width="125" align="center" />
+</div>
 
 # Cowbot
 Cowbot is a text-based RPG over IRC taking place in the wild west era. Players have to defend the local saloon from intruders.
