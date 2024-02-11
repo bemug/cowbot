@@ -29,3 +29,5 @@ This project uses mypy to check for python errors.
 pip -r requirements/dev.txt
 mypy --strict src/*.py
 ```
+
+<sub><sup>Cowboy icons created by shmai - <a href="https://www.flaticon.com/free-icons/cowboy" title="cowboy icons">Flaticon</a></sub></sup>
