@@ -22,9 +22,9 @@ class Lootable():
                 attr2 = self.attr_list[1]
             except IndexError:
                 attr2 = 0
-            attr1 += int(self.attr_chance[0].draw())
+            attr1 += int(self.attr_chance[0].draw_center())
             try:
-                attr2 += int(self.attr_chance[1].draw())
+                attr2 += int(self.attr_chance[1].draw_center())
             except IndexError:
                 pass
             return self.type(self.name, attr1, attr2)

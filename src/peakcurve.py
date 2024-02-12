@@ -49,3 +49,6 @@ class PeakCurve():
                 return value - self.start
         trace("Can't find a value in curve, check your curve values immediately")
         return 0
+
+    def draw_center(self) -> float:
+        return self.draw() - self.start
