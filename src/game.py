@@ -157,7 +157,7 @@ class Game():
     def handle_exp(self) -> int:
         total_exp: int = sum(foe.get_kill_exp() for foe in self.foes)
         exp: int = int(total_exp / len(self.players_ingame))
-        if self.are_they_dead(self.foes):
+        if self.has_lost(self.foes):
             for player in self.players_ingame:
                 trace("Added " + str(exp) + " to 'exp' and 'foe_exp' for " + str(player))
                 player.add_exp(exp)
@@ -179,7 +179,7 @@ class Game():
 
     def end_fight(self) -> int:
         self.loot = []
-        if self.are_they_dead(self.foes):
+        if self.has_lost(self.foes):
             self.generate_loot()
         return self.handle_exp()
 
@@ -190,14 +190,14 @@ class Game():
                 trace("Set " + str(player) + " to 1 hp")
                 player.hp = 1
 
-    def are_they_dead(self, list) -> bool: #TODO rename "has_won" and change calls
+    def has_lost(self, list) -> bool:
         for elem in list:
             if not elem.is_dead():
                 return False
         return True
 
     def is_fight_over(self) -> bool:
-        return self.are_they_dead(self.foes) or self.are_they_dead(self.players_ingame)
+        return self.has_lost(self.foes) or self.has_lost(self.players_ingame)
 
     def find_player(self, name: str, create: bool = False) -> Player:
         player : Player = next((player for player in self.players if player.name == name), None)
