@@ -1,3 +1,5 @@
+import re
+
 from typing import List, Optional
 from random import randint, choice, uniform, randrange, shuffle
 from datetime import datetime, time, timedelta
@@ -204,6 +206,8 @@ class Game():
         return self.has_lost(self.foes) or self.has_lost(self.players_ingame)
 
     def find_player(self, name: str, create: bool = False) -> Player:
+        #Remove spurious '_'
+        name = re.sub('_*$', '', name)
         player : Player = next((player for player in self.players if player.name == name), None)
         if not player and create:
             trace(f"Player {name} not found, adding to players list")
