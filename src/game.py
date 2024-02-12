@@ -263,10 +263,8 @@ class Game():
             #If fights or heal were yesterday, reschedule
             fmt = "%Y-%m-%d"
             if datetime.now().strftime(fmt) != game.last_scheduled.strftime(fmt):
-                trace("Save file belongs to yesterday or older, schedule new events and heal players")
+                trace("Save file belongs to yesterday or older, schedule new events")
                 game.schedule()
-                for player in game.players:
-                    player.hp = player.get_max_hp()
         except (FileNotFoundError, IndexError):
             trace("No saves found, creating a new game")
             game = Game()
