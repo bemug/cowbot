@@ -14,7 +14,7 @@ class Foe(Character):
         self.name = choice(open(Foe.animals_file).readlines()).strip() + \
                 " " + \
                 choice(open(Foe.adjectives_file).readlines()).strip()
-        self.base_hp = 9
+        self.base_hp = 8
         self.base_damage = 3
         self.add_exp(exp)
         self.hp = self.get_max_hp() #After add_exp
