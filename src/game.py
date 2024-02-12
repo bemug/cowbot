@@ -122,7 +122,10 @@ class Game():
             #Let the foe pick some items
             for i in range(0, Game.foe_items_tries):
                 for lootable in lootables:
-                    item = lootable.generate_item(foe.level)
+                    #If the player just reached level X, he didn't have the opportunity to get a loot for level X.
+                    #The foe could be really deadly if he gets lucky.
+                    #Make the foe only pick up items from its previous level, he'll catch up eventually.
+                    item = lootable.generate_item(foe.level - 1)
                     if item != None:
                         if isinstance(item, Weapon) and foe.weapon == None:
                             foe.weapon = item
