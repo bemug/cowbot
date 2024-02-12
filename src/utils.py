@@ -70,7 +70,7 @@ def git_version():
         if dirty:
             version += "-dirty"
     except:
-        version = "Unknown version"
+        version = "Version inconnue"
     return version
 
 def save_save(obj, prefix):
