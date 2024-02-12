@@ -187,7 +187,7 @@ class Game():
         self.foes = []
         for player in self.players_ingame:
             if player.hp <= 0:
-                trace("Set " + str(player) + " to 1")
+                trace("Set " + str(player) + " to 1 hp")
                 player.hp = 1
 
     def are_they_dead(self, list) -> bool: #TODO rename "has_won" and change calls
