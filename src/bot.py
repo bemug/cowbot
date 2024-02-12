@@ -266,16 +266,16 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_enter(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source, True)
-        if not player.ingame:
-            player.ingame = True
+        if not player in self.game.players_ingame:
+            self.game.players_ingame.append(player)
             self.msg(target, f"Bienvenue dans le saloon.")
         else:
             self.msg(target, f"{ERR} Tu es déjà dans le saloon.")
 
     def _callback_leave(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source, True)
-        if player.ingame:
-            player.ingame = False
+        if player in self.game.players_ingame:
+            self.game.players_ingame.remove(player)
             self.msg(target, f"A la prochaine cowboy.")
         else:
             self.msg(target, f"{ERR} Tu es déjà hors du saloon.")

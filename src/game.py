@@ -19,6 +19,7 @@ class Game():
 
     def __init__(self) -> None:
         self.players: List[Player] = []
+        self.players_ingame: List[Player] = []
         self.foes: List[Foe] = []
         self.opened = Game.is_open_hour()
         #TODO fight item ?
@@ -82,16 +83,13 @@ class Game():
         for heal_time in self.heal_times[:]:
             if now > heal_time:
                 self.heal_times.remove(heal_time)
-                #Don't discard aything, we want the player to receive its missing health even if we miss a fight inbetween.
-                #That's a compensation incase the game crashed.
                 trace("Heal " + str(heal_time))
                 return True
         return False
 
     def heal_players(self, hp: int = 1) -> None:
-        for player in self.players:
-            if player.ingame:
-                player.hp = min(player.hp + hp, player.get_max_hp())
+        for player in self.players_ingame:
+            player.hp = min(player.hp + hp, player.get_max_hp())
 
     def is_open_hour():
         now = datetime.now()
@@ -112,22 +110,19 @@ class Game():
         return int(sum([player.foe_exp for player in self.players]) / Game.cash_divider)
 
     def find_foes(self) -> None:
-        if sum([player.ingame for player in self.players]) <= 0:
+        if len(self.players_ingame) <= 0:
             raise RuntimeError
         #TODO generate combined/split foes with 5% chance of appearance
-        for player in self.players:
-            if player.ingame:
-                #TODO peakcurve
-                noised_foe_exp = player.foe_exp * uniform(0.8, 1.2)
-                foe: Foe = Foe(noised_foe_exp)
-                self.foes.append(foe)
-                trace(f"Player {player} : add {str(foe)} level {str(foe.level)} with {str(noised_foe_exp)} exp")
-            else:
-                trace(f"Player {player} is not ingame, skipping")
+        for player in self.players_ingame:
+            #TODO peakcurve
+            noised_foe_exp = player.foe_exp * uniform(0.8, 1.2)
+            foe: Foe = Foe(noised_foe_exp)
+            self.foes.append(foe)
+            trace(f"Player {player} : add {str(foe)} level {str(foe.level)} with {str(noised_foe_exp)} exp")
 
     def start_fight(self) -> None:
         self.find_foes()
-        self.fight_order = self.players + self.foes
+        self.fight_order = self.players_ingame + self.foes
         shuffle(self.fight_order)
         trace(f"Fight order: " + ", ".join(str(fighter) for fighter in self.fight_order))
         self.fighter_id = -1 #First process fight call will make it 0
@@ -138,7 +133,7 @@ class Game():
         if isinstance(source, Player):
             target_list = self.foes
         else:
-            target_list = self.players
+            target_list = self.players_ingame
         #TODO have higher chance to pick someone at your level
         target = target_list[randint(0, len(target_list) - 1)]
         return source.hit(target)
@@ -148,14 +143,14 @@ class Game():
 
     def give_exp(self) -> int:
         total_exp: int = sum(foe.get_kill_exp() for foe in self.foes)
-        exp: int = int(total_exp / len(self.players))
+        exp: int = int(total_exp / len(self.players_ingame))
         if self.are_they_dead(self.foes):
-            for player in self.players:
+            for player in self.players_ingame:
                 trace("Added " + str(exp) + " to 'exp' and 'foe_exp' for " + str(player))
                 player.add_exp(exp)
                 player.foe_exp += exp
         else:
-            for player in self.players:
+            for player in self.players_ingame:
                 trace("Substracting " + str(exp) + " 'foe_exp' to " + str(player))
                 player.foe_exp -= exp
             total_exp *= -1
@@ -176,7 +171,7 @@ class Game():
 
     def clean_after_fight(self):
         self.foes = []
-        for player in self.players:
+        for player in self.players_ingame:
             if player.hp <= 0:
                 trace("Set " + str(player) + " to 1")
                 player.hp = 1
@@ -188,7 +183,7 @@ class Game():
         return True
 
     def is_fight_over(self) -> bool:
-        return self.are_they_dead(self.foes) or self.are_they_dead(self.players)
+        return self.are_they_dead(self.foes) or self.are_they_dead(self.players_ingame)
 
     def find_player(self, name: str, create: bool = False) -> Player:
         player : Player = next((player for player in self.players if player.name == name), None)
@@ -247,8 +242,7 @@ class Game():
             #We have no idea when the save will be loaded
             game.opened = Game.is_open_hour()
             #Kick out all players
-            for player in game.players:
-                player.ingame = False
+            game.players_ingame.clear()
             #If fights or heal were yesterday, reschedule
             fmt = "%Y-%m-%d"
             if datetime.now().strftime(fmt) != game.last_scheduled.strftime(fmt):
