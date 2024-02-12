@@ -39,7 +39,8 @@ class PeakCurve():
         rand = random()
         prob = self.get_probability(value)
         ret = rand < prob
-        trace(f"Drew '{rand:.3f}' against p(x)='{prob:.3f}', with x = {value:.3f} and x ∈ [{self.start};{self.end}] & x-peak = {self.peak} : {str(ret)}")
+        if ret:
+            trace(f"Drew '{rand:.3f}' against p(x)='{prob:.3f}', with x = {value:.3f} and x ∈ [{self.start};{self.end}] & x-peak = {self.peak} : {str(ret)}")
         return ret
 
     def draw(self) -> float:
