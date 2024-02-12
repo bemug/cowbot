@@ -154,7 +154,7 @@ class Game():
     def exp_to_cash(exp: int):
         return int(exp / Game.cash_divider)
 
-    def give_exp(self) -> int:
+    def handle_exp(self) -> int:
         total_exp: int = sum(foe.get_kill_exp() for foe in self.foes)
         exp: int = int(total_exp / len(self.players_ingame))
         if self.are_they_dead(self.foes):
@@ -170,7 +170,6 @@ class Game():
         return Game.exp_to_cash(total_exp)
 
     def generate_loot(self) -> None:
-        self.loot = []
         for foe in self.foes:
             trace(f"Generating loot from {foe}")
             for lootable in lootables:
@@ -179,8 +178,10 @@ class Game():
                     self.loot.append(item)
 
     def end_fight(self) -> int:
-        self.generate_loot()
-        return self.give_exp()
+        self.loot = []
+        if self.are_they_dead(self.foes):
+            self.generate_loot()
+        return self.handle_exp()
 
     def clean_after_fight(self):
         self.foes = []
