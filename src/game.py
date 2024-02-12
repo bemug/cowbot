@@ -15,6 +15,7 @@ class Game():
     hour_close = time(16, 30)
     fight_timeout = timedelta(minutes=30)
     tick_heal = timedelta(minutes=15)
+    foe_items_tries = 3
     speed = 1
 
     def __init__(self) -> None:
@@ -118,8 +119,19 @@ class Game():
             foe_curve = PeakCurve(int(player.foe_exp * 0.6), player.foe_exp, int(player.foe_exp * 1.4))
             noised_foe_exp = int(player.foe_exp + foe_curve.draw())
             foe: Foe = Foe(noised_foe_exp)
+            #Let the foe pick some items
+            for i in range(0, Game.foe_items_tries):
+                for lootable in lootables:
+                    item = lootable.generate_item(foe.level)
+                    if item != None:
+                        if isinstance(item, Weapon) and foe.weapon == None:
+                            foe.weapon = item
+                        elif isinstance(item, Armor) and foe.armor == None:
+                            foe.armor = item
+                        if foe.weapon != None and foe.armor != None:
+                            break
             self.foes.append(foe)
-            trace(f"Player {player} : add {str(foe)} level {str(foe.level)} with {str(noised_foe_exp)} exp")
+            trace(f"Player {player} : add {str(foe)} level {str(foe.level)} ({str(noised_foe_exp)} xp) with '{foe.weapon}' and '{foe.armor}'")
 
     def start_fight(self) -> None:
         self.find_foes()
