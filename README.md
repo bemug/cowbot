@@ -18,7 +18,7 @@ pip install -r requirements.txt
 ## Configuration
 TODO
 
-## Usage
+## Running
 ```
 python src/bot.py
 ```
