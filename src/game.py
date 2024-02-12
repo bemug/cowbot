@@ -168,7 +168,7 @@ class Game():
         else:
             for player in self.players_ingame:
                 trace("Substracting " + str(exp) + " 'foe_exp' to " + str(player))
-                player.foe_exp -= exp
+                player.foe_exp = max(player.foe_exp - exp, 0)
             total_exp *= -1
         return Game.exp_to_cash(total_exp)
 
