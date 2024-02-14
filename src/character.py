@@ -26,7 +26,7 @@ class Character:
         return self.base_damage + self.level - 1
 
     def get_max_hp(self) -> int:
-        return self.base_hp + self.level - 1
+        return self.base_hp + self.level * 2 - 1
 
     def is_dead(self):
         return self.hp <= 0
