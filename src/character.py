@@ -1,5 +1,6 @@
-from aftermath import *
 from random import random
+
+from src.aftermath import *
 
 class Character:
     level_up_speed = 10

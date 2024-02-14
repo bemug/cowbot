@@ -1,8 +1,9 @@
-from enum import Enum
-from datetime import datetime
 import subprocess
 import pickle
 import pathlib
+
+from enum import Enum
+from datetime import datetime
 
 class Decoration:
     def __init__(self, color: str, icon: str):

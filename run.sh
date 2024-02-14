@@ -1,1 +1,1 @@
-python src/bot.py 'irc.libera.chat' '##saloon' cowbot
+python cowbot.py 'irc.libera.chat' '##saloon' cowbot

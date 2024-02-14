@@ -1,6 +1,7 @@
 from enum import Enum
 from random import choice
-from character import *
+
+from src.character import *
 
 
 class Foe(Character):

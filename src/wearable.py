@@ -1,4 +1,4 @@
-from item import *
+from src.item import *
 
 
 class Wearable(Item):

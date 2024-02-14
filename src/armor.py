@@ -1,4 +1,4 @@
-from wearable import *
+from src.wearable import *
 
 
 class Armor(Wearable):

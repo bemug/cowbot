@@ -1,12 +1,13 @@
-from foe import *
 from typing import List, Optional
-from player import *
-from weapon import *
-from armor import *
 from random import randint, choice, uniform, randrange, shuffle
 from datetime import datetime, time, timedelta
-from utils import *
-from lootable import *
+
+from src.foe import *
+from src.player import *
+from src.weapon import *
+from src.armor import *
+from src.utils import *
+from src.lootable import *
 
 
 class Game():

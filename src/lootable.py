@@ -1,6 +1,6 @@
-from peakcurve import *
-from weapon import *
-from armor import *
+from src.peakcurve import *
+from src.weapon import *
+from src.armor import *
 
 
 class Lootable():
