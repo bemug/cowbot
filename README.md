@@ -1,5 +1,5 @@
 <div align="center">
-  <img alt="Cowbot icon" src="https://github.com/bemug/cowbot/assets/5015627/6c55b1d9-b2eb-464f-861a-4ef1461e8e02" width="125" />
+  <img alt="Cowbot icon" src="https://github.com/bemug/cowbot/assets/5015627/6c55b1d9-b2eb-464f-861a-4ef1461e8e02" width="100" />
 </div>
 
 # Cowbot
