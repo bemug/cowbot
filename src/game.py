@@ -100,8 +100,7 @@ class Game():
 
     #TODO remove and replace by time compare with hour_open and hour_close
     def open(self):
-        self.schedule_fights()
-        self.schedule_heals()
+        self.schedule()
         self.opened = True
 
     def close(self):
