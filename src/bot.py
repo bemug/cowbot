@@ -279,7 +279,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_status(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source, True)
-        msg: str = "Cowboy niv. {} → {} ; {} ; {}.".format(
+        msg: str = "Cowboy niv. {} : {} {} {}.".format(
                 player.level,
                 decor_str(f"{player.get_damage()}", decorations["dmg"]),
                 decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"]),
