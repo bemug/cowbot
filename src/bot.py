@@ -132,7 +132,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.game.start_fight()
         except RuntimeError:
             #TODO steal money instead
-            self.msg(target, f"Il n'y a personne pour defendre le saloon !")
+            self.msg(target, f"Les indiens rôdent dehors. Je ne peux pas défendre le saloon seul. Je l'ai barricadé en attendant, mais c'est pas bon pour les ventes.")
             return
 
         if len(self.game.foes) > 1:
@@ -184,9 +184,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         cash_change = self.game.end_fight()
 
         if cash_change > 0:
-            log = "VICTOIRE. {} possède{} {}, que je place dans le tiroir-caisse ({}).".format(
-                    list_str(self.game.foes),
-                    number_str,
+            log = "VICTOIRE. Pendant la bagarre j'ai vendu pour {} de consommations. J'ai placé cet argent dans le tiroir-caisse ({}).".format(
                     decor_str(str(cash_change), decorations["cash"]),
                     decor_str(str(self.game.get_cash()), decorations["cash"]),
                 )
