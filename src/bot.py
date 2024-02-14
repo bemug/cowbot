@@ -227,13 +227,13 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             decor = [decorations["arm"], decorations["miss"]]
         else:
             trace("Unknown item type, ignoring.")
-        ret = str(item) + " : " + decor_str(str(item.attr1), decor[0])
+        ret = str(item) + " " + decor_str(str(item.attr1), decor[0])
         if item.attr2 > 0:
-            ret += " ; " + decor_str(str(item.attr2), decor[1])
+            ret += " " + decor_str(str(item.attr2), decor[1])
         return ret
 
     def _show_loot(self, target):
-        log = "Dépouille →"
+        log = "Dépouille :"
         items_log = ""
         for i, item in enumerate(self.game.loot):
             if item != None:
@@ -301,7 +301,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_inventory(self, target, source, args: str) -> None:
         player: Player = self.game.find_player(source, True)
-        log = "Inventaire →"
+        log = "Inventaire :"
         items_log = ""
         for i, item in enumerate(player.inventory):
             if item != None:
