@@ -20,7 +20,7 @@ TODO
 
 ## Running
 ```
-python src/bot.py
+python cowbot.py
 ```
 
 ## Development
