@@ -69,10 +69,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
     ### Game FSM and display ###
 
     def debug_start(self):
-        self.game.loot.append(Weapon("Colt", 1, 50))
-        self.game.loot.append(Weapon("Revolver", 2, 0))
-        self.game.loot.append(Armor("Stetson en laine", 2, 50))
-        self.game.loot.append(Armor("Stetson en feutre", 3, 0))
+        pass
 
     def _process_time(self, c, e):
         fmt= "%Hh%M"
