@@ -203,7 +203,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
             self._show_loot(target)
         else:
-            log = "DEFAITE. {} vole{} {} dans le tiroir-caisse ({}), et s'échappe{}.".format(
+            log = "DEFAITE. Avant de s'échapper {} vole{} {} dans le tiroir-caisse ({}).".format(
                     list_str(self.game.foes),
                     number_str,
                     decor_str(str(-cash_change), decorations["cash"]),
