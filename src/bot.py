@@ -146,7 +146,11 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             am: Aftermath = self.game.process_fight()
 
             #Construct log
-            log = f"{step}. {am.source.no_hl_str()} tire sur {am.target.no_hl_str()} : "
+            log = ""
+            if am.source.weapon:
+                log = f"{step}. {am.source.no_hl_str()} tire sur {am.target.no_hl_str()} : "
+            else:
+                log = f"{step}. {am.source.no_hl_str()} frappe {am.target.no_hl_str()} à mains nues : "
 
             did_crit: bool = am.source.weapon and am.critical != 1
             did_miss: bool = am.source.armor and am.miss != 1
