@@ -38,15 +38,15 @@ lootables = (
         #Weapons
         #Require at least level 2 to spawn
         Lootable("Pistolet de poche Derringer", Weapon, PeakCurve(2,2,5),        [1],     [PeakCurve(0,0,6)]),
-        Lootable("Revolver Colt",               Weapon, PeakCurve(2,10,15),      [2],     [PeakCurve(0,0,7)]),
-        Lootable("Revolver Remington",          Weapon, PeakCurve(2,11,15),      [1,4],   [PeakCurve(0,0,7),  PeakCurve(0,0,10)]),
-        Lootable("Revolver S&W",                Weapon, PeakCurve(8,16,20),      [4],     [PeakCurve(0,0,8)]),
-        Lootable("Pistolet Volcanic",           Weapon, PeakCurve(8,17,20),      [2,9],  [PeakCurve(0,0,10), PeakCurve(0,0,10)]),
+        Lootable("Revolver Colt",               Weapon, PeakCurve(2,10,15),      [2],     [PeakCurve(0,0,8)]),
+        Lootable("Revolver Remington",          Weapon, PeakCurve(2,11,15),      [1,4],   [PeakCurve(0,0,6),  PeakCurve(0,0,10)]),
+        Lootable("Revolver S&W",                Weapon, PeakCurve(8,16,20),      [4],     [PeakCurve(0,0,10)]),
+        Lootable("Pistolet Volcanic",           Weapon, PeakCurve(8,17,20),      [2,9],   [PeakCurve(0,0,8),  PeakCurve(0,0,10)]),
         Lootable("Fusil Spencer",               Weapon, PeakCurve(14,20,22),     [5,0],   [PeakCurve(0,0,10), PeakCurve(0,0,10)]),
         Lootable("Fusil Sharps",                Weapon, PeakCurve(14,21,22),     [3,14],  [PeakCurve(0,0,15), PeakCurve(0,0,10)]),
-        Lootable("Fusil Springfield",           Weapon, PeakCurve(20,22,24),     [9,4],  [PeakCurve(0,0,15), PeakCurve(0,0,10)]),
-        Lootable("Carabine Mauser",             Weapon, PeakCurve(20,23,24),     [4,19],  [PeakCurve(0,0,15), PeakCurve(0,0,15)]),
-        Lootable("Carabine Winchester",         Weapon, PeakCurve(23,25,25),     [14,9], [PeakCurve(0,0,20), PeakCurve(0,0,20)]),
+        Lootable("Fusil Springfield",           Weapon, PeakCurve(20,22,24),     [9,4],   [PeakCurve(0,0,15), PeakCurve(0,0,10)]),
+        Lootable("Carabine Mauser",             Weapon, PeakCurve(20,23,24),     [4,19],  [PeakCurve(0,0,10), PeakCurve(0,0,15)]),
+        Lootable("Carabine Winchester",         Weapon, PeakCurve(23,25,25),     [14,9],  [PeakCurve(0,0,15), PeakCurve(0,0,20)]),
         Lootable("Mitrailleuse Gatling",        Weapon, PeakCurve(10,25,25,0.1), [0,40],  [PeakCurve(0,0,1),  PeakCurve(0,0,20)]),
         ### Armors
         #Require at least level 4 to spawn
