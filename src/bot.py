@@ -18,7 +18,7 @@ class Command():
 
 
 class Bot(irc.bot.SingleServerIRCBot): #type: ignore
-    msg_wait = 1
+    msg_wait = 2
     after_fight_wait = timedelta(milliseconds=10)
 
 
@@ -28,6 +28,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
         self.channel = channel
         self.game = Game.load()
+        if self.game.speed > 1:
+            Bot.msg_wait = 1
         self.last_fight_time = datetime.now()
 
     def is_admin(self, nick):
@@ -195,6 +197,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
                     decor_str(str(self.game.get_cash()), decorations["cash"]),
                 )
             self.msg(target, log)
+            sleep(Bot.msg_wait)
 
             for i, player in enumerate(self.game.players):
                 if player.level != levels[i]:
@@ -204,6 +207,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
                             decor_str(f"{player.exp}/{player.get_max_exp()}", decorations["exp"]),
                         )
                     self.msg(target, log)
+                    sleep(Bot.msg_wait)
 
             self._show_loot(target)
         else:
