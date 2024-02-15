@@ -3,6 +3,7 @@ import irc.bot #type: ignore
 from time import sleep
 from typing import Any, Callable, Coroutine
 from datetime import datetime
+from textwrap import wrap
 
 from src.aftermath import *
 from src.game import *
@@ -37,8 +38,16 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         return nick == "zoologist"
 
     def msg(self, target, msg):
-        trace("Sent to " + target + ": \"" + msg + "\"")
-        self.connection.privmsg(target, msg)
+        #This lib is fucked up.
+        #It could either let me know how much byte it sends in a message, or either wrap lines for me.
+        max_chars = 512 #IRC protocol limit excluding CR/LF
+        max_chars -= 25 #So we should be safe
+        for sub_msg in wrap(msg, max_chars):
+            try:
+                self.connection.privmsg(target, sub_msg)
+                trace("Sent to " + target + ": \"" + sub_msg + "\"")
+            except irc.client.MessageTooLong:
+                trace("Message to " + target + " too long : " + sub_msg + "\", dropping")
 
     def get_users(self):
         users: List = list(self.channels.get(self.channel).users())
