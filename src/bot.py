@@ -286,7 +286,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
                 decor_str(f"{player.exp}/{player.get_max_exp()}", decorations["exp"]),
             )
         if player.weapon != None or player.armor != None:
-            msg += "  Equipement → " + " et ".join(filter(None, ([self._str_item(player.weapon), self._str_item(player.armor)]))) + "."
+            msg += "  Equipement : " + " et ".join(filter(None, ([self._str_item(player.weapon), self._str_item(player.armor)]))) + "."
 
         self.msg(target, msg)
 
