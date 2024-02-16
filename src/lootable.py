@@ -4,9 +4,13 @@ from src.armor import *
 
 
 class Lootable():
+
+    loot_rate = 0.6
+
     def __init__(self, name, type, loot_chance, attr_list, attr_chance):
         self.name = name
         self.type = type
+        loot_chance.peak_value *= Lootable.loot_rate
         self.loot_chance = loot_chance
         self.attr_list = attr_list
         self.attr_chance = attr_chance
