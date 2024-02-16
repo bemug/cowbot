@@ -259,6 +259,7 @@ class Game():
             raise IndexError
         if isinstance(item, Consumable):
             player.heal(item.heal)
+            replace_by_none(player.inventory, item)
             return item
         raise ValueError
 
