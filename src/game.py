@@ -15,7 +15,7 @@ class Game():
     hour_open = time(9, 30)
     hour_close = time(16, 30)
     fight_timeout = timedelta(minutes=30)
-    tick_heal = timedelta(minutes=15)
+    tick_heal = timedelta(minutes=20)
     foe_items_tries = 3
     speed = 1
 
