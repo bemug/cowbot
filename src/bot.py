@@ -256,8 +256,12 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             decor = [decorations["dmg"], decorations["crit"]]
         elif isinstance(item, Armor):
             decor = [decorations["arm"], decorations["miss"]]
+        elif isinstance(item, Consumable):
+            decor = [decorations["hp"]]
+            return str(item) + " " + decor_str(str(item.heal), decor[0])
         else:
             trace("Unknown item type, ignoring.")
+            return
         ret = str(item) + " " + decor_str(str(item.attr1), decor[0])
         if item.attr2 > 0:
             ret += " " + decor_str(str(item.attr2), decor[1])
@@ -398,6 +402,25 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         self.msg(target, f"{self._str_item(item)} équipé.")
 
+    def _callback_use(self, target, source, args: str) -> None:
+        if len(args) != 1:
+            self.msg(target, "!equip <index>")
+            return
+        try:
+            index = self._parse_uint(target, args[0])
+        except ValueError:
+            return
+        player: Player = self.game.find_player(source, True)
+        try:
+            item = self.game.do_use(player, index)
+        except IndexError:
+            self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
+            return
+        except ValueError:
+            self.msg(target, f"{ERR} Tu ne peux pas utiliser ça.")
+            return
+        self.msg(target, f"{self._str_item(item)} utilisé.")
+
     def _callback_version(self, target, source, args: str) -> None:
         self.msg(target, git_version())
 
@@ -485,6 +508,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         "!loot": Command(_callback_loot, "Prend un objet d'une dépouille pour la placer dans ton inventaire"),
         "!drop": Command(_callback_drop, "Place un objet de ton inventaire dans la dépouille"),
         "!equip": Command(_callback_equip, "Equipe un objet de ton inventaire"),
+        "!use": Command(_callback_use, "Utilise un consommable"),
         "!version": Command(_callback_version, "Affiche la version du jeu"),
     }
 

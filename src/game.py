@@ -6,6 +6,7 @@ from src.foe import *
 from src.player import *
 from src.weapon import *
 from src.armor import *
+from src.consumable import *
 from src.utils import *
 from src.lootable import *
 
@@ -91,7 +92,7 @@ class Game():
 
     def heal_players(self, hp: int = 1) -> None:
         for player in self.players_ingame:
-            player.hp = min(player.hp + hp, player.get_max_hp())
+            player.heal(hp)
 
     def is_open_hour():
         now = datetime.now()
@@ -249,6 +250,15 @@ class Game():
             return item
         elif isinstance(item, Armor):
             player.armor = item
+            return item
+        raise ValueError
+
+    def do_use(self, player: Player, loot_index: int) -> Item :
+        item = player.inventory[loot_index]
+        if item == None:
+            raise IndexError
+        if isinstance(item, Consumable):
+            player.heal(item.heal)
             return item
         raise ValueError
 

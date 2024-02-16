@@ -60,3 +60,6 @@ class Character:
         hit: int = max(int((base_dmg + weapon_dmg) * crit) - armor, 0) * miss
         target.hp = max(target.hp - hit, 0)
         return Aftermath(self, target, total_dmg, armor, crit, miss, hit)
+
+    def heal(self, hp = 1):
+        self.hp = min(self.hp + hp, self.get_max_hp())

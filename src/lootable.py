@@ -1,6 +1,7 @@
 from src.peakcurve import *
 from src.weapon import *
 from src.armor import *
+from src.consumable import *
 
 
 class Lootable():
@@ -65,4 +66,10 @@ lootables = (
         Lootable("Chapeau Diamond",   Armor, PeakCurve(19,24,25),     [5,11], [PeakCurve(0,0,13), PeakCurve(0,0,13)]),
         Lootable("Chapeau Telescope", Armor, PeakCurve(22,25,25),     [15,6], [PeakCurve(0,0,18), PeakCurve(0,0,18)]),
         Lootable("Chapeau Gambler",   Armor, PeakCurve(12,25,25,0.1), [0,20], [PeakCurve(0,0,1),  PeakCurve(0,0,20)]),
+
+        ### Consumables
+        Lootable("Tequilla", Consumable, PeakCurve(0,10,13),  [3],  [PeakCurve(0,0,6)]),
+        Lootable("Whisky",   Consumable, PeakCurve(10,15,18), [9],  [PeakCurve(0,0,6)]),
+        Lootable("Rhum",     Consumable, PeakCurve(15,20,25), [15], [PeakCurve(0,0,6)]),
+        Lootable("Biere",    Consumable, PeakCurve(23,25,40), [21], [PeakCurve(0,0,6)]),
     )
