@@ -78,8 +78,25 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
     def on_pubmsg(self, c, e):
         self._process_command(c, e)
 
+    def on_part(self, c, e):
+        self.remove_player_from_game(e.source.nick)
+    def on_kick(self, c, e):
+        self.remove_player_from_game(e.source.nick)
+    def on_quit(self, c, e):
+        self.remove_player_from_game(e.source.nick)
+
 
     ### Game FSM and display ###
+
+    def remove_player_from_game(self, source):
+        player: Player = self.game.find_player(source)
+        if not player:
+            return
+        if player in self.game.players_ingame:
+            trace(f"Player {player} quit, remove him from ingame")
+            self.game.players_ingame.remove(player)
+        else:
+            trace(f"Player {player} quit, but was not ingame. Do nothing")
 
     def debug_start(self):
         pass
