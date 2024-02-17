@@ -70,8 +70,8 @@ lootables = (
         Lootable("Chapeau Gambler",   Armor, PeakCurve(12,25,25,0.1), [0,20], [PeakCurve(0,0,1),  PeakCurve(0,0,20)]),
 
         ### Consumables
-        Lootable("Tequilla", Consumable, PeakCurve(0,10,13),  [3],  [PeakCurve(0,0,6)]),
-        Lootable("Whisky",   Consumable, PeakCurve(10,15,18), [9],  [PeakCurve(0,0,6)]),
-        Lootable("Rhum",     Consumable, PeakCurve(15,20,25), [15], [PeakCurve(0,0,6)]),
-        Lootable("Biere",    Consumable, PeakCurve(23,25,40), [21], [PeakCurve(0,0,6)]),
+        Lootable("Tequilla", Consumable, PeakCurve(0,10,13,0.25),  [3],  [PeakCurve(0,0,6)]),
+        Lootable("Whisky",   Consumable, PeakCurve(10,15,18,0.25), [9],  [PeakCurve(0,0,6)]),
+        Lootable("Rhum",     Consumable, PeakCurve(15,20,25,0.25), [15], [PeakCurve(0,0,6)]),
+        Lootable("Biere",    Consumable, PeakCurve(23,25,40,0.25), [21], [PeakCurve(0,0,6)]),
     )
