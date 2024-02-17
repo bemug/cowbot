@@ -32,6 +32,8 @@ class Lootable():
                 attr2 += int(self.attr_chance[1].draw_center())
             except IndexError:
                 pass
+            if self.type == Consumable:
+                return self.type(self.name, attr1)
             return self.type(self.name, attr1, attr2)
 
     def __str__(self) -> str:
