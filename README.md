@@ -26,7 +26,7 @@ python cowbot.py
 ## Development
 This project uses mypy to check for python errors.
 ```
-pip -r requirements/dev.txt
+pip install -r requirements/dev.txt
 mypy --strict src/*.py
 ```
 
