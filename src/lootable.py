@@ -6,7 +6,7 @@ from src.consumable import *
 
 class Lootable():
 
-    loot_rate = 0.6
+    loot_rate = 0.8
 
     def __init__(self, name, type, loot_chance, attr_list, attr_chance):
         self.name = name
