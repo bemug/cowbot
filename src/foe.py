@@ -8,7 +8,7 @@ class Foe(Character):
     animals_file: str = "data/animals.txt"
     adjectives_file: str = "data/adjectives.txt"
     #Foe level up faster than players
-    scale_factor = 4/5
+    scale_factor = 3/4
 
     def __init__(self, exp: int) -> None:
         super().__init__()
