@@ -34,6 +34,7 @@ class Game():
         self.schedule()
         self.loot = []
         self.fight_order = []
+        self.rivals = {}
         self.fighter_id = -1
         self.last_save = datetime.now()
 
@@ -118,7 +119,6 @@ class Game():
             raise RuntimeError
         #TODO generate combined/split foes with 5% chance of appearance
         for player in self.players_ingame:
-            #TODO peakcurve
             foe_curve = PeakCurve(int(player.foe_exp * 0.6), player.foe_exp, int(player.foe_exp * 1.4))
             noised_foe_exp = int(player.foe_exp + foe_curve.draw())
             foe: Foe = Foe(noised_foe_exp)
@@ -137,6 +137,8 @@ class Game():
                         if foe.weapon != None and foe.armor != None:
                             break
             self.foes.append(foe)
+            self.rivals[player] = foe
+            self.rivals[foe] = player
             trace(f"Player {player} : add {str(foe)} level {str(foe.level)} ({str(noised_foe_exp)} xp) with '{foe.weapon}' and '{foe.armor}'")
 
     def start_fight(self) -> None:
@@ -146,16 +148,33 @@ class Game():
         trace(f"Fight order: " + ", ".join(str(fighter) for fighter in self.fight_order))
         self.fighter_id = -1 #First process fight call will make it 0
 
+    def find_new_rival(self, old_rival):
+        if isinstance(old_rival, Player):
+            target_list = self.players_ingame
+            source_list = self.foes
+        else:
+            target_list = self.foes
+            source_list = self.players_ingame
+        for source in source_list:
+            if self.rivals[source] == old_rival:
+                next_rival = None
+                for target in target_list:
+                    if not target.is_dead():
+                        if next_rival == None or abs(source.level - target.level) < abs(source.level - next_rival.level):
+                            next_rival = target
+                trace(f"Switch {source} rival to {next_rival}")
+                self.rivals[source] = next_rival
+
     def process_fight(self) -> Aftermath:
         self.fighter_id = (self.fighter_id + 1) % len(self.fight_order)
         source = self.fight_order[self.fighter_id]
-        if isinstance(source, Player):
-            target_list = self.foes
-        else:
-            target_list = self.players_ingame
-        #TODO have higher chance to pick someone at your level
-        target = target_list[randint(0, len(target_list) - 1)]
-        return source.hit(target)
+        target = self.rivals[source]
+        aftermath = source.hit(target)
+        if target.is_dead():
+            self.fight_order.remove(target)
+            self.rivals[target] = None #Just in case
+            self.find_new_rival(target)
+        return aftermath
 
     def exp_to_cash(exp: int):
         return int(exp / Game.cash_divider)
@@ -191,6 +210,7 @@ class Game():
 
     def clean_after_fight(self):
         self.foes = []
+        self.rivals = {}
         for player in self.players_ingame:
             if player.hp <= 0:
                 trace("Set " + str(player) + " to 1 hp")
