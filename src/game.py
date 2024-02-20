@@ -1,7 +1,7 @@
 import re
 
 from typing import List, Optional
-from random import randint, choice, uniform, randrange, shuffle
+from random import randint, choice, uniform, randrange, shuffle, random
 from datetime import datetime, time, timedelta
 
 from src.foe import *
@@ -20,6 +20,7 @@ class Game():
     fight_timeout = timedelta(minutes=30)
     tick_heal = timedelta(minutes=15)
     foe_items_tries = 3
+    miss_rival_chance = 0.1
     speed = 1
 
     def __init__(self) -> None:
@@ -168,7 +169,13 @@ class Game():
     def process_fight(self) -> Aftermath:
         self.fighter_id = (self.fighter_id + 1) % len(self.fight_order)
         source = self.fight_order[self.fighter_id]
-        target = self.rivals[source]
+        if random() < Game.miss_rival_chance:
+            target = source
+            while target == source:
+                target = choice(self.fight_order) #This is a feature
+            trace(f"Hit from {source} ignores rival, choose {target} instead")
+        else:
+            target = self.rivals[source]
         aftermath = source.hit(target)
         if target.is_dead():
             self.fight_order.remove(target)
