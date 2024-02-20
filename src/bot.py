@@ -167,7 +167,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
         if len(self.game.foes) > 1:
             number_str = "nt"
-        self.msg(target, f"{list_str(self.game.foes)} débarque{number_str} dans le saloon {list_str(self.game.players)} !")
+        self.msg(target, f"{list_str(self.game.foes)} débarque{number_str} dans le saloon {list_str(self.game.players_ingame)} !")
         sleep(Bot.msg_wait)
         while not self.game.is_fight_over():
             #Fight
