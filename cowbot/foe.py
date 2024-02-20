@@ -1,7 +1,7 @@
 from enum import Enum
 from random import choice
 
-from src.character import *
+from cowbot.character import *
 
 
 class Foe(Character):

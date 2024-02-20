@@ -1,5 +1,5 @@
 import sys
-from src.bot import Bot
+from cowbot.bot import Bot
 
 def main():
 

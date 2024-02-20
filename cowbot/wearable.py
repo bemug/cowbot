@@ -1,4 +1,4 @@
-from src.item import *
+from cowbot.item import *
 
 
 class Wearable(Item):

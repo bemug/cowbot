@@ -1,7 +1,7 @@
-from src.peakcurve import *
-from src.weapon import *
-from src.armor import *
-from src.consumable import *
+from cowbot.peakcurve import *
+from cowbot.weapon import *
+from cowbot.armor import *
+from cowbot.consumable import *
 
 
 class Lootable():

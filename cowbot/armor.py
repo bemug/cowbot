@@ -1,4 +1,4 @@
-from src.wearable import *
+from cowbot.wearable import *
 
 
 class Armor(Wearable):

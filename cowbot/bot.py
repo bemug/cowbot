@@ -5,10 +5,10 @@ from typing import Any, Callable, Coroutine
 from datetime import datetime
 from textwrap import wrap
 
-from src.aftermath import *
-from src.game import *
-from src.foe import *
-from src.utils import *
+from cowbot.aftermath import *
+from cowbot.game import *
+from cowbot.foe import *
+from cowbot.utils import *
 
 
 class Command():

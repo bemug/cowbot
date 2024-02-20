@@ -4,13 +4,13 @@ from typing import List, Optional
 from random import randint, choice, uniform, randrange, shuffle, random
 from datetime import datetime, time, timedelta
 
-from src.foe import *
-from src.player import *
-from src.weapon import *
-from src.armor import *
-from src.consumable import *
-from src.utils import *
-from src.lootable import *
+from cowbot.foe import *
+from cowbot.player import *
+from cowbot.weapon import *
+from cowbot.armor import *
+from cowbot.consumable import *
+from cowbot.utils import *
+from cowbot.lootable import *
 
 
 class Game():

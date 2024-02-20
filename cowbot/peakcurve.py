@@ -1,6 +1,6 @@
 from random import random, uniform
 
-from src.utils import *
+from cowbot.utils import *
 
 ### If you describe yourself as a 'mathematician' close this file immediately
 ### You have been warned

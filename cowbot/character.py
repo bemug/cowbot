@@ -1,6 +1,6 @@
 from random import random
 
-from src.aftermath import *
+from cowbot.aftermath import *
 
 class Character:
     level_up_speed = 10

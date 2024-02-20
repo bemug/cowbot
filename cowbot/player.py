@@ -1,4 +1,4 @@
-from src.character import *
+from cowbot.character import *
 
 
 class Player(Character):
