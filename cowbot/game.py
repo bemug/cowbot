@@ -36,7 +36,7 @@ class Game():
         self.loot = []
         self.fight_order = []
         self.rivals = {}
-        self.fighter_id = -1
+        self.current_fighter = None
         self.last_save = datetime.now()
 
     def schedule(self) -> None:
@@ -147,7 +147,7 @@ class Game():
         self.fight_order = self.players_ingame + self.foes
         shuffle(self.fight_order)
         trace(f"Fight order: " + ", ".join(str(fighter) for fighter in self.fight_order))
-        self.fighter_id = -1 #First process fight call will make it 0
+        self.current_fighter = self.fight_order[-1] #First process fight call will make it the first fighter
 
     def find_new_rival(self, old_rival):
         if isinstance(old_rival, Player):
@@ -167,8 +167,9 @@ class Game():
                 self.rivals[source] = next_rival
 
     def process_fight(self) -> Aftermath:
-        self.fighter_id = (self.fighter_id + 1) % len(self.fight_order)
-        source = self.fight_order[self.fighter_id]
+        current_fighter_id = self.fight_order.index(self.current_fighter)
+        self.current_fighter = self.fight_order[(current_fighter_id + 1) % len(self.fight_order)]
+        source = self.current_fighter
         if random() < Game.miss_rival_chance:
             target = source
             while target == source:
