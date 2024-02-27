@@ -373,9 +373,12 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         player: Player = self.game.find_player(source, True)
         try:
-            item = self.game.do_loot(player, index)
+            item = self.game.do_pick(player, index)
         except IndexError:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans la dépouille.")
+            return
+        except ValueError:
+            self.msg(target, f"{ERR} Ton inventaire est plein.")
             return
         self.msg(target, f"{self._str_item(item)} ramassé.")
 

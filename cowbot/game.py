@@ -22,6 +22,7 @@ class Game():
     foe_items_tries = 3
     foe_win_exp_multiplier = 3
     miss_rival_chance = 0.1
+    inventory_size = 10
     speed = 1
 
     def __init__(self) -> None:
@@ -245,13 +246,13 @@ class Game():
             self.players.append(player)
         return player
 
-    def do_loot(self, player: Player, loot_index: int) -> Item :
+    def do_pick(self, player: Player, loot_index: int) -> Item :
         item = self.loot[loot_index]
         if item == None:
             raise IndexError
-        append_in_none(player.inventory, item)
+        append_in_none(player.inventory, item, Game.inventory_size)
         replace_by_none(self.loot, item)
-        trace(f"Loot : {self.loot}")
+        trace(f"Pick : {self.loot}")
         trace(f"{player} inventory : {player.inventory}")
         return item
 
@@ -269,7 +270,7 @@ class Game():
             trace(f"Removing {item} as equipped armor")
             player.armor = None
             unequipped = True
-        append_in_none(self.loot, item)
+        append_in_none(self.loot, item, float('inf'))
         replace_by_none(player.inventory, item)
         trace(f"Loot : {self.loot}")
         trace(f"{player} inventory : {player.inventory}")

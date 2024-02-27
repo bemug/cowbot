@@ -55,7 +55,10 @@ def trace(msg):
 def replace_by_none(list, elem):
     list[:] = [None if x == elem else x for x in list]
 
-def append_in_none(list, elem):
+def append_in_none(list, elem, nb_max):
+    nb_elem = sum(x != None for x in list)
+    if nb_elem >= nb_max:
+        raise ValueError #TODO proper errors names
     for i, value in enumerate(list[:]):
         if value == None:
             list[i] = elem
