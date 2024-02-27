@@ -518,10 +518,10 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         "!cash": Command(_callback_cash, "Affiche le contenu du tiroir-caisse", v.PUBLIC | v.PRIVATE),
         "!status": Command(_callback_status, "Affiche ton statut", v.PUBLIC | v.PRIVATE),
         "!inventory": Command(_callback_inventory, "Affiche ton inventaire", v.PUBLIC | v.PRIVATE),
-        "!loot": Command(_callback_loot, "Prend un objet d'une dépouille pour la placer dans ton inventaire", v.PUBLIC | v.PRIVATE),
+        "!loot": Command(_callback_loot, "Prend un objet de la dépouille pour le placer dans ton inventaire", v.PUBLIC | v.PRIVATE),
         "!drop": Command(_callback_drop, "Place un objet de ton inventaire dans la dépouille", v.PUBLIC),
         "!equip": Command(_callback_equip, "Equipe un objet de ton inventaire", v.PUBLIC),
-        "!use": Command(_callback_use, "Utilise un consommable", v.PUBLIC | v.PRIVATE),
+        "!use": Command(_callback_use, "Utilise un consommable de ton inventaire", v.PUBLIC | v.PRIVATE),
         "!version": Command(_callback_version, "Affiche la version du jeu", v.PUBLIC | v.PRIVATE),
     }
 
