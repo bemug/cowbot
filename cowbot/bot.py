@@ -9,13 +9,15 @@ from cowbot.aftermath import *
 from cowbot.game import *
 from cowbot.foe import *
 from cowbot.utils import *
+from cowbot.visibility import Visibility as v
 
 
 class Command():
     #TODO replace first any with Bot
-    def __init__(self, callback: Callable[[Any, Any, Any, Any], Coroutine[Any, Any, None]], help_message: str) -> None:
+    def __init__(self, callback: Callable[[Any, Any, Any, Any], Coroutine[Any, Any, None]], help_message: str, visibility: v) -> None:
         self.callback = callback
         self.help_message = help_message
+        self.visibility = visibility
 
 
 class Bot(irc.bot.SingleServerIRCBot): #type: ignore
@@ -71,9 +73,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self.on_ping(c, e)
 
     def on_privmsg(self, c, e):
-        #Treat privmsg as nomal messages for now, but answer in public
-        e.target = self.channel
-        self.on_pubmsg(c, e)
+        #Talk to our source
+        e.target = e.source.split('!',1)[0]
+        self._process_command(c, e)
 
     def on_pubmsg(self, c, e):
         self._process_command(c, e)
@@ -146,11 +148,21 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             pass
         try:
             #Check it exists
-            command_array[command]
+            cmd = command_array[command]
         except KeyError:
             self.msg(e.target, f"{ERR} Commande inconnue : {message}")
             return
-        command_array[command].callback(self, e.target, e.source.nick, args)
+
+        #Check you have the right to sue this command here
+        if e.target == self.channel and not cmd.visibility & v.PUBLIC:
+            self.msg(e.target, f"{ERR} Tu ne peux pas utiliser la commande '{message}' en public.")
+            return
+        elif e.target != self.channel and not cmd.visibility & v.PRIVATE:
+            self.msg(e.target, f"{ERR} Tu ne peux pas utiliser la commande '{message}' en privé.")
+            return
+
+        #Everything is ok, execute the command
+        cmd.callback(self, e.target, e.source.nick, args)
         Game.save(self.game)
 
     def _fight(self, target) -> None:
@@ -499,26 +511,26 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
     ### Commands lists ###
 
     commands = {
-        "!help": Command(_callback_help, "Affiche l'aide"),
-        "!pitch": Command(_callback_pitch, "Conte l'histoire"),
-        "!enter": Command(_callback_enter, "Entre dans le saloon"),
-        "!leave": Command(_callback_leave, "Quitte le saloon"),
-        "!cash": Command(_callback_cash, "Affiche le contenu du tiroir-caisse"),
-        "!status": Command(_callback_status, "Affiche ton statut"),
-        "!inventory": Command(_callback_inventory, "Affiche ton inventaire"),
-        "!loot": Command(_callback_loot, "Prend un objet d'une dépouille pour la placer dans ton inventaire"),
-        "!drop": Command(_callback_drop, "Place un objet de ton inventaire dans la dépouille"),
-        "!equip": Command(_callback_equip, "Equipe un objet de ton inventaire"),
-        "!use": Command(_callback_use, "Utilise un consommable"),
-        "!version": Command(_callback_version, "Affiche la version du jeu"),
+        "!help": Command(_callback_help, "Affiche l'aide", v.PUBLIC | v.PRIVATE),
+        "!pitch": Command(_callback_pitch, "Conte l'histoire", v.PUBLIC | v.PRIVATE),
+        "!enter": Command(_callback_enter, "Entre dans le saloon", v.PUBLIC),
+        "!leave": Command(_callback_leave, "Quitte le saloon", v.PUBLIC),
+        "!cash": Command(_callback_cash, "Affiche le contenu du tiroir-caisse", v.PUBLIC | v.PRIVATE),
+        "!status": Command(_callback_status, "Affiche ton statut", v.PUBLIC | v.PRIVATE),
+        "!inventory": Command(_callback_inventory, "Affiche ton inventaire", v.PUBLIC | v.PRIVATE),
+        "!loot": Command(_callback_loot, "Prend un objet d'une dépouille pour la placer dans ton inventaire", v.PUBLIC | v.PRIVATE),
+        "!drop": Command(_callback_drop, "Place un objet de ton inventaire dans la dépouille", v.PUBLIC),
+        "!equip": Command(_callback_equip, "Equipe un objet de ton inventaire", v.PUBLIC),
+        "!use": Command(_callback_use, "Utilise un consommable", v.PUBLIC | v.PRIVATE),
+        "!version": Command(_callback_version, "Affiche la version du jeu", v.PUBLIC | v.PRIVATE),
     }
 
     admin_commands = {
-        "!!help": Command(_callback_admin_help, "Affiche l'aide administrateur"),
-        "!!fight": Command(_callback_admin_fight, "Déclenche instantanément un combat"),
-        "!!cash": Command(_callback_admin_cash, "Change le cash dans le tiroir-caisse"),
-        "!!heal": Command(_callback_admin_heal, "Soigne un joueur"),
-        "!!level": Command(_callback_admin_level, "Change le niveau d'un joueur"),
-        "!!exp": Command(_callback_admin_exp, "Change l'experience d'un joueur"),
-        "!!icons": Command(_callback_admin_icons, "Affiche les icones"),
+        "!!help": Command(_callback_admin_help, "Affiche l'aide administrateur", v.PUBLIC | v.PRIVATE),
+        "!!fight": Command(_callback_admin_fight, "Déclenche instantanément un combat", v.PUBLIC),
+        "!!cash": Command(_callback_admin_cash, "Change le cash dans le tiroir-caisse", v.PUBLIC | v.PRIVATE),
+        "!!heal": Command(_callback_admin_heal, "Soigne un joueur", v.PUBLIC | v.PRIVATE),
+        "!!level": Command(_callback_admin_level, "Change le niveau d'un joueur", v.PUBLIC | v.PRIVATE),
+        "!!exp": Command(_callback_admin_exp, "Change l'experience d'un joueur", v.PUBLIC | v.PRIVATE),
+        "!!icons": Command(_callback_admin_icons, "Affiche les icones", v.PUBLIC | v.PRIVATE),
     }
