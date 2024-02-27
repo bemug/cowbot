@@ -161,7 +161,6 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         try:
             self.game.start_fight()
         except RuntimeError:
-            #TODO steal money instead
             self.msg(target, f"Les indiens rôdent dehors. Je ne peux pas défendre le saloon seul. Je l'ai barricadé en attendant, mais c'est pas bon pour les ventes.")
             return
 
@@ -174,11 +173,13 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             am: Aftermath = self.game.process_fight()
 
             #Construct log
-            log = ""
+            log = f"{step}. {am.source.no_hl_str()}"
+            if am.target != self.game.rivals[am.source]:
+                log += " manque sa cible, et"
             if am.source.weapon:
-                log = f"{step}. {am.source.no_hl_str()} tire sur {am.target.no_hl_str()} : "
+                log += f" tire sur {am.target.no_hl_str()} : "
             else:
-                log = f"{step}. {am.source.no_hl_str()} frappe {am.target.no_hl_str()} à mains nues : "
+                log += f" frappe {am.target.no_hl_str()} à mains nues : "
 
             did_crit: bool = am.source.weapon and am.critical != 1
             did_miss: bool = am.source.armor and am.miss != 1
