@@ -362,8 +362,11 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, log + items_log)
 
     def _callback_loot(self, target, source, args: str) -> None:
-        if len(args) == 0:
-            self._show_loot(target)
+        self._show_loot(target)
+
+    def _callback_pick(self, target, source, args: str) -> None:
+        if len(args) != 1:
+            self.msg(target, "!pick <index>")
             return
         try:
             index = self._parse_uint(target, args[0])
@@ -518,11 +521,14 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         "!cash": Command(_callback_cash, "Affiche le contenu du tiroir-caisse", v.PUBLIC | v.PRIVATE),
         "!status": Command(_callback_status, "Affiche ton statut", v.PUBLIC | v.PRIVATE),
         "!inventory": Command(_callback_inventory, "Affiche ton inventaire", v.PUBLIC | v.PRIVATE),
-        "!loot": Command(_callback_loot, "Prend un objet de la dépouille pour le placer dans ton inventaire", v.PUBLIC | v.PRIVATE),
+        "!loot": Command(_callback_loot, "Affiche la dépouille", v.PUBLIC | v.PRIVATE),
+        "!pick": Command(_callback_pick, "Recupère un objet de la dépouille pour le placer dans ton inventaire", v.PUBLIC | v.PRIVATE),
         "!drop": Command(_callback_drop, "Place un objet de ton inventaire dans la dépouille", v.PUBLIC),
         "!equip": Command(_callback_equip, "Equipe un objet de ton inventaire", v.PUBLIC),
         "!use": Command(_callback_use, "Utilise un consommable de ton inventaire", v.PUBLIC | v.PRIVATE),
         "!version": Command(_callback_version, "Affiche la version du jeu", v.PUBLIC | v.PRIVATE),
+        #TODO !pack
+        #TODO !steal
     }
 
     admin_commands = {
