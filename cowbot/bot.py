@@ -64,9 +64,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     #Fired every ~3min on libera.chat
     def on_ping(self, c, e):
-        #Target is the irc server, change it to our channel
-        e.target = self.channel
-        self._process_time(c, e)
+        #Comes is the irc server, our target is our channel
+        self._process_time(c, e, self.channel)
 
     def on_join(self, c, e):
         #As we join the channel, do the same thing as if we're pinged
@@ -103,26 +102,26 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
     def debug_start(self):
         pass
 
-    def _process_time(self, c, e):
+    def _process_time(self, c, e, target):
         fmt= "%Hh%M"
         #Check opening hours
         if not self.game.opened and Game.is_open_hour():
             trace("Opening game")
             self.game.open()
-            self.msg(e.target, f"Il est {Game.hour_open.strftime(fmt)}, le saloon ouvre ses portes 🌅")
+            self.msg(target, f"Il est {Game.hour_open.strftime(fmt)}, le saloon ouvre ses portes 🌅")
         #Check if a fight is available before closing, to not miss any fights
         if self.game.opened: #Skip missed fights on closed hours, and don't heal
             while self.game.is_heal_time():
                 self.game.heal_players()
                 Game.save(self.game)
             if self.game.is_fight_time():
-                self._fight(e.target)
+                self._fight(target)
                 Game.save(self.game)
         if self.game.opened and not Game.is_open_hour():
             self.game.close()
             trace("Closing game")
             #TODO today's earnings
-            self.msg(e.target, f"Il est {Game.hour_close.strftime(fmt)}, le saloon ferme 🌠")
+            self.msg(target, f"Il est {Game.hour_close.strftime(fmt)}, le saloon ferme 🌠")
 
     def _process_command(self, c, e, target):
         message: str = e.arguments[0]
