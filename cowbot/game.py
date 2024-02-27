@@ -20,6 +20,7 @@ class Game():
     fight_timeout = timedelta(minutes=30)
     tick_heal = timedelta(minutes=15)
     foe_items_tries = 3
+    foe_win_exp_multiplier = 3
     miss_rival_chance = 0.1
     speed = 1
 
@@ -192,14 +193,15 @@ class Game():
         exp: int = int(total_exp / len(self.players_ingame))
         if self.has_lost(self.foes):
             for player in self.players_ingame:
-                trace("Added " + str(exp) + " to 'exp' and 'foe_exp' for " + str(player))
+                trace("Add " + str(exp) + " to 'exp' and 'foe_exp' for " + str(player))
                 player.add_exp(exp)
                 player.foe_exp += exp
         else:
+            exp *= Game.foe_win_exp_multiplier
+            total_exp *= Game.foe_win_exp_multiplier * -1
             for player in self.players_ingame:
-                trace("Substracting " + str(exp) + " 'foe_exp' to " + str(player))
+                trace("Substract " + str(exp) + " 'foe_exp' to " + str(player))
                 player.foe_exp = max(player.foe_exp - exp, 0)
-            total_exp *= -1
         return Game.exp_to_cash(total_exp)
 
     def generate_loot(self) -> None:
