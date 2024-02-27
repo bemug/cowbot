@@ -74,11 +74,11 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def on_privmsg(self, c, e):
         #Talk to our source
-        e.target = e.source.split('!',1)[0]
-        self._process_command(c, e)
+        target = e.source.split('!',1)[0]
+        self._process_command(c, e, target)
 
     def on_pubmsg(self, c, e):
-        self._process_command(c, e)
+        self._process_command(c, e, e.target)
 
     def on_part(self, c, e):
         self.remove_player_from_game(e.source.nick)
@@ -124,7 +124,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             #TODO today's earnings
             self.msg(e.target, f"Il est {Game.hour_close.strftime(fmt)}, le saloon ferme 🌠")
 
-    def _process_command(self, c, e):
+    def _process_command(self, c, e, target):
         message: str = e.arguments[0]
         if message.startswith("!!") and self.is_admin(e.source.nick):
             command_array = self.admin_commands
@@ -150,19 +150,19 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             #Check it exists
             cmd = command_array[command]
         except KeyError:
-            self.msg(e.target, f"{ERR} Commande inconnue : {message}")
+            self.msg(target, f"{ERR} Commande inconnue : {message}")
             return
 
         #Check you have the right to sue this command here
-        if e.target == self.channel and not cmd.visibility & v.PUBLIC:
-            self.msg(e.target, f"{ERR} Tu ne peux pas utiliser la commande '{message}' en public.")
+        if target == self.channel and not cmd.visibility & v.PUBLIC:
+            self.msg(target, f"{ERR} Tu ne peux pas utiliser la commande '{message}' en public.")
             return
-        elif e.target != self.channel and not cmd.visibility & v.PRIVATE:
-            self.msg(e.target, f"{ERR} Tu ne peux pas utiliser la commande '{message}' en privé.")
+        elif target != self.channel and not cmd.visibility & v.PRIVATE:
+            self.msg(target, f"{ERR} Tu ne peux pas utiliser la commande '{message}' en privé.")
             return
 
         #Everything is ok, execute the command
-        cmd.callback(self, e.target, e.source.nick, args)
+        cmd.callback(self, target, e.source.nick, args)
         Game.save(self.game)
 
     def _fight(self, target) -> None:
