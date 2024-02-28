@@ -185,7 +185,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
             #Construct log
             log = f"{step}. {am.source.no_hl_str()}"
-            if am.target != self.game.rivals[am.source]:
+            if am.target != am.rival:
                 log += " manque sa cible, et"
             if am.source.weapon:
                 log += f" tire sur {am.target.no_hl_str()} : "

@@ -10,3 +10,4 @@ class Aftermath():
         self.critical = critical
         self.miss = miss
         self.hit = hit
+        self.rival = None

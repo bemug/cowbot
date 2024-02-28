@@ -180,6 +180,7 @@ class Game():
         else:
             target = self.rivals[source]
         aftermath = source.hit(target)
+        aftermath.rival = self.rivals[source]
         if target.is_dead():
             self.fight_order.remove(target)
             self.rivals[target] = None #Just in case
