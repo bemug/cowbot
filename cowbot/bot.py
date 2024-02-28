@@ -530,7 +530,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         "!status": Command(_callback_status, "Affiche ton statut", v.PUBLIC | v.PRIVATE),
         "!inventory": Command(_callback_inventory, "Affiche ton inventaire", v.PUBLIC | v.PRIVATE),
         "!loot": Command(_callback_loot, "Affiche la dépouille", v.PUBLIC | v.PRIVATE),
-        "!pick": Command(_callback_pick, "Recupère un objet de la dépouille pour le placer dans ton inventaire", v.PUBLIC | v.PRIVATE),
+        "!pick": Command(_callback_pick, "Recupère un objet de la dépouille pour le placer dans ton inventaire", v.PUBLIC),
         "!drop": Command(_callback_drop, "Place un objet de ton inventaire dans la dépouille", v.PUBLIC),
         "!equip": Command(_callback_equip, "Equipe un objet de ton inventaire", v.PUBLIC),
         "!use": Command(_callback_use, "Utilise un consommable de ton inventaire", v.PUBLIC | v.PRIVATE),
