@@ -336,6 +336,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         player: Player = self.game.find_player(source, True)
         if not player in self.game.players_ingame:
             self.game.players_ingame.append(player)
+            #TODO voice
             self.msg(target, f"Bienvenue dans le saloon.")
         else:
             self.msg(target, f"{ERR} Tu es déjà dans le saloon.")
@@ -347,6 +348,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         player: Player = self.game.find_player(source, True)
         if player in self.game.players_ingame:
             self.game.players_ingame.remove(player)
+            #TODO devoice
             self.msg(target, f"A la prochaine cowboy.")
         else:
             self.msg(target, f"{ERR} Tu es déjà hors du saloon.")
@@ -582,6 +584,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         #TODO !pack
         #TODO !swap
         #TODO !steal
+        #TODO !show
     }
 
     admin_commands = {
