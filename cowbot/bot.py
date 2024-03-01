@@ -14,10 +14,17 @@ from cowbot.visibility import Visibility as v
 
 class Command():
     #TODO replace first any with Bot
-    def __init__(self, callback: Callable[[Any, Any, Any, Any], Coroutine[Any, Any, None]], help_message: str, visibility: v) -> None:
+    def __init__(self, callback: Callable[[Any, Any, Any, Any], Coroutine[Any, Any, None]], visibility: v) -> None:
         self.callback = callback
-        self.help_message = help_message
         self.visibility = visibility
+
+    def help_asked(args, expected_len):
+        try:
+            if args[0] == "help" or len(args) not in expected_len:
+                return True
+        except IndexError:
+            pass
+        return False
 
 
 class Bot(irc.bot.SingleServerIRCBot): #type: ignore
@@ -304,14 +311,26 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
     ### Player commands ###
 
     def _callback_help(self, target: int, source, args: str) -> None:
-        for command in self.commands:
-            self.msg(target, command + " : " + self.commands[command].help_message)
+        if Command.help_asked(args, [0]):
+            self.msg(target, f"{HELP} !help : Affiche l'aide")
+            return
+        msg = f"{HELP} Commandes : "
+        msg += decor_str(' '.join(self.commands), decorations['cmd'])
+        msg += ". Taper '!<command> help' pour plus. Certaines commandes sont également accessibles par message privé."
+        self.msg(target, msg)
 
     def _callback_pitch(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [0]):
+            self.msg(target, "!pitch : Raconte l'histoire du lieu")
+            return
         self.msg(target, "Bienvenue dans mon saloon, étranger. Installez vous. J'ai là un excellent whisky, vous devriez le goûter.")
         self.msg(target, "Dites, j'ai entendu dire que vous n'aimiez pas trop les indiens ? Ils me mènent la vie dure ces temps-ci. Ils débarquent dans mon saloon et piquent dans la caisse. Peut être que vous pourriez en dessouder quelques-uns pour moi ? Je saurais me montrer redevable.")
+        #TODO Ask to enter
 
     def _callback_enter(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [0]):
+            self.msg(target, f"{HELP} !enter : Entre dans le saloon.")
+            return
         player: Player = self.game.find_player(source, True)
         if not player in self.game.players_ingame:
             self.game.players_ingame.append(player)
@@ -320,6 +339,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, f"{ERR} Tu es déjà dans le saloon.")
 
     def _callback_leave(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [0]):
+            self.msg(target, f"{HELP} !leave : Quitte le saloon.")
+            return
         player: Player = self.game.find_player(source, True)
         if player in self.game.players_ingame:
             self.game.players_ingame.remove(player)
@@ -328,6 +350,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, f"{ERR} Tu es déjà hors du saloon.")
 
     def _callback_status(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [0]):
+            self.msg(target, f"{HELP} !status : Affiche ton statut.")
+            return
         player: Player = self.game.find_player(source, True)
         msg: str = "Cowboy niv. {}  {} {} {}.".format(
                 player.level,
@@ -345,12 +370,18 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, msg)
 
     def _callback_cash(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [0]):
+            self.msg(target, f"{HELP} !cash : Affiche le contenu du tiroir-caisse.")
+            return
         log: str = "Le contenu du tiroir-caisse est actuellement de {}.".format(
             decor_str(str(self.game.get_cash()), decorations["cash"])
         )
         self.msg(target, log)
 
     def _callback_inventory(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [0]):
+            self.msg(target, f"{HELP} !inventory : Affiche ton inventaire.")
+            return
         player: Player = self.game.find_player(source, True)
         log = "Inventaire :"
         items_log = ""
@@ -365,11 +396,14 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, log + items_log)
 
     def _callback_loot(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [0]):
+            self.msg(target, f"{HELP} !loot : Affiche la dépouille")
+            return
         self._show_loot(target)
 
     def _callback_pick(self, target, source, args: str) -> None:
-        if len(args) != 1:
-            self.msg(target, "!pick <index>")
+        if Command.help_asked(args, [1]):
+            self.msg(target, f"{HELP} !pick <index> : Recupère l'objet 'index' de la dépouille pour le placer dans ton inventaire")
             return
         try:
             index = self._parse_uint(target, args[0])
@@ -387,8 +421,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, f"{self._str_item(item)} ramassé.")
 
     def _callback_drop(self, target, source, args: str) -> None:
-        if len(args) != 1:
-            self.msg(target, "!drop <index>")
+        if Command.help_asked(args, [1]):
+            self.msg(target, f"{HELP} !drop <index> : Place l'objet 'index' de ton inventaire dans la dépouille")
             return
         try:
             index = self._parse_uint(target, args[0])
@@ -406,8 +440,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, f"{self._str_item(item)} {str_unequipped}déposé.")
 
     def _callback_equip(self, target, source, args: str) -> None:
-        if len(args) != 1:
-            self.msg(target, "!equip <index>")
+        if Command.help_asked(args, [1]):
+            self.msg(target, f"{HELP} !equip <index> : Equipe l'objet 'index' de ton inventaire")
             return
         try:
             index = self._parse_uint(target, args[0])
@@ -425,8 +459,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, f"{self._str_item(item)} équipé.")
 
     def _callback_use(self, target, source, args: str) -> None:
-        if len(args) != 1:
-            self.msg(target, "!equip <index>")
+        if Command.help_asked(args, [1]):
+            self.msg(target, f"{HELP} !use <index> : Utilise l'objet 'index' de ton inventaire")
             return
         try:
             index = self._parse_uint(target, args[0])
@@ -450,23 +484,24 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
     ### Admin commands ###
 
     def _callback_admin_help(self, target: int, source, args: str) -> None:
-        for command in self.admin_commands:
-            self.msg(target, command + " : " + self.admin_commands[command].help_message)
+        if Command.help_asked(args, [0]):
+            self.msg(target, f"{HELP} !!help : Affiche l'aide admin")
+            return
+        msg = "Commandes : "
+        msg += decor_str(' '.join(self.admin_commands), decorations['cmd'])
+        msg += "."
+        self.msg(target, msg)
 
     def _callback_admin_fight(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [0]):
+            self.msg(target, f"{HELP} !!fight : Déclenche instantanément un combat")
+            return
         self._fight(target)
 
-    def _callback_admin_cash(self, target, source, args: str) -> None:
-        if len(args) != 1:
-            self.msg(target, "!cash <cash>")
-            return
-        try:
-            self.game.cash = self._parse_uint(target, args[0])
-        except ValueError:
-            return
-        self.msg(target, f"Il y a à présent {self.game.cash}$ dans le tiroir-caisse.")
-
     def _callback_admin_heal(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [0,1]):
+            self.msg(target, f"{HELP} !!heal [joueur] : Soigne un joueur")
+            return
         try:
             source = args[0]
         except IndexError:
@@ -479,6 +514,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, "Joueur soigné.")
 
     def _callback_admin_level(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [1,2]):
+            self.msg(target, f"{HELP} !!level [level] [joueur] : Change le niveau d'un joueur")
+            return
         try:
             source = args[1]
         except IndexError:
@@ -496,6 +534,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, f"Joueur au niveau {player.level}.")
 
     def _callback_admin_exp(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [1,2]):
+            self.msg(target, f"{HELP} !!exp [level] [joueur] : Change l'expérience d'un joueur")
+            return
         try:
             source = args[1]
         except IndexError:
@@ -514,43 +555,38 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         player.exp = exp
         self.msg(target, f"Experience du joueur {player.exp}.")
 
-    def _callback_admin_icons(self, target, source, args: str) -> None:
-        self.msg(target, "Icones : "  + ''.join(icon for icon in icons.values()))
-
     def _callback_admin_say(self, target, source, args: str) -> None:
-        if len(args) == 0:
-            self.msg(target, "!say <phrase>")
+        if Command.help_asked(args, [1]):
+            self.msg(target, f"{HELP} !!say <message> : Parle")
             return
         self.msg(self.channel, ' '.join(args))
 
     ### Commands lists ###
 
     commands = {
-        "!help": Command(_callback_help, "Affiche l'aide", v.PUBLIC | v.PRIVATE),
-        "!pitch": Command(_callback_pitch, "Conte l'histoire", v.PUBLIC | v.PRIVATE),
-        "!enter": Command(_callback_enter, "Entre dans le saloon", v.PUBLIC),
-        "!leave": Command(_callback_leave, "Quitte le saloon", v.PUBLIC),
-        "!cash": Command(_callback_cash, "Affiche le contenu du tiroir-caisse", v.PUBLIC | v.PRIVATE),
-        "!status": Command(_callback_status, "Affiche ton statut", v.PUBLIC | v.PRIVATE),
-        "!inventory": Command(_callback_inventory, "Affiche ton inventaire", v.PUBLIC | v.PRIVATE),
-        "!loot": Command(_callback_loot, "Affiche la dépouille", v.PUBLIC | v.PRIVATE),
-        "!pick": Command(_callback_pick, "Recupère un objet de la dépouille pour le placer dans ton inventaire", v.PUBLIC),
-        "!drop": Command(_callback_drop, "Place un objet de ton inventaire dans la dépouille", v.PUBLIC),
-        "!equip": Command(_callback_equip, "Equipe un objet de ton inventaire", v.PUBLIC),
-        "!use": Command(_callback_use, "Utilise un consommable de ton inventaire", v.PUBLIC | v.PRIVATE),
-        "!version": Command(_callback_version, "Affiche la version du jeu", v.PUBLIC | v.PRIVATE),
+        "!help": Command(_callback_help, v.PUBLIC | v.PRIVATE),
+        "!pitch": Command(_callback_pitch, v.PUBLIC | v.PRIVATE),
+        "!enter": Command(_callback_enter, v.PUBLIC),
+        "!leave": Command(_callback_leave, v.PUBLIC),
+        "!cash": Command(_callback_cash, v.PUBLIC | v.PRIVATE),
+        "!status": Command(_callback_status, v.PUBLIC | v.PRIVATE),
+        "!inventory": Command(_callback_inventory, v.PUBLIC | v.PRIVATE),
+        "!loot": Command(_callback_loot, v.PUBLIC | v.PRIVATE),
+        "!pick": Command(_callback_pick, v.PUBLIC),
+        "!drop": Command(_callback_drop, v.PUBLIC),
+        "!equip": Command(_callback_equip, v.PUBLIC),
+        "!use": Command(_callback_use, v.PUBLIC | v.PRIVATE),
+        "!version": Command(_callback_version, v.PUBLIC | v.PRIVATE),
         #TODO !pack
         #TODO !swap
         #TODO !steal
     }
 
     admin_commands = {
-        "!!help": Command(_callback_admin_help, "Affiche l'aide administrateur", v.PUBLIC | v.PRIVATE),
-        "!!fight": Command(_callback_admin_fight, "Déclenche instantanément un combat", v.PUBLIC),
-        "!!cash": Command(_callback_admin_cash, "Change le cash dans le tiroir-caisse", v.PUBLIC | v.PRIVATE),
-        "!!heal": Command(_callback_admin_heal, "Soigne un joueur", v.PUBLIC | v.PRIVATE),
-        "!!level": Command(_callback_admin_level, "Change le niveau d'un joueur", v.PUBLIC | v.PRIVATE),
-        "!!exp": Command(_callback_admin_exp, "Change l'experience d'un joueur", v.PUBLIC | v.PRIVATE),
-        "!!icons": Command(_callback_admin_icons, "Affiche les icones", v.PUBLIC | v.PRIVATE),
-        "!!say": Command(_callback_admin_say, "Parle", v.PRIVATE),
+        "!!help": Command(_callback_admin_help, v.PUBLIC | v.PRIVATE),
+        "!!fight": Command(_callback_admin_fight, v.PUBLIC),
+        "!!heal": Command(_callback_admin_heal, v.PUBLIC | v.PRIVATE),
+        "!!level": Command(_callback_admin_level, v.PUBLIC | v.PRIVATE),
+        "!!exp": Command(_callback_admin_exp, v.PUBLIC | v.PRIVATE),
+        "!!say": Command(_callback_admin_say, v.PRIVATE),
     }

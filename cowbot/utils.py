@@ -12,8 +12,10 @@ class Decoration:
 
 save_path = pathlib.Path(str(pathlib.Path(__file__).parent.resolve()) + "/../saves")
 
-ERR: str = "BAH!"
-colors_reset : str = "\x03" #Reset
+ERR: str = "Bah! "
+HELP: str = "Pst! "
+
+colors_reset : str = "\x0F" #Reset
 #See https://modern.ircdocs.horse/formatting.html for formatting
 #See https://defs.ircdocs.horse/info/formatting for client support
 decorations = {
@@ -24,6 +26,7 @@ decorations = {
     "arm" : Decoration("\x0314", "⛨"), #Grey
     "crit" : Decoration("\x0305", "%‼"), #Brown
     "miss" : Decoration("\x0303", "%↯"), #Green
+    "cmd" : Decoration("\x1D", ""), #Italic
 }
 
 
