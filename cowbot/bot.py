@@ -536,6 +536,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         "!use": Command(_callback_use, "Utilise un consommable de ton inventaire", v.PUBLIC | v.PRIVATE),
         "!version": Command(_callback_version, "Affiche la version du jeu", v.PUBLIC | v.PRIVATE),
         #TODO !pack
+        #TODO !swap
         #TODO !steal
     }
 
