@@ -179,7 +179,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         try:
             self.game.start_fight()
         except RuntimeError:
-            self.msg(target, f"Les indiens rôdent dehors. Je ne peux pas défendre le saloon seul. Je l'ai barricadé en attendant, mais c'est pas bon pour les ventes.")
+            self.msg(target, f"Les indiens rôdent dehors. Je ne peux pas défendre le saloon seul. Je l'ai barricadé en attendant, mais c'est pas bon pour les ventes. Vous devriez entrer pour me filer un coup de main.")
             return
 
         if len(self.game.foes) > 1:
