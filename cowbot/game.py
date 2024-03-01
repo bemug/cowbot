@@ -248,17 +248,18 @@ class Game():
             self.players.append(player)
         return player
 
-    def do_pick(self, player: Player, loot_index: int) -> Item :
+    def do_pick(self, player: Player, loot_index: int) -> [int, Item] :
         if len(player.inventory) > Player.inventory_size:
             raise ValueError
         item = self.loot[loot_index]
         del self.loot[loot_index]
-        player.inventory[player.next_slot()] = item
+        slot = player.next_slot()
+        player.inventory[slot] = item
         trace(f"Pick : {self.loot}")
         trace(f"{player} inventory : {player.inventory}")
-        return item
+        return [slot, item]
 
-    def do_drop(self, player: Player, loot_index: int) -> [Item, bool] :
+    def do_drop(self, player: Player, loot_index: int) -> [int, Item, bool] :
         unequipped: bool = False
         item = player.inventory[loot_index]
         #Check if object is equipped, and if it is, unequip it
@@ -271,20 +272,23 @@ class Game():
             player.armor = None
             unequipped = True
         del player.inventory[loot_index]
-        self.loot[self.loot_index] = item
+        slot = self.loot_index
+        self.loot[slot] = item
         self.loot_index += 1
         trace(f"Loot : {self.loot}")
         trace(f"{player} inventory : {player.inventory}")
-        return item, unequipped
+        return [slot, item, unequipped]
 
-    def do_equip(self, player: Player, loot_index: int) -> Item :
+    def do_equip(self, player: Player, loot_index: int) -> [Item, Item] :
         item = player.inventory[loot_index]
         if isinstance(item, Weapon):
+            old_item = player.weapon
             player.weapon = item
-            return item
+            return [old_item, item]
         elif isinstance(item, Armor):
+            old_item = player.armor
             player.armor = item
-            return item
+            return [old_item, item]
         raise ValueError
 
     def do_use(self, player: Player, loot_index: int) -> Item :

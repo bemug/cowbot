@@ -415,14 +415,14 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         player: Player = self.game.find_player(source, True)
         try:
-            item = self.game.do_pick(player, index)
+            slot, item = self.game.do_pick(player, index)
         except KeyError:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans la dépouille.")
             return
         except ValueError:
             self.msg(target, f"{ERR} Ton inventaire est plein.")
             return
-        self.msg(target, f"{self._str_item(item)} ramassé.")
+        self.msg(target, f"{self._str_item(item)} ramassé dans le slot [{slot}] ton l'inventaire.")
 
     def _callback_drop(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
@@ -434,14 +434,14 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         player: Player = self.game.find_player(source, True)
         try:
-            item, unequipped = self.game.do_drop(player, index)
+            slot, item, unequipped = self.game.do_drop(player, index)
         except KeyError:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
             return
         str_unequipped = ""
         if unequipped:
-            str_unequipped = "d'abord déséquipé, et "
-        self.msg(target, f"{self._str_item(item)} {str_unequipped}déposé.")
+            str_unequipped = "d'abord déséquipé, puis "
+        self.msg(target, f"{self._str_item(item)} {str_unequipped}déposé dans le slot [{slot}] de la dépouille.")
 
     def _callback_equip(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
@@ -453,14 +453,21 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         player: Player = self.game.find_player(source, True)
         try:
-            item = self.game.do_equip(player, index)
-        except IndexError:
+            old_item, item = self.game.do_equip(player, index)
+        except KeyError:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
             return
         except ValueError:
             self.msg(target, f"{ERR} Tu ne peux pas équipper ça.")
             return
-        self.msg(target, f"{self._str_item(item)} équipé.")
+        if old_item == item:
+            self.msg(target, f"{HELP} {self._str_item(item)} est déjà équipé.")
+            return
+        msg =  f"{self._str_item(item)} équipé"
+        if old_item != None:
+            msg += f" à la place de {self._str_item(old_item)}"
+        msg += "."
+        self.msg(target, msg)
 
     def _callback_use(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
@@ -473,13 +480,13 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         player: Player = self.game.find_player(source, True)
         try:
             item = self.game.do_use(player, index)
-        except IndexError:
+        except KeyError:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
             return
         except ValueError:
             self.msg(target, f"{ERR} Tu ne peux pas utiliser ça.")
             return
-        self.msg(target, f"{self._str_item(item)} utilisé.")
+        self.msg(target, f"{self._str_item(item)} utilisé ({TODO}).")
 
     def _callback_version(self, target, source, args: str) -> None:
         self.msg(target, git_version())
