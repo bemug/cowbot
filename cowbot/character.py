@@ -46,7 +46,7 @@ class Character:
     def has_equipped(self, item):
         return self.weapon == item or self.armor == item
 
-    def hit(self, target):
+    def hit(self, target, rival):
         base_dmg: int = self.get_damage()
         weapon_dmg = self.weapon.attr1 if self.weapon != None else 0
         total_dmg = base_dmg + weapon_dmg
@@ -59,7 +59,7 @@ class Character:
             miss = Character.miss_multiplier
         hit: int = max(int((base_dmg + weapon_dmg) * crit) - armor, 0) * miss
         target.hp = max(target.hp - hit, 0)
-        return Aftermath(self, target, total_dmg, armor, crit, miss, hit)
+        return Aftermath(self, target, total_dmg, armor, crit, miss, hit, rival)
 
     def heal(self, hp = 1):
         self.hp = min(self.hp + hp, self.get_max_hp())
