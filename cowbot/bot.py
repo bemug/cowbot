@@ -227,6 +227,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, log)
 
             if am.target.is_dead():
+                sleep(0.5)
                 self.msg(target, f"{am.target} est à terre.")
 
             step += 1
