@@ -22,7 +22,6 @@ class Game():
     foe_items_tries = 3
     foe_win_exp_multiplier = 3
     miss_rival_chance = 0.1
-    inventory_size = 10
     speed = 1
 
     def __init__(self) -> None:
@@ -35,7 +34,8 @@ class Game():
         self.fight_times = []
         self.heal_times = []
         self.schedule()
-        self.loot = []
+        self.loot = {}
+        self.loot_index = 0
         self.fight_order = []
         self.rivals = {}
         self.current_fighter = None
@@ -211,10 +211,12 @@ class Game():
             for lootable in lootables:
                 item = lootable.generate_item(foe.level)
                 if item != None:
-                    self.loot.append(item)
+                    self.loot[self.loot_index] = item
+                    self.loot_index += 1
 
     def end_fight(self) -> int:
-        self.loot = []
+        self.loot_index = 0
+        self.loot.clear()
         if self.has_lost(self.foes):
             self.generate_loot()
         return self.handle_exp()
@@ -247,11 +249,11 @@ class Game():
         return player
 
     def do_pick(self, player: Player, loot_index: int) -> Item :
+        if len(player.inventory) > Player.inventory_size:
+            raise ValueError
         item = self.loot[loot_index]
-        if item == None:
-            raise IndexError
-        append_in_none(player.inventory, item, Game.inventory_size)
-        replace_by_none(self.loot, item)
+        del self.loot[loot_index]
+        player.inventory[player.next_slot()] = item
         trace(f"Pick : {self.loot}")
         trace(f"{player} inventory : {player.inventory}")
         return item
@@ -259,8 +261,6 @@ class Game():
     def do_drop(self, player: Player, loot_index: int) -> [Item, bool] :
         unequipped: bool = False
         item = player.inventory[loot_index]
-        if item == None:
-            raise IndexError
         #Check if object is equipped, and if it is, unequip it
         if player.weapon == item:
             trace(f"Removing {item} as equipped weapon")
@@ -270,16 +270,15 @@ class Game():
             trace(f"Removing {item} as equipped armor")
             player.armor = None
             unequipped = True
-        append_in_none(self.loot, item, float('inf'))
-        replace_by_none(player.inventory, item)
+        del player.inventory[loot_index]
+        self.loot[self.loot_index] = item
+        self.loot_index += 1
         trace(f"Loot : {self.loot}")
         trace(f"{player} inventory : {player.inventory}")
         return item, unequipped
 
     def do_equip(self, player: Player, loot_index: int) -> Item :
         item = player.inventory[loot_index]
-        if item == None:
-            raise IndexError
         if isinstance(item, Weapon):
             player.weapon = item
             return item
@@ -290,8 +289,6 @@ class Game():
 
     def do_use(self, player: Player, loot_index: int) -> Item :
         item = player.inventory[loot_index]
-        if item == None:
-            raise IndexError
         if isinstance(item, Consumable):
             player.heal(item.heal)
             replace_by_none(player.inventory, item)

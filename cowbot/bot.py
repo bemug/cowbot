@@ -282,7 +282,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
     def _show_loot(self, target):
         log = "Dépouille :"
         items_log = ""
-        for i, item in enumerate(self.game.loot):
+        for i, item in sorted(self.game.loot.items()):
             if item != None:
                 items_log += f"  [{i}] {self._str_item(item)}"
         if items_log == "":
@@ -350,7 +350,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         player: Player = self.game.find_player(source, True)
         log = "Inventaire :"
         items_log = ""
-        for i, item in enumerate(player.inventory):
+        for i, item in sorted(player.inventory.items()):
             if item != None:
                 str_equipped = ""
                 if player.has_equipped(item):
@@ -374,7 +374,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         player: Player = self.game.find_player(source, True)
         try:
             item = self.game.do_pick(player, index)
-        except IndexError:
+        except KeyError:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans la dépouille.")
             return
         except ValueError:
@@ -393,7 +393,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         player: Player = self.game.find_player(source, True)
         try:
             item, unequipped = self.game.do_drop(player, index)
-        except IndexError:
+        except KeyError:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
             return
         str_unequipped = ""

@@ -3,6 +3,7 @@ from cowbot.character import *
 
 class Player(Character):
     scale_factor = 1
+    inventory_size = 10
 
     def __init__(self, name: str) -> None:
         super().__init__()
@@ -13,4 +14,10 @@ class Player(Character):
         self.base_hp = 16
         self.hp = self.get_max_hp()
         self.base_damage = 6
-        self.inventory = []
+        self.inventory = {}
+
+    def next_slot(self):
+        i = 0
+        while i in self.inventory:
+            i += 1
+        return i
