@@ -323,9 +323,11 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         if Command.help_asked(args, [0]):
             self.msg(target, "!pitch : Raconte l'histoire du lieu")
             return
-        self.msg(target, "Bienvenue dans mon saloon, étranger. Installez vous. J'ai là un excellent whisky, vous devriez le goûter.")
+        self.msg(target, "Bienvenue dans mon saloon, étranger. Installez vous. J'ai là un excellent whisky, goûtez-le.")
+        sleep(0.5)
         self.msg(target, "Dites, j'ai entendu dire que vous n'aimiez pas trop les indiens ? Ils me mènent la vie dure ces temps-ci. Ils débarquent dans mon saloon et piquent dans la caisse. Peut être que vous pourriez en dessouder quelques-uns pour moi ? Je saurais me montrer redevable.")
-        #TODO Ask to enter
+        sleep(0.5)
+        self.msg(target, f"Vous devriez entrer, et attendre ici. Je les connais bien ils ne devraient pas tarder.")
 
     def _callback_enter(self, target, source, args: str) -> None:
         if Command.help_asked(args, [0]):
