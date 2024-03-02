@@ -281,14 +281,12 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             decor = [decorations["arm"], decorations["miss"]]
         elif isinstance(item, Consumable):
             decor = [decorations["hp"]]
-            return ret + " " + str(item) + " " + decor_str(str(item.heal), decor[0])
+            return ret + str(item) + " " + decor_str(str(item.heal), decor[0])
         else:
             trace("Unknown item type, ignoring.")
             return
         if equipped:
             ret += "[E]"
-        if ret != "":
-           ret += " " 
         ret += str(item) + " " + decor_str(str(item.attr1), decor[0])
         if item.attr2 > 0:
             ret += " " + decor_str(str(item.attr2), decor[1])
@@ -298,7 +296,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         log = "Dépouille :"
         items_log = ""
         for i, item in sorted(self.game.loot.items()):
-            items_log += f"  {self._str_item(item, i)}"
+            items_log += f" {self._str_item(item, i)}"
         if items_log == "":
             log += " Vide"
         self.msg(target, log + items_log)
@@ -398,7 +396,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         log = "Inventaire :"
         items_log = ""
         for i, item in sorted(player.inventory.items()):
-            items_log += f"  {self._str_item(item, i, player.has_equipped(item))}"
+            items_log += f" {self._str_item(item, i, player.has_equipped(item))}"
         if items_log == "":
             log += " Vide"
         self.msg(target, log + items_log)
