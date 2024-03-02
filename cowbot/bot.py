@@ -247,9 +247,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
             for i, player in enumerate(self.game.players):
                 if player.level != levels[i]:
-                    log = "{} passe au niveau {} ({}).".format(
+                    log = "{} passe au {} ({}).".format(
                             player,
-                            player.level,
+                            decor_str(f"niveau {player.level}", decorations["level"]),
                             decor_str(f"{player.exp}/{player.get_max_exp()}", decorations["exp"]),
                         )
                     self.msg(target, log)
@@ -365,18 +365,19 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, "!status : Affiche ton statut.")
             return
         player: Player = self.game.find_player(source, True)
-        msg: str = "Cowboy niv. {}  {} {} {}.".format(
-                player.level,
+        msg: str = "Cowboy "
+        msg += decor_str(f"niveau {player.level}", decorations["level"])
+        if player.weapon != None or player.armor != None:
+            msg += " équipé de " + " et ".join(filter(None, ([self._str_item(player.weapon), self._str_item(player.armor)])))
+        if player in self.game.players_ingame:
+            msg += f", actuellement {decor_str('dans', decorations['position'])} le saloon."
+        else:
+            msg += f", actuellement {decor_str('hors', decorations['position'])} du saloon."
+        msg += " {} {} {}.".format(
                 decor_str(f"{player.get_damage()}", decorations["dmg"]),
                 decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"]),
                 decor_str(f"{player.exp}/{player.get_max_exp()}", decorations["exp"]),
             )
-        if player.weapon != None or player.armor != None:
-            msg += " Equipement : " + " et ".join(filter(None, ([self._str_item(player.weapon), self._str_item(player.armor)]))) + "."
-        if player in self.game.players_ingame:
-            msg += " Actuellement dans le saloon."
-        else:
-            msg += " Actuellement hors du saloon."
 
         self.msg(target, msg)
 

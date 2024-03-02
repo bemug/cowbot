@@ -26,6 +26,8 @@ decorations = {
     "crit" : Decoration("\x0305", "%‼"), #Brown
     "miss" : Decoration("\x0303", "%↯"), #Green
     "cmd" : Decoration("\x1D", ""), #Italic
+    "level" : Decoration("\x02", ""), #Bold
+    "position" : Decoration("\x1F", ""), #Underline
 }
 
 
