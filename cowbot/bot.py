@@ -495,6 +495,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, msg)
 
     def _callback_version(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [0]):
+            self.msg(target, "!version : Affiche la version du jeu")
+            return
         self.msg(target, git_version())
 
 
