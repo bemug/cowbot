@@ -101,6 +101,9 @@ class Game():
             player.heal(hp)
 
     def is_open_hour():
+        weekno = datetime.today().weekday()
+        if weekno >= 5:
+            return False
         now = datetime.now()
         today_open: datetime = datetime.combine(now, Game.hour_open)
         today_close: datetime = datetime.combine(now, Game.hour_close)
