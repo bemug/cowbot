@@ -16,14 +16,14 @@ pip install -r requirements.txt
 ```
 
 ## Configuration
-Edit run.sh with your arguments, or run directly through command line.
+Edit run.sh with your favorite text editor.
 ```
-python cowbot.py '<IRC network>' '<channel>' <bot name>'
+nano run.sh
 ```
 
 ## Running
 ```
-python cowbot.py
+./run.sh
 ```
 
 ## Development
