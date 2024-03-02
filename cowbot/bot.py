@@ -274,19 +274,21 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             return None
         ret = ""
         if slot != -1:
-            ret += f"[{slot}] "
+            ret += f"[{slot}]"
         if isinstance(item, Weapon):
             decor = [decorations["dmg"], decorations["crit"]]
         elif isinstance(item, Armor):
             decor = [decorations["arm"], decorations["miss"]]
         elif isinstance(item, Consumable):
             decor = [decorations["hp"]]
-            return ret + str(item) + " " + decor_str(str(item.heal), decor[0])
+            return ret + " " + str(item) + " " + decor_str(str(item.heal), decor[0])
         else:
             trace("Unknown item type, ignoring.")
             return
         if equipped:
-            ret += "[E] "
+            ret += "[E]"
+        if ret != "":
+           ret += " " 
         ret += str(item) + " " + decor_str(str(item.attr1), decor[0])
         if item.attr2 > 0:
             ret += " " + decor_str(str(item.attr2), decor[1])
