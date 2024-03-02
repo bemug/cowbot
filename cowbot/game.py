@@ -295,7 +295,7 @@ class Game():
         item = player.inventory[loot_index]
         if isinstance(item, Consumable):
             player.heal(item.heal)
-            replace_by_none(player.inventory, item)
+            del player.inventory[loot_index]
             return item
         raise ValueError
 

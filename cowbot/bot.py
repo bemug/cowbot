@@ -487,7 +487,10 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         except ValueError:
             self.msg(target, f"{ERR} Tu ne peux pas utiliser ça.")
             return
-        self.msg(target, f"{self._str_item(item)} utilisé ({TODO}).")
+        msg = f"{self._str_item(item)} utilisé ("
+        msg += decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"])
+        msg += ")."
+        self.msg(target, msg)
 
     def _callback_version(self, target, source, args: str) -> None:
         self.msg(target, git_version())
