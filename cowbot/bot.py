@@ -152,19 +152,26 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             args: str = message.split(' ')[1:]
         except IndexError:
             pass
-        try:
-            #Check it exists
-            cmd = command_array[command]
-        except KeyError:
-            self.msg(target, f"{ERR} Commande inconnue : {message}")
+        #Check one command matches our command list
+        matches = []
+        for item in command_array:
+            if item.startswith(command):
+                matches.append(item)
+        if len(matches) == 0:
+            self.msg(target, f"{ERR} Commande inconnue : {command}")
             return
+        if len(matches) > 1:
+            self.msg(target, f"{ERR} Plusieurs commandes correspondent à ta demande : " + " ".join(matches))
+            return
+        cmd_str = matches[0]
+        cmd = command_array[matches[0]]
 
         #Check you have the right to sue this command here
         if target == self.channel and not cmd.visibility & v.PUBLIC:
-            self.msg(target, f"{ERR} Tu ne peux pas utiliser la commande '{message}' en public.")
+            self.msg(target, f"{ERR} Tu ne peux pas utiliser la commande '{cmd_str}' en public.")
             return
         elif target != self.channel and not cmd.visibility & v.PRIVATE:
-            self.msg(target, f"{ERR} Tu ne peux pas utiliser la commande '{message}' en privé.")
+            self.msg(target, f"{ERR} Tu ne peux pas utiliser la commande '{cmd_str}' en privé.")
             return
 
         #Everything is ok, execute the command
