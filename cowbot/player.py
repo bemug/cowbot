@@ -21,3 +21,9 @@ class Player(Character):
         while i in self.inventory:
             i += 1
         return i
+
+    def get_slot(self, item):
+        for index, value in self.inventory.items():
+            if value == item:
+                return index
+        raise ValueError

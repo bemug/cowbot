@@ -469,7 +469,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         msg =  f"{self._str_item(item, index)} équipé"
         if old_item != None:
-            msg += f" à la place de {self._str_item(old_item)}"
+            old_slot = player.get_slot(old_item)
+            msg += f" à la place de {self._str_item(old_item, old_slot)}"
         msg += "."
         self.msg(target, msg)
 
