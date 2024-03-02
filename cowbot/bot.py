@@ -28,7 +28,8 @@ class Command():
 
 
 class Bot(irc.bot.SingleServerIRCBot): #type: ignore
-    msg_wait = 2
+    fight_wait = 2
+    msg_wait = 0.5
     after_fight_wait = timedelta(milliseconds=10)
 
 
@@ -39,7 +40,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self.channel = channel
         self.game = Game.load()
         if self.game.speed > 1:
-            Bot.msg_wait = 1
+            Bot.fight_wait = 1
         self.last_fight_time = datetime.now()
 
     def is_admin(self, nick):
@@ -192,7 +193,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         if len(self.game.foes) > 1:
             number_str = "nt"
         self.msg(target, f"{list_str(self.game.foes)} débarque{number_str} dans le saloon {list_str(self.game.players_ingame)} !")
-        sleep(Bot.msg_wait)
+        sleep(Bot.fight_wait)
         while not self.game.is_fight_over():
             #Fight
             am: Aftermath = self.game.process_fight()
@@ -234,11 +235,11 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, log)
 
             if am.target.is_dead():
-                sleep(0.5)
+                sleep(self.msg_wait)
                 self.msg(target, f"{am.target} est à terre.")
 
             step += 1
-            sleep(Bot.msg_wait)
+            sleep(Bot.fight_wait)
 
         #Backup levels for display
         levels = [player.level for player in self.game.players]
@@ -250,7 +251,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
                     decor_str(str(self.game.get_cash()), decorations["cash"]),
                 )
             self.msg(target, log)
-            sleep(Bot.msg_wait)
+            sleep(Bot.fight_wait)
 
             for i, player in enumerate(self.game.players):
                 if player.level != levels[i]:
@@ -260,7 +261,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
                             decor_str(f"{player.exp}/{player.get_max_exp()}", decorations["exp"]),
                         )
                     self.msg(target, log)
-                    sleep(Bot.msg_wait)
+                    sleep(Bot.fight_wait)
 
             self._show_loot(target)
         else:
@@ -328,7 +329,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         msg = "Commandes : " + decor_str(' '.join(self.commands), decorations['cmd']) +"."
         self.msg(target, msg)
-        sleep(0.5)
+        sleep(self.msg_wait)
         msg = "Taper '!<command> help' pour en savoir plus. Il est possible de ne taper que le debut d'une commande. Certaines commandes sont également accessibles par message privé."
         self.msg(target, msg)
 
@@ -337,9 +338,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, "!pitch : Raconte l'histoire du lieu")
             return
         self.msg(target, "Bienvenue dans mon saloon, étranger. Installez vous. J'ai là un excellent whisky, goûtez-le.")
-        sleep(0.5)
+        sleep(self.msg_wait)
         self.msg(target, "Dites, j'ai entendu dire que vous n'aimiez pas trop les indiens ? Ils me mènent la vie dure ces temps-ci. Ils débarquent dans mon saloon et piquent dans la caisse. Peut être que vous pourriez en dessouder quelques-uns pour moi ? Je saurais me montrer redevable.")
-        sleep(0.5)
+        sleep(self.msg_wait)
         self.msg(target, f"Vous devriez entrer, et attendre ici. Je les connais bien ils ne devraient pas tarder.")
 
     def _callback_enter(self, target, source, args: str) -> None:
