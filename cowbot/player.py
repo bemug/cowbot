@@ -26,7 +26,7 @@ class Player(Character):
         for index, value in self.inventory.items():
             if value == item:
                 return index
-        raise ValueError
+        return -1
 
     def pack_inventory(self):
         i = 0
