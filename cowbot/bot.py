@@ -326,9 +326,10 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         if Command.help_asked(args, [0]):
             self.msg(target, "!help : Affiche l'aide")
             return
-        msg = "Commandes : "
-        msg += decor_str(' '.join(self.commands), decorations['cmd'])
-        msg += ". Taper '!<command> help' pour plus. Certaines commandes sont également accessibles par message privé."
+        msg = "Commandes : " + decor_str(' '.join(self.commands), decorations['cmd']) +"."
+        self.msg(target, msg)
+        sleep(0.5)
+        msg = "Taper '!<command> help' pour en savoir plus. Il est possible de ne taper que le debut d'une commande. Certaines commandes sont également accessibles par message privé."
         self.msg(target, msg)
 
     def _callback_pitch(self, target, source, args: str) -> None:
