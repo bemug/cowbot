@@ -291,8 +291,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         log = "Dépouille :"
         items_log = ""
         for i, item in sorted(self.game.loot.items()):
-            if item != None:
-                items_log += f"  [{i}] {self._str_item(item)}"
+            items_log += f"  [{i}] {self._str_item(item)}"
         if items_log == "":
             log += " Vide"
         self.msg(target, log + items_log)
@@ -391,11 +390,10 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         log = "Inventaire :"
         items_log = ""
         for i, item in sorted(player.inventory.items()):
-            if item != None:
-                str_equipped = ""
-                if player.has_equipped(item):
-                    str_equipped = "[E]"
-                items_log += f"  [{i}]{str_equipped} {self._str_item(item)}"
+            str_equipped = ""
+            if player.has_equipped(item):
+                str_equipped = "[E]"
+            items_log += f"  [{i}]{str_equipped} {self._str_item(item)}"
         if items_log == "":
             log += " Vide"
         self.msg(target, log + items_log)
