@@ -12,8 +12,7 @@ class Decoration:
 
 save_path = pathlib.Path(str(pathlib.Path(__file__).parent.resolve()) + "/../saves")
 
-ERR: str = "Bah! "
-HELP: str = "Pst! "
+ERR: str = "BAH!"
 
 colors_reset : str = "\x0F" #Reset
 #See https://modern.ircdocs.horse/formatting.html for formatting

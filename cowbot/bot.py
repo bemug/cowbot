@@ -317,9 +317,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_help(self, target: int, source, args: str) -> None:
         if Command.help_asked(args, [0]):
-            self.msg(target, f"{HELP} !help : Affiche l'aide")
+            self.msg(target, "!help : Affiche l'aide")
             return
-        msg = f"{HELP} Commandes : "
+        msg = "Commandes : "
         msg += decor_str(' '.join(self.commands), decorations['cmd'])
         msg += ". Taper '!<command> help' pour plus. Certaines commandes sont également accessibles par message privé."
         self.msg(target, msg)
@@ -336,7 +336,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_enter(self, target, source, args: str) -> None:
         if Command.help_asked(args, [0]):
-            self.msg(target, f"{HELP} !enter : Entre dans le saloon.")
+            self.msg(target, "!enter : Entre dans le saloon.")
             return
         player: Player = self.game.find_player(source, True)
         if not player in self.game.players_ingame:
@@ -348,7 +348,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_leave(self, target, source, args: str) -> None:
         if Command.help_asked(args, [0]):
-            self.msg(target, f"{HELP} !leave : Quitte le saloon.")
+            self.msg(target, "!leave : Quitte le saloon.")
             return
         player: Player = self.game.find_player(source, True)
         if player in self.game.players_ingame:
@@ -360,7 +360,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_status(self, target, source, args: str) -> None:
         if Command.help_asked(args, [0]):
-            self.msg(target, f"{HELP} !status : Affiche ton statut.")
+            self.msg(target, "!status : Affiche ton statut.")
             return
         player: Player = self.game.find_player(source, True)
         msg: str = "Cowboy niv. {}  {} {} {}.".format(
@@ -380,7 +380,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_cash(self, target, source, args: str) -> None:
         if Command.help_asked(args, [0]):
-            self.msg(target, f"{HELP} !cash : Affiche le contenu du tiroir-caisse.")
+            self.msg(target, "!cash : Affiche le contenu du tiroir-caisse.")
             return
         log: str = "Le contenu du tiroir-caisse est actuellement de {}.".format(
             decor_str(str(self.game.get_cash()), decorations["cash"])
@@ -389,7 +389,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_inventory(self, target, source, args: str) -> None:
         if Command.help_asked(args, [0]):
-            self.msg(target, f"{HELP} !inventory : Affiche ton inventaire.")
+            self.msg(target, "!inventory : Affiche ton inventaire.")
             return
         player: Player = self.game.find_player(source, True)
         log = "Inventaire :"
@@ -402,13 +402,13 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_loot(self, target, source, args: str) -> None:
         if Command.help_asked(args, [0]):
-            self.msg(target, f"{HELP} !loot : Affiche la dépouille")
+            self.msg(target, "!loot : Affiche la dépouille")
             return
         self._show_loot(target)
 
     def _callback_pick(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
-            self.msg(target, f"{HELP} !pick <index> : Recupère l'objet 'index' de la dépouille pour le placer dans ton inventaire")
+            self.msg(target, "!pick <index> : Recupère l'objet 'index' de la dépouille pour le placer dans ton inventaire")
             return
         try:
             index = self._parse_uint(target, args[0])
@@ -427,7 +427,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_drop(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
-            self.msg(target, f"{HELP} !drop <index> : Place l'objet 'index' de ton inventaire dans la dépouille")
+            self.msg(target, "!drop <index> : Place l'objet 'index' de ton inventaire dans la dépouille")
             return
         try:
             index = self._parse_uint(target, args[0])
@@ -446,7 +446,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_equip(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
-            self.msg(target, f"{HELP} !equip <index> : Equipe l'objet 'index' de ton inventaire")
+            self.msg(target, "!equip <index> : Equipe l'objet 'index' de ton inventaire")
             return
         try:
             index = self._parse_uint(target, args[0])
@@ -462,7 +462,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, f"{ERR} Tu ne peux pas équipper ça.")
             return
         if old_item == item:
-            self.msg(target, f"{HELP} {self._str_item(item, index, True)} est déjà équipé.")
+            self.msg(target, f"{ERR} {self._str_item(item, index, True)} est déjà équipé.")
             return
         msg =  f"{self._str_item(item, index)} équipé"
         if old_item != None:
@@ -472,7 +472,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_drink(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
-            self.msg(target, f"{HELP} !drink <index> : Utilise l'objet 'index' de ton inventaire")
+            self.msg(target, "!drink <index> : Utilise l'objet 'index' de ton inventaire")
             return
         try:
             index = self._parse_uint(target, args[0])
@@ -500,7 +500,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_admin_help(self, target: int, source, args: str) -> None:
         if Command.help_asked(args, [0]):
-            self.msg(target, f"{HELP} !!help : Affiche l'aide admin")
+            self.msg(target, "!!help : Affiche l'aide admin")
             return
         msg = "Commandes : "
         msg += decor_str(' '.join(self.admin_commands), decorations['cmd'])
@@ -509,13 +509,13 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_admin_fight(self, target, source, args: str) -> None:
         if Command.help_asked(args, [0]):
-            self.msg(target, f"{HELP} !!fight : Déclenche instantanément un combat")
+            self.msg(target, "!!fight : Déclenche instantanément un combat")
             return
         self._fight(target)
 
     def _callback_admin_heal(self, target, source, args: str) -> None:
         if Command.help_asked(args, [0,1]):
-            self.msg(target, f"{HELP} !!heal [joueur] : Soigne un joueur")
+            self.msg(target, "!!heal [joueur] : Soigne un joueur")
             return
         try:
             source = args[0]
@@ -530,7 +530,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_admin_level(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1,2]):
-            self.msg(target, f"{HELP} !!level [level] [joueur] : Change le niveau d'un joueur")
+            self.msg(target, "!!level [level] [joueur] : Change le niveau d'un joueur")
             return
         try:
             source = args[1]
@@ -550,7 +550,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_admin_exp(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1,2]):
-            self.msg(target, f"{HELP} !!exp [level] [joueur] : Change l'expérience d'un joueur")
+            self.msg(target, "!!exp [level] [joueur] : Change l'expérience d'un joueur")
             return
         try:
             source = args[1]
@@ -572,7 +572,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_admin_say(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
-            self.msg(target, f"{HELP} !!say <message> : Parle")
+            self.msg(target, "!!say <message> : Parle")
             return
         self.msg(self.channel, ' '.join(args))
 
