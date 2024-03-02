@@ -409,7 +409,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_pick(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
-            self.msg(target, "!pick <index> : Recupère l'objet 'index' de la dépouille pour le placer dans ton inventaire")
+            self.msg(target, "!pick <slot> : Recupère l'objet du slot 'slot' de la dépouille pour le placer dans ton inventaire")
             return
         try:
             index = self._parse_uint(target, args[0])
@@ -428,7 +428,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_drop(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
-            self.msg(target, "!drop <index> : Place l'objet 'index' de ton inventaire dans la dépouille")
+            self.msg(target, "!drop <slot> : Place l'objet du slot 'slot' de ton inventaire dans la dépouille")
             return
         try:
             index = self._parse_uint(target, args[0])
@@ -447,7 +447,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_equip(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
-            self.msg(target, "!equip <index> : Equipe l'objet 'index' de ton inventaire")
+            self.msg(target, "!equip <slot> : Equipe l'objet du slot 'slot' de ton inventaire")
             return
         try:
             index = self._parse_uint(target, args[0])
@@ -474,7 +474,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_drink(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
-            self.msg(target, "!drink <index> : Bois l'objet 'index' de ton inventaire")
+            self.msg(target, "!drink <slot> : Bois l'objet du slot 'slot' de ton inventaire")
             return
         try:
             index = self._parse_uint(target, args[0])
@@ -504,7 +504,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_swap(self, target, source, args: str) -> None:
         if Command.help_asked(args, [2]):
-            self.msg(target, "!pack : Permute 2 objets de ton inventaire. Permet de déplacer un objet si un des 2 slots est vide.")
+            self.msg(target, "!swap <slot 1> <slot 2> : Permute 2 objets de ton inventaire. Permet de déplacer un objet si un des 2 slots est vide.")
             return
         try:
             index1 = self._parse_uint(target, args[0])
@@ -523,18 +523,22 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         except ValueError:
             self.msg(target, f"{ERR} Les 2 slots [{index1}] et [{index2}] sont vides.")
             return
-        str1 = ""
         try:
             equipped = player.has_equipped(player.inventory[index1])
             str1 = self._str_item(player.inventory[index1], index1, equipped)
         except KeyError:
-            str1 = f"[{index1}]"
-        str2 = ""
+            str1 = ""
         try:
             equipped = player.has_equipped(player.inventory[index2])
             str2 = self._str_item(player.inventory[index2], index2, equipped)
         except KeyError:
-            str2 = f"[{index2}]"
+            str2 = ""
+        if str1 == "":
+            self.msg(target, f"Déplacé [{index1}] vers {str2}.")
+            return
+        elif str2 == "":
+            self.msg(target, f"Déplacé [{index2}] vers {str1}.")
+            return
         self.msg(target, f"{str1} et {str2} permutés.")
 
     def _callback_version(self, target, source, args: str) -> None:
