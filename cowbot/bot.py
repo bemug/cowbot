@@ -366,7 +366,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         msg: str = "Cowboy "
         msg += decor_str(f"niveau {player.level}", decorations["level"])
         if player.weapon != None or player.armor != None:
-            msg += " équipé de " + " et ".join(filter(None, ([self._str_item(player.weapon), self._str_item(player.armor)])))
+            msg += " équipé de " + " et ".join(filter(None, ([self._str_item(player.weapon, player.get_slot(player.weapon), True), self._str_item(player.armor, player.get_slot(player.armor), True)])))
         if player in self.game.players_ingame:
             msg += f", actuellement {decor_str('dans', decorations['position'])} le saloon."
         else:
