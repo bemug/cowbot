@@ -494,6 +494,14 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         msg += ")."
         self.msg(target, msg)
 
+    def _callback_pack(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [0]):
+            self.msg(target, "!pack : Tasse ton inventaire, éliminant les trous.")
+            return
+        player: Player = self.game.find_player(source, True)
+        next_slot = player.pack_inventory()
+        self.msg(target, f"Inventaire tassé. Prochain slot disponible : [{next_slot}].")
+
     def _callback_version(self, target, source, args: str) -> None:
         if Command.help_asked(args, [0]):
             self.msg(target, "!version : Affiche la version du jeu")
@@ -596,8 +604,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         "!drop": Command(_callback_drop, v.PUBLIC),
         "!equip": Command(_callback_equip, v.PUBLIC),
         "!drink": Command(_callback_drink, v.PUBLIC | v.PRIVATE),
+        "!pack": Command(_callback_pack, v.PUBLIC | v.PRIVATE),
         "!version": Command(_callback_version, v.PUBLIC | v.PRIVATE),
-        #TODO !pack
         #TODO !swap
         #TODO !steal
         #TODO !show

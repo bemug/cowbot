@@ -27,3 +27,12 @@ class Player(Character):
             if value == item:
                 return index
         raise ValueError
+
+    def pack_inventory(self):
+        i = 0
+        old_inv = self.inventory.copy()
+        self.inventory.clear()
+        for value in old_inv.values():
+            self.inventory[i] = value
+            i += 1
+        return i
