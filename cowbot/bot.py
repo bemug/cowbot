@@ -384,7 +384,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         if Command.help_asked(args, [0]):
             self.msg(target, "!cash : Affiche le contenu du tiroir-caisse.")
             return
-        log: str = "Le contenu du tiroir-caisse est actuellement de {}.".format(
+        log: str = "Le contenu du tiroir-caisse est de {}.".format(
             decor_str(str(self.game.get_cash()), decorations["cash"])
         )
         self.msg(target, log)
@@ -420,12 +420,12 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         try:
             slot, item = self.game.do_pick(player, index)
         except KeyError:
-            self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans la dépouille.")
+            self.msg(target, f"{ERR} Il n'y a pas d'objet [{int(args[0])}] dans la dépouille.")
             return
         except ValueError:
             self.msg(target, f"{ERR} Ton inventaire est plein.")
             return
-        self.msg(target, f"{self._str_item(item, index)} ramassé dans le slot [{slot}] ton l'inventaire.")
+        self.msg(target, f"{self._str_item(item, index)} ramassé dans le slot [{slot}].")
 
     def _callback_drop(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
@@ -439,12 +439,12 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         try:
             slot, item, unequipped = self.game.do_drop(player, index)
         except KeyError:
-            self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
+            self.msg(target, f"{ERR} Il n'y a pas d'objet [{int(args[0])}] dans ton inventaire.")
             return
         str_unequipped = ""
         if unequipped:
             str_unequipped = "d'abord déséquipé, puis "
-        self.msg(target, f"{self._str_item(item, index, unequipped)} {str_unequipped}déposé dans le slot [{slot}] de la dépouille.")
+        self.msg(target, f"{self._str_item(item, index, unequipped)} {str_unequipped}déposé dans le slot [{slot}].")
 
     def _callback_equip(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
@@ -458,10 +458,10 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         try:
             old_item, item = self.game.do_equip(player, index)
         except KeyError:
-            self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
+            self.msg(target, f"{ERR} Il n'y a pas d'objet numéro [{int(args[0])}] dans ton inventaire.")
             return
         except ValueError:
-            self.msg(target, f"{ERR} Tu ne peux pas équipper ça.")
+            self.msg(target, f"{ERR} Cet objet ne peut pas être équippé.")
             return
         if old_item == item:
             self.msg(target, f"{ERR} {self._str_item(item, index, True)} est déjà équipé.")
@@ -474,7 +474,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_drink(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
-            self.msg(target, "!drink <index> : Utilise l'objet 'index' de ton inventaire")
+            self.msg(target, "!drink <index> : Bois l'objet 'index' de ton inventaire")
             return
         try:
             index = self._parse_uint(target, args[0])
@@ -484,12 +484,12 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         try:
             item = self.game.do_drink(player, index)
         except KeyError:
-            self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
+            self.msg(target, f"{ERR} Il n'y a pas d'objet numéro [{int(args[0])}] dans ton inventaire.")
             return
         except ValueError:
-            self.msg(target, f"{ERR} Tu ne peux pas utiliser ça.")
+            self.msg(target, f"{ERR} Cet object ne peut pas être bu.")
             return
-        msg = f"{self._str_item(item, index)} utilisé ("
+        msg = f"{self._str_item(item, index)} bu ("
         msg += decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"])
         msg += ")."
         self.msg(target, msg)
