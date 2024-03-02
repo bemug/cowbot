@@ -291,7 +291,7 @@ class Game():
             return [old_item, item]
         raise ValueError
 
-    def do_use(self, player: Player, loot_index: int) -> Item :
+    def do_drink(self, player: Player, loot_index: int) -> Item :
         item = player.inventory[loot_index]
         if isinstance(item, Consumable):
             player.heal(item.heal)

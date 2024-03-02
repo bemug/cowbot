@@ -470,9 +470,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         msg += "."
         self.msg(target, msg)
 
-    def _callback_use(self, target, source, args: str) -> None:
+    def _callback_drink(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
-            self.msg(target, f"{HELP} !use <index> : Utilise l'objet 'index' de ton inventaire")
+            self.msg(target, f"{HELP} !drink <index> : Utilise l'objet 'index' de ton inventaire")
             return
         try:
             index = self._parse_uint(target, args[0])
@@ -480,7 +480,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         player: Player = self.game.find_player(source, True)
         try:
-            item = self.game.do_use(player, index)
+            item = self.game.do_drink(player, index)
         except KeyError:
             self.msg(target, f"{ERR} Il n'y a pas d'objet numéro {int(args[0])} dans ton inventaire.")
             return
@@ -590,7 +590,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         "!pick": Command(_callback_pick, v.PUBLIC),
         "!drop": Command(_callback_drop, v.PUBLIC),
         "!equip": Command(_callback_equip, v.PUBLIC),
-        "!use": Command(_callback_use, v.PUBLIC | v.PRIVATE),
+        "!drink": Command(_callback_drink, v.PUBLIC | v.PRIVATE),
         "!version": Command(_callback_version, v.PUBLIC | v.PRIVATE),
         #TODO !pack
         #TODO !swap
