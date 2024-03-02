@@ -502,6 +502,41 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         next_slot = player.pack_inventory()
         self.msg(target, f"Inventaire tassé. Prochain slot disponible : [{next_slot}].")
 
+    def _callback_swap(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [2]):
+            self.msg(target, "!pack : Permute 2 objets de ton inventaire. Permet de déplacer un objet si un des 2 slots est vide.")
+            return
+        try:
+            index1 = self._parse_uint(target, args[0])
+        except ValueError:
+            return
+        try:
+            index2 = self._parse_uint(target, args[1])
+        except ValueError:
+            return
+        if index1 == index2:
+            self.msg(target, f"{ERR} Les 2 objets doivent être différents.")
+            return
+        player: Player = self.game.find_player(source, True)
+        try:
+            player.swap_inventory(index1, index2)
+        except ValueError:
+            self.msg(target, f"{ERR} Les 2 slots [{index1}] et [{index2}] sont vides.")
+            return
+        str1 = ""
+        try:
+            equipped = player.has_equipped(player.inventory[index1])
+            str1 = self._str_item(player.inventory[index1], index1, equipped)
+        except KeyError:
+            str1 = f"[{index1}]"
+        str2 = ""
+        try:
+            equipped = player.has_equipped(player.inventory[index2])
+            str2 = self._str_item(player.inventory[index2], index2, equipped)
+        except KeyError:
+            str2 = f"[{index2}]"
+        self.msg(target, f"{str1} et {str2} permutés.")
+
     def _callback_version(self, target, source, args: str) -> None:
         if Command.help_asked(args, [0]):
             self.msg(target, "!version : Affiche la version du jeu")
@@ -605,8 +640,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         "!equip": Command(_callback_equip, v.PUBLIC),
         "!drink": Command(_callback_drink, v.PUBLIC | v.PRIVATE),
         "!pack": Command(_callback_pack, v.PUBLIC | v.PRIVATE),
+        "!swap": Command(_callback_swap, v.PUBLIC | v.PRIVATE),
         "!version": Command(_callback_version, v.PUBLIC | v.PRIVATE),
-        #TODO !swap
         #TODO !steal
         #TODO !show
     }

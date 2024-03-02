@@ -1,4 +1,5 @@
 from cowbot.character import *
+from cowbot.utils import trace
 
 
 class Player(Character):
@@ -36,3 +37,19 @@ class Player(Character):
             self.inventory[i] = value
             i += 1
         return i
+
+    def swap_inventory(self, slot1, slot2):
+        #There must be a better way somehow
+        item_slot1 = self.inventory.get(slot1)
+        item_slot2 = self.inventory.get(slot2)
+        if item_slot1 == None and item_slot2 == None:
+            raise ValueError
+        elif item_slot1 == None:
+            self.inventory[slot1] = self.inventory[slot2]
+            del self.inventory[slot2]
+        elif item_slot2 == None:
+            self.inventory[slot2] = self.inventory[slot1]
+            del self.inventory[slot1]
+        else:
+            self.inventory[slot1], self.inventory[slot2] = self.inventory[slot2], self.inventory[slot1]
+        trace("Inventory : " + str(self.inventory))
