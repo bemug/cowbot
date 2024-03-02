@@ -269,20 +269,25 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         #Start a time to ignore all new messages that came inbetween the fight sleeps
         self.last_fight_time = datetime.now()
 
-    def _str_item(self, item):
+    def _str_item(self, item, slot = -1, equipped = False):
         if item == None:
             return None
+        ret = ""
+        if slot != -1:
+            ret += f"[{slot}] "
         if isinstance(item, Weapon):
             decor = [decorations["dmg"], decorations["crit"]]
         elif isinstance(item, Armor):
             decor = [decorations["arm"], decorations["miss"]]
         elif isinstance(item, Consumable):
             decor = [decorations["hp"]]
-            return str(item) + " " + decor_str(str(item.heal), decor[0])
+            return ret + str(item) + " " + decor_str(str(item.heal), decor[0])
         else:
             trace("Unknown item type, ignoring.")
             return
-        ret = str(item) + " " + decor_str(str(item.attr1), decor[0])
+        if equipped:
+            ret += "[E] "
+        ret += str(item) + " " + decor_str(str(item.attr1), decor[0])
         if item.attr2 > 0:
             ret += " " + decor_str(str(item.attr2), decor[1])
         return ret
@@ -291,7 +296,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         log = "Dépouille :"
         items_log = ""
         for i, item in sorted(self.game.loot.items()):
-            items_log += f"  [{i}] {self._str_item(item)}"
+            items_log += f"  {self._str_item(item, i)}"
         if items_log == "":
             log += " Vide"
         self.msg(target, log + items_log)
@@ -390,10 +395,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         log = "Inventaire :"
         items_log = ""
         for i, item in sorted(player.inventory.items()):
-            str_equipped = ""
-            if player.has_equipped(item):
-                str_equipped = "[E]"
-            items_log += f"  [{i}]{str_equipped} {self._str_item(item)}"
+            items_log += f"  {self._str_item(item, i, player.has_equipped(item))}"
         if items_log == "":
             log += " Vide"
         self.msg(target, log + items_log)
@@ -421,7 +423,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         except ValueError:
             self.msg(target, f"{ERR} Ton inventaire est plein.")
             return
-        self.msg(target, f"{self._str_item(item)} ramassé dans le slot [{slot}] ton l'inventaire.")
+        self.msg(target, f"{self._str_item(item, index)} ramassé dans le slot [{slot}] ton l'inventaire.")
 
     def _callback_drop(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
@@ -440,7 +442,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         str_unequipped = ""
         if unequipped:
             str_unequipped = "d'abord déséquipé, puis "
-        self.msg(target, f"{self._str_item(item)} {str_unequipped}déposé dans le slot [{slot}] de la dépouille.")
+        self.msg(target, f"{self._str_item(item, index, unequipped)} {str_unequipped}déposé dans le slot [{slot}] de la dépouille.")
 
     def _callback_equip(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
@@ -460,9 +462,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, f"{ERR} Tu ne peux pas équipper ça.")
             return
         if old_item == item:
-            self.msg(target, f"{HELP} {self._str_item(item)} est déjà équipé.")
+            self.msg(target, f"{HELP} {self._str_item(item, index, True)} est déjà équipé.")
             return
-        msg =  f"{self._str_item(item)} équipé"
+        msg =  f"{self._str_item(item, index)} équipé"
         if old_item != None:
             msg += f" à la place de {self._str_item(old_item)}"
         msg += "."
@@ -485,7 +487,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         except ValueError:
             self.msg(target, f"{ERR} Tu ne peux pas utiliser ça.")
             return
-        msg = f"{self._str_item(item)} utilisé ("
+        msg = f"{self._str_item(item, index)} utilisé ("
         msg += decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"])
         msg += ")."
         self.msg(target, msg)
