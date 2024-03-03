@@ -308,8 +308,6 @@ class Game():
             trace(f"Last game save was at {str(game.last_save)}")
             #We have no idea when the save will be loaded
             game.opened = Game.is_open_hour()
-            #Kick out all players
-            game.players_ingame.clear()
             #If fights or heal were yesterday, reschedule
             fmt = "%Y-%m-%d"
             if datetime.now().strftime(fmt) != game.last_scheduled.strftime(fmt):
