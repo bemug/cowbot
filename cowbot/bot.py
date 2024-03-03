@@ -76,6 +76,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self._process_time(c, e, self.channel)
 
     def on_join(self, c, e):
+        #TODO advertise ourself as a bot
         #As we join the channel, do the same thing as if we're pinged
         self.on_ping(c, e)
 
@@ -350,8 +351,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         player: Player = self.game.find_player(source, True)
         if not player in self.game.players_ingame:
             self.game.players_ingame.append(player)
-            #TODO voice
+            #TODO display either message or voice according to priviledges (maybe get error log ?, or just get permissions)
             self.msg(target, f"Bienvenue dans le saloon.")
+            self.connection.mode(target, f"+v {source}")
         else:
             self.msg(target, f"{ERR} Tu es déjà dans le saloon.")
 
@@ -362,8 +364,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         player: Player = self.game.find_player(source, True)
         if player in self.game.players_ingame:
             self.game.players_ingame.remove(player)
-            #TODO devoice
             self.msg(target, f"A la prochaine cowboy.")
+            self.connection.mode(target, f"-v {source}")
         else:
             self.msg(target, f"{ERR} Tu es déjà hors du saloon.")
 
@@ -645,6 +647,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(self.channel, "Il n'y a personne dans le saloon actuellement.")
             return
         self.msg(self.channel, f"Aller hop, tout le monde dehors ! Vous êtes maintenant hors du saloon {list_str(self.game.players_ingame)}.")
+        for player in self.game.players_ingame:
+            self.connection.mode(target, f"-v {player}")
         self.game.players_ingame.clear()
 
     ### Commands lists ###
