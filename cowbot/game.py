@@ -40,6 +40,8 @@ class Game():
         self.rivals = {}
         self.current_fighter = None
         self.last_save = datetime.now()
+        self.total_fights = 0
+        self.total_wins = 0
 
     def schedule(self) -> None:
         self.schedule_fights()
@@ -220,8 +222,10 @@ class Game():
     def end_fight(self) -> int:
         self.loot_index = 0
         self.loot.clear()
+        self.total_fights += 1
         if self.has_lost(self.foes):
             self.generate_loot()
+            self.total_wins += 1
         return self.handle_exp()
 
     def clean_after_fight(self):
