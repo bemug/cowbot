@@ -641,6 +641,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         if Command.help_asked(args, [0]):
             self.msg(target, f"!!out : Expulse tout le monde du saloon.")
             return
+        if len(self.game.players_ingame) == 0:
+            self.msg(self.channel, "Il n'y a personne dans le saloon actuellement.")
+            return
         self.msg(self.channel, f"Aller hop, tout le monde dehors ! Vous êtes maintenant hors du saloon {list_str(self.game.players_ingame)}.")
         self.game.players_ingame.clear()
 
