@@ -637,6 +637,13 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         self.msg(self.channel, ' '.join(args))
 
+    def _callback_admin_out(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [0]):
+            self.msg(target, f"!!out : Expulse tout le monde du saloon.")
+            return
+        self.msg(self.channel, f"Aller hop, tout le monde dehors ! Vous êtes maintenant hors du saloon {list_str(self.game.players_ingame)}.")
+        self.game.players_ingame.clear()
+
     ### Commands lists ###
 
     commands = {
@@ -666,4 +673,5 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         "!!level": Command(_callback_admin_level, v.PUBLIC | v.PRIVATE),
         "!!exp": Command(_callback_admin_exp, v.PUBLIC | v.PRIVATE),
         "!!say": Command(_callback_admin_say, v.PRIVATE),
+        "!!out": Command(_callback_admin_out, v.PUBLIC | v.PRIVATE),
     }
