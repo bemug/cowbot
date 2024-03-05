@@ -77,12 +77,14 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def on_join(self, c, e):
         #TODO advertise ourself as a bot
+        source = e.source.nick
         #As we join the channel, do the same thing as if we're pinged
-        self.on_ping(c, e)
+        if source == self._nickname:
+            self.on_ping(c, e)
 
     def on_privmsg(self, c, e):
         #Talk to our source
-        target = e.source.split('!',1)[0]
+        target = e.source.nick
         self._process_command(c, e, target)
 
     def on_pubmsg(self, c, e):
