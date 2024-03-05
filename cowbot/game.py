@@ -318,13 +318,15 @@ class Game():
             game.opened = Game.is_open_hour()
             #Kick out all players
             game.players_ingame.clear()
+            #Always heal player, this is a little gift in case of crash
+            for player in game.players:
+                trace("Heal every player on save load")
+                player.hp = player.get_max_hp()
             #If fights or heal were yesterday, reschedule
             fmt = "%Y-%m-%d"
             if datetime.now().strftime(fmt) != game.last_scheduled.strftime(fmt):
-                trace("Save file belongs to yesterday or older, schedule new events and heal players")
+                trace("Save file belongs to yesterday or older, schedule new events")
                 game.schedule()
-                for player in game.players:
-                    player.hp = player.get_max_hp()
         except (FileNotFoundError, IndexError):
             trace("No saves found, creating a new game")
             game = Game()
