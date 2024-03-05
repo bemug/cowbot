@@ -488,7 +488,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         except ValueError:
             self.msg(target, f"{ERR} Ton inventaire est plein.")
             return
-        self.msg(target, f"{self._str_item(item, index)} ramassé dans le slot [{slot}].")
+        self.msg(target, f"{self._str_item(item, index)} ramassé dans le slot [{slot}] de ton inventaire.")
 
     def _callback_drop(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
@@ -507,7 +507,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         str_unequipped = ""
         if unequipped:
             str_unequipped = "d'abord déséquipé, puis "
-        self.msg(target, f"{self._str_item(item, index, unequipped)} {str_unequipped}déposé dans le slot [{slot}].")
+        self.msg(target, f"{self._str_item(item, index, unequipped)} {str_unequipped}déposé dans le slot [{slot}] de la dépouille.")
 
     def _callback_equip(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
