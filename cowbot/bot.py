@@ -28,6 +28,7 @@ class Command():
 
 
 class Bot(irc.bot.SingleServerIRCBot): #type: ignore
+    MAGIC_MESSAGE = "howdy"
     fight_wait = 2
     msg_wait = 0.5
     after_fight_wait = timedelta(milliseconds=10)
@@ -80,7 +81,18 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         source = e.source.nick
         #As we join the channel, do the same thing as if we're pinged
         if source == self._nickname:
+            trace(f"Join '{self.channel}'")
+            #TODO advertise ourself as a bot
+            self.msg(self._nickname, Bot.MAGIC_MESSAGE)
+            #Do the same thing as if we're pinged
             self.on_ping(c, e)
+        else:
+            #Could be an alias, check its status
+            for player in self.game.players_ingame:
+                if get_real_nick(source) == player.name:
+                    trace(f"Voice '{source}' as he is an alias of ingame '{player.name}'.")
+                    self.voice(e.target, source)
+                    break
 
     def on_privmsg(self, c, e):
         #Talk to our source
@@ -91,19 +103,23 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self._process_command(c, e, e.target)
 
     def on_part(self, c, e):
-        self.remove_player_from_game(e.source.nick)
+        self.handle_quit(e.source.nick, e.target)
     def on_kick(self, c, e):
-        self.remove_player_from_game(e.source.nick)
+        self.handle_quit(e.source.nick, e.target)
     def on_quit(self, c, e):
-        self.remove_player_from_game(e.source.nick)
+        self.handle_quit(e.source.nick, e.target)
 
 
     ### Game FSM and display ###
 
-    def remove_player_from_game(self, source):
+    def handle_quit(self, source, target):
         player: Player = self.game.find_player(source)
         if not player:
             return
+        for user in self.get_users():
+            if get_real_nick(user) == player.name:
+                trace(f"Player {player} has an alias in channel as '{user}', Don't remove him from game")
+                return
         if player in self.game.players_ingame:
             trace(f"Player {player} quit, remove him from ingame")
             self.game.players_ingame.remove(player)
@@ -136,6 +152,12 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _process_command(self, c, e, target):
         message: str = e.arguments[0]
+
+        #Get the magic command
+        #This is used to trigger the first event, as the on_join callback does not have the user list available
+        if message == Bot.MAGIC_MESSAGE and e.source.nick == self._nickname:
+            self.restore_status(self.channel)
+
         if message.startswith("!!") and self.is_admin(e.source.nick):
             command_array = self.admin_commands
         elif message.startswith('!'):
@@ -323,6 +345,26 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             raise ValueError
         return index
 
+    def voice(self, target, nick):
+        trace(f"Voice '{nick}'")
+        self.connection.mode(target, f"+v {nick}")
+
+    def devoice(self, target, nick):
+        trace(f"Devoice '{nick}'")
+        self.connection.mode(target, f"-v {nick}")
+
+    def restore_status(self, target):
+        trace("Restore save channel status")
+        #Set back voice status to all players
+        for user in self.get_users():
+            voiced = False
+            for player in self.game.players_ingame:
+                if get_real_nick(user) == player.name:
+                    self.voice(target, user)
+                    voiced = True
+            if not voiced:
+                self.devoice(target, user)
+
 
     ### Player commands ###
 
@@ -353,9 +395,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         player: Player = self.game.find_player(source, True)
         if not player in self.game.players_ingame:
             self.game.players_ingame.append(player)
-            #TODO display either message or voice according to priviledges (maybe get error log ?, or just get permissions)
-            self.msg(target, f"Bienvenue dans le saloon.")
-            self.connection.mode(target, f"+v {source}")
+            for user in self.get_users():
+                if get_real_nick(user) == player.name:
+                    self.voice(target, user)
         else:
             self.msg(target, f"{ERR} Tu es déjà dans le saloon.")
 
@@ -366,12 +408,14 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         player: Player = self.game.find_player(source, True)
         if player in self.game.players_ingame:
             self.game.players_ingame.remove(player)
-            self.msg(target, f"A la prochaine cowboy.")
-            self.connection.mode(target, f"-v {source}")
+            for user in self.get_users():
+                if get_real_nick(user) == player.name:
+                    self.devoice(target, user)
         else:
             self.msg(target, f"{ERR} Tu es déjà hors du saloon.")
 
     def _callback_status(self, target, source, args: str) -> None:
+        #TODO target other players
         if Command.help_asked(args, [0]):
             self.msg(target, "!status : Affiche ton statut.")
             return

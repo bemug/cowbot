@@ -1,6 +1,8 @@
 import subprocess
 import pickle
 import pathlib
+import re
+
 
 from enum import Enum
 from datetime import datetime
@@ -79,3 +81,5 @@ def load_save(prefix):
     trace(f"Loading file {last_save.name}")
     return pickle.load(open(str(last_save), "rb"))
 
+def get_real_nick(nick):
+    return re.sub('_*$', '', nick)

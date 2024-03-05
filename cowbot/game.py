@@ -1,5 +1,3 @@
-import re
-
 from typing import List, Optional
 from random import randint, choice, uniform, randrange, shuffle, random
 from datetime import datetime, time, timedelta
@@ -251,7 +249,7 @@ class Game():
 
     def find_player(self, name: str, create: bool = False) -> Player:
         #Remove spurious '_'
-        name = re.sub('_*$', '', name)
+        name = get_real_nick(name)
         player : Player = next((player for player in self.players if player.name == name), None)
         if not player and create:
             trace(f"Player {name} not found, adding to players list")
