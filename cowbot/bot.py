@@ -612,6 +612,22 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         self.msg(target, f"{str1} et {str2} permutés.")
 
+    def _callback_show(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [1]):
+            self.msg(target, "!show <slot> : Affiche un objet de ton inventaire.")
+            return
+        player: Player = self.game.find_player(source, True)
+        try:
+            slot = self._parse_uint(target, args[0])
+        except ValueError:
+            return
+        try:
+            item = player.inventory[slot]
+        except KeyError:
+            self.msg(target, f"{ERR} Il n'y a pas d'objet [{int(args[0])}] dans ton inventaire.")
+            return
+        self.msg(target, self._str_item(item, slot, player.has_equipped(item)))
+
     def _callback_version(self, target, source, args: str) -> None:
         if Command.help_asked(args, [0]):
             self.msg(target, "!version : Affiche la version du jeu")
@@ -728,9 +744,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         "!drink": Command(_callback_drink, v.PUBLIC | v.PRIVATE),
         "!pack": Command(_callback_pack, v.PUBLIC | v.PRIVATE),
         "!swap": Command(_callback_swap, v.PUBLIC | v.PRIVATE),
+        "!show": Command(_callback_show, v.PUBLIC | v.PRIVATE),
         "!version": Command(_callback_version, v.PUBLIC | v.PRIVATE),
         #TODO !steal
-        #TODO !show
     }
 
     admin_commands = {
