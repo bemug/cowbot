@@ -77,7 +77,7 @@ def save_save(obj, prefix):
     pickle.dump(obj, open(f"{str(save_path)}/{prefix}-{now.strftime(fmt)}.pkl", "wb"))
 
 def load_save(prefix):
-    last_save = list(save_path.glob(f"{prefix}-*.pkl"))[0]
+    last_save = sorted(list(save_path.glob(f"{prefix}-*.pkl")))[-1]
     trace(f"Loading file {last_save.name}")
     return pickle.load(open(str(last_save), "rb"))
 
