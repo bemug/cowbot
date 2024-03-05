@@ -427,10 +427,17 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _callback_status(self, target, source, args: str) -> None:
         #TODO target other players
-        if Command.help_asked(args, [0]):
-            self.msg(target, "!status : Affiche ton statut.")
+        if Command.help_asked(args, [0,1]):
+            self.msg(target, "!status [joueur] : Affiche ton statut ou celui d'un joueur.")
             return
-        player: Player = self.game.find_player(source, True)
+        try:
+            source = args[0]
+            player: Player = self.game.find_player(source)
+        except IndexError:
+            player: Player = self.game.find_player(source, True)
+        if not player:
+            self.msg(target, f"{ERR} Le joueur {source} n'existe pas.")
+            return
         msg: str = "Cowboy "
         msg += decor_str(f"niveau {player.level}", decorations["level"])
         if player.weapon != None or player.armor != None:
