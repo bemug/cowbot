@@ -18,6 +18,7 @@ class Game():
     hour_open = time(9, 30)
     hour_close = time(16, 30)
     fight_timeout = timedelta(minutes=30)
+    heal_timeout = timedelta(minutes=10)
     tick_heal = timedelta(minutes=15)
     foe_items_tries = 3
     foe_win_exp_multiplier = 3
@@ -94,6 +95,9 @@ class Game():
         for heal_time in self.heal_times[:]:
             if now > heal_time:
                 self.heal_times.remove(heal_time)
+                if now - heal_time > Game.heal_timeout:
+                    #Don't trace on purpose, this is to avoid spam on reload
+                    continue
                 trace("Heal " + str(heal_time))
                 return True
         return False
