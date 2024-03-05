@@ -314,8 +314,6 @@ class Game():
             trace(f"Last game save was at {str(game.last_save)}")
             #We have no idea when the save will be loaded
             game.opened = Game.is_open_hour()
-            #Kick out all players
-            game.players_ingame.clear()
             #Always heal player, this is a little gift in case of crash
             for player in game.players:
                 trace("Heal every player on save load")
