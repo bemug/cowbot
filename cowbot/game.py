@@ -98,7 +98,7 @@ class Game():
                 if now - heal_time > Game.heal_timeout:
                     #Don't trace on purpose, this is to avoid spam on reload
                     continue
-                trace("Heal " + str(heal_time))
+                trace("Heal " + " ".join(self.players_ingame) + " " + str(heal_time))
                 return True
         return False
 
