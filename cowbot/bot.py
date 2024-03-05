@@ -355,8 +355,19 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def restore_status(self, target):
         trace("Restore save channel status")
+        users = self.get_users()
+        #Remove people that left
+        for player in self.game.players_ingame:
+            found = False
+            for user in users:
+                if get_real_nick(user) == player.name:
+                    found = True
+                    break
+            if not found:
+                trace(f"Player '{player}' left before save reload, remove him from game")
+                self.game.players_ingame.remove(player)
         #Set back voice status to all players
-        for user in self.get_users():
+        for user in users:
             voiced = False
             for player in self.game.players_ingame:
                 if get_real_nick(user) == player.name:
