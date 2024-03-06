@@ -28,7 +28,6 @@ class Command():
 
 
 class Bot(irc.bot.SingleServerIRCBot): #type: ignore
-    MAGIC_MESSAGE = "howdy"
     fight_wait = 2
     msg_wait = 0.5
     after_fight_wait = timedelta(milliseconds=10)
