@@ -16,10 +16,9 @@ pip install -r requirements.txt
 ```
 
 ## Configuration
-Copy `config-template.cfg` to `config.cfg`, and edit it with your favorite text editor.
 ```
 cp config-template.cfg config.txt
-nano config.txt
+$(EDITOR) config.txt
 ```
 
 ## Running
