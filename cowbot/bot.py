@@ -83,9 +83,6 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         if source == self._nickname:
             trace(f"Join '{self.channel}'")
             #TODO advertise ourself as a bot
-            self.msg(self._nickname, Bot.MAGIC_MESSAGE)
-            #Do the same thing as if we're pinged
-            self.on_ping(c, e)
         else:
             #Could be an alias, check its status
             for player in self.game.players_ingame:
@@ -93,6 +90,13 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
                     trace(f"Voice '{source}' as he is an alias of ingame '{player.name}'.")
                     self.voice(e.target, source)
                     break
+
+    def on_endofnames(self, c, e):
+        trace(f"Receive '{self.channel}' user list")
+        #Require users list to be received, don't do it in on_join on purpose
+        self.restore_status(self.channel)
+        #Consider this as a first instant ping
+        self.on_ping(c, e)
 
     def on_privmsg(self, c, e):
         #Talk to our source
@@ -152,19 +156,12 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _process_command(self, c, e, target):
         message: str = e.arguments[0]
-
-        #Get the magic command
-        #This is used to trigger the first event, as the on_join callback does not have the user list available
-        if message == Bot.MAGIC_MESSAGE and e.source.nick == self._nickname:
-            self.restore_status(self.channel)
-
         if message.startswith("!!") and self.is_admin(e.source.nick):
             command_array = self.admin_commands
         elif message.startswith('!'):
             command_array = self.commands
         else:
             return
-
         now = datetime.now()
         if now - self.last_fight_time < Bot.after_fight_wait:
             remaining_time = self.last_fight_time + Bot.after_fight_wait - now
@@ -346,15 +343,15 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         return index
 
     def voice(self, target, nick):
-        trace(f"Voice '{nick}'")
+        trace(f"Mode +v '{nick}'")
         self.connection.mode(target, f"+v {nick}")
 
     def devoice(self, target, nick):
-        trace(f"Devoice '{nick}'")
+        trace(f"Mode -v '{nick}'")
         self.connection.mode(target, f"-v {nick}")
 
     def restore_status(self, target):
-        trace("Restore save channel status")
+        trace("Restore voice status from save")
         users = self.get_users()
         #Remove people that left
         for player in self.game.players_ingame:
