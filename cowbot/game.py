@@ -41,6 +41,7 @@ class Game():
         self.last_save = datetime.now()
         self.total_fights = 0
         self.total_wins = 0
+        self.max_cash = 0
 
     def schedule(self) -> None:
         self.schedule_fights()
@@ -210,6 +211,9 @@ class Game():
             for player in self.players_ingame:
                 trace("Substract " + str(exp) + " 'foe_exp' to " + str(player))
                 player.foe_exp = max(player.foe_exp - exp, 0)
+        current_cash = self.get_cash()
+        if current_cash > self.max_cash:
+            self.max_cash = current_cash
         return Game.exp_to_cash(total_exp)
 
     def generate_loot(self) -> None:

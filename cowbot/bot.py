@@ -268,10 +268,12 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         cash_change = self.game.end_fight()
 
         if cash_change > 0:
-            log = "VICTOIRE. Pendant la bagarre j'ai vendu pour {} de consommations. J'ai placé cet argent dans le tiroir-caisse ({}).".format(
+            log = "VICTOIRE. Pendant la bagarre j'ai vendu pour {} de boissons. J'ai placé cet argent dans le tiroir-caisse ({}).".format(
                     decor_str(str(cash_change), decorations["cash"]),
                     decor_str(str(self.game.get_cash()), decorations["cash"]),
                 )
+            if self.game.get_cash() >= self.game.max_cash:
+                log += " C'est le montant le plus haut jamais atteint !"
             self.msg(target, log)
             sleep(Bot.fight_wait)
 
@@ -451,8 +453,11 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         if Command.help_asked(args, [0]):
             self.msg(target, "!cash : Affiche le contenu du tiroir-caisse.")
             return
-        log: str = "Le contenu du tiroir-caisse est de {}.".format(
+        log: str = "Le contenu actuel du tiroir-caisse est de {}.".format(
             decor_str(str(self.game.get_cash()), decorations["cash"])
+        )
+        log += " Le montant maximal jamais atteint est de {}.".format(
+            decor_str(str(self.game.max_cash), decorations["cash"])
         )
         self.msg(target, log)
 
