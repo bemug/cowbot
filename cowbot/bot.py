@@ -247,9 +247,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             with_crit = None
             with_miss = None
             if did_crit:
-                with_crit = decor_str(str(am.source.weapon.attr2), decorations["crit"])
+                with_crit = decor_str(str(am.source.weapon.critical), decorations["crit"])
             if did_miss:
-                with_miss = decor_str(str(am.source.armor.attr2), decorations["miss"])
+                with_miss = decor_str(str(am.source.armor.miss), decorations["miss"])
             log += " et ".join(filter(None, [with_crit, with_miss]))
 
             log += ". Reste {}.".format(decor_str(f"{am.target.hp}/{am.target.get_max_hp()}", decorations["hp"]))
@@ -309,19 +309,24 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             ret += f"[{slot}]"
         if isinstance(item, Weapon):
             decor = [decorations["dmg"], decorations["crit"]]
+            attr1 = item.damage
+            attr2 = item.critical
         elif isinstance(item, Armor):
             decor = [decorations["arm"], decorations["miss"]]
+            attr1 = item.armor
+            attr2 = item.miss
         elif isinstance(item, Consumable):
             decor = [decorations["hp"]]
-            return ret + str(item) + " " + decor_str(str(item.heal), decor[0])
+            attr1 = item.heal
+            attr2 = 0
         else:
             trace("Unknown item type, ignoring.")
             return
         if equipped:
             ret += "[E]"
-        ret += str(item) + " " + decor_str(str(item.attr1), decor[0])
-        if item.attr2 > 0:
-            ret += " " + decor_str(str(item.attr2), decor[1])
+        ret += str(item) + " " + decor_str(str(attr1), decor[0])
+        if attr2 > 0:
+            ret += " " + decor_str(str(attr2), decor[1])
         return ret
 
     def _show_loot(self, target):
