@@ -19,3 +19,6 @@ dmypy.json
 
 # Saves
 saves/*.pkl
+
+# Configs
+config.cfg

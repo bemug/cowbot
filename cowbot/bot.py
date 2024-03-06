@@ -35,8 +35,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     ### IRC callbacks ###
 
-    def __init__(self, channel, nickname, server, port=6667):
-        irc.bot.SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
+    def __init__(self, channel, nickname, realname, server, port=6667, password=""):
+        irc.bot.SingleServerIRCBot.__init__(self, [(server, port, password)], nickname, realname)
         self.channel = channel
         self.game = Game.load()
         if self.game.speed > 1:

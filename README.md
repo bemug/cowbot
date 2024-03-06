@@ -16,14 +16,15 @@ pip install -r requirements.txt
 ```
 
 ## Configuration
-Edit run.sh with your favorite text editor.
+Copy `config-template.cfg` to `config.cfg`, and edit it with your favorite text editor.
 ```
-nano run.sh
+cp config-template.cfg config.txt
+nano config.txt
 ```
 
 ## Running
 ```
-./run.sh
+python cowbot.py
 ```
 
 ## Development
