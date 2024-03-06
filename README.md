@@ -17,8 +17,8 @@ pip install -r requirements.txt
 
 ## Configuration
 ```
-cp config-template.cfg config.txt
-$(EDITOR) config.txt
+cp config-template.cfg config.cfg
+$(EDITOR) config.cfg
 ```
 
 ## Running
