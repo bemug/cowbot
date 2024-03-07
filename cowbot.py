@@ -17,7 +17,7 @@ def main():
         sys.exit(1)
 
     try:
-        bot = Bot(cfg['channel'], cfg['nickname'], cfg['realname'], cfg['server'], cfg.getint('port'), cfg['password']) #type: ignore
+        bot = Bot(cfg['channel'], cfg['nickname'], cfg['realname'], cfg['server'], cfg.getint('port'), cfg['password'], cfg['admin']) #type: ignore
     except KeyError as e:
         print(f"Configuration parameter '{e.args[0]}' not defined in {config_file}")
         sys.exit(1)

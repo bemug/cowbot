@@ -35,17 +35,17 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     ### IRC callbacks ###
 
-    def __init__(self, channel, nickname, realname, server, port=6667, password=""):
+    def __init__(self, channel, nickname, realname, server, port=6667, password="", admin=""):
         irc.bot.SingleServerIRCBot.__init__(self, [(server, port, password)], nickname, realname)
         self.channel = channel
         self.game = Game.load()
         if self.game.speed > 1:
             Bot.fight_wait = 1
         self.last_fight_time = datetime.now()
+        self.admin = admin
 
     def is_admin(self, nick):
-        #TODO config file
-        return nick == "zoologist"
+        return nick == self.admin
 
     def msg(self, target, msg):
         #This lib is fucked up.
