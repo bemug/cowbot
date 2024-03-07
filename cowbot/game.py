@@ -21,7 +21,7 @@ class Game():
     foe_items_tries = 3
     foe_win_exp_multiplier = 3
     miss_rival_chance = 0.1
-    speed = 1
+    speed = 1 #Overridden in config
 
     def __init__(self) -> None:
         self.players: List[Player] = []

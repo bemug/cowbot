@@ -1,6 +1,7 @@
 import configparser
 import sys
 from cowbot.bot import Bot
+from cowbot.game import Game
 
 def main():
     config_file = "config.cfg"
@@ -14,6 +15,15 @@ def main():
         cfg = config['config']
     except KeyError as e:
         print(f"Configuration section '[{e.args[0]}]' not defined in {config_file}")
+        sys.exit(1)
+
+    try:
+        Game.speed = cfg.getint('speed')
+    except KeyError as e:
+        print(f"Configuration parameter '{e.args[0]}' not defined in {config_file}. Usually this should be set to 1")
+        sys.exit(1)
+    except ValueError as e:
+        print(f"Configuration parameter 'speed' must be a number")
         sys.exit(1)
 
     try:
