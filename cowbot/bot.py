@@ -171,7 +171,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         command: str = message.split(' ')[0]
         args: str = None
         try:
-            args: str = message.split(' ')[1:]
+            args: str = message.rstrip().split(' ')[1:]
         except IndexError:
             pass
         #Check one command matches our command list
