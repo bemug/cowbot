@@ -76,7 +76,6 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self._process_time(c, e, self.channel)
 
     def on_join(self, c, e):
-        #TODO advertise ourself as a bot
         source = e.source.nick
         #As we join the channel, do the same thing as if we're pinged
         if source == self._nickname:
@@ -429,7 +428,6 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, f"{ERR} Tu es déjà hors du saloon.")
 
     def _callback_status(self, target, source, args: str) -> None:
-        #TODO target other players
         if Command.help_asked(args, [0,1]):
             self.msg(target, "!status [joueur] : Affiche ton statut ou celui d'un joueur.")
             return

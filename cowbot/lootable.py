@@ -42,7 +42,6 @@ class Lootable():
 
 
 lootables = (
-        #TODO TriangleCurve for attr chances
         #Weapons
         #Require at least level 2 to spawn
         Lootable("Pistolet de poche Derringer", Weapon, PeakCurve(2,2,5),        [1],     [DownCurve(5)]),

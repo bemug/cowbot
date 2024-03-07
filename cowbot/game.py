@@ -114,7 +114,6 @@ class Game():
         today_close: datetime = datetime.combine(now, Game.hour_close)
         return now > today_open and now < today_close
 
-    #TODO remove and replace by time compare with hour_open and hour_close
     def open(self):
         self.schedule()
         self.opened = True
