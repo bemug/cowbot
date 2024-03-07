@@ -20,7 +20,7 @@ class Command():
 
     def help_asked(args, expected_len):
         try:
-            if args[0] == "help" or len(args) not in expected_len:
+            if len(args) not in expected_len or args[0] == "help":
                 return True
         except IndexError:
             pass
