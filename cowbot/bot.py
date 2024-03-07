@@ -180,7 +180,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             if item.startswith(command):
                 matches.append(item)
         if len(matches) == 0:
-            self.msg(target, f"{ERR} Commande inconnue : {command}")
+            self.msg(target, f"{ERR} Commande inconnue : '{command}'")
             return
         if len(matches) > 1:
             self.msg(target, f"{ERR} Plusieurs commandes correspondent à ta demande : " + " ".join(matches))
@@ -439,7 +439,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         except IndexError:
             player: Player = self.game.find_player(source, True)
         if not player:
-            self.msg(target, f"{ERR} Le joueur {source} n'existe pas.")
+            self.msg(target, f"{ERR} Le joueur '{source}' n'existe pas.")
             return
         msg: str = "Cowboy "
         msg += decor_str(f"niveau {player.level}", decorations["level"])
@@ -668,7 +668,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             pass
         player: Player = self.game.find_player(source)
         if not player:
-            self.msg(target, f"{ERR} Le joueur {source} n'existe pas.")
+            self.msg(target, f"{ERR} Le joueur '{source}' n'existe pas.")
             return
         player.hp = player.get_max_hp()
         self.msg(target, "Joueur soigné.")
@@ -683,7 +683,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             pass
         player: Player = self.game.find_player(source)
         if not player:
-            self.msg(target, f"{ERR} Le joueur {source} n'existe pas.")
+            self.msg(target, f"{ERR} Le joueur '{source}' n'existe pas.")
             return
         try:
             player.level = self._parse_uint(target, args[0])
@@ -703,14 +703,14 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             pass
         player: Player = self.game.find_player(source)
         if not player:
-            self.msg(target, f"{ERR} Le joueur {source} n'existe pas.")
+            self.msg(target, f"{ERR} Le joueur '{source}' n'existe pas.")
             return
         try:
             exp: int = self._parse_uint(target, args[0])
         except ValueError:
             return
         if exp > player.get_max_exp():
-            self.msg(target, f"{ERR} L'experience de {player.no_hl_str()} ne peut dépasser {player.get_max_exp()}.")
+            self.msg(target, f"{ERR} L'experience de {player.no_hl_str()} ne peut dépasser {player.get_max_exp()} d'expérience.")
             return
         player.exp = exp
         self.msg(target, f"Experience du joueur {player.exp}.")
