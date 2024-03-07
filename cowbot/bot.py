@@ -467,9 +467,12 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         log: str = "Le contenu actuel du tiroir-caisse est de {}.".format(
             decor_str(str(self.game.get_cash()), decorations["cash"])
         )
-        log += " Le montant maximal jamais atteint est de {}.".format(
-            decor_str(str(self.game.max_cash), decorations["cash"])
-        )
+        if self.game.get_cash() >= self.game.max_cash:
+            log += " C'est le montant le plus haut jamais atteint."
+        else:
+            log += " Le montant le plus haut jamais atteint est de {}.".format(
+                decor_str(str(self.game.max_cash), decorations["cash"])
+            )
         self.msg(target, log)
 
     def _callback_inventory(self, target, source, args: str) -> None:
