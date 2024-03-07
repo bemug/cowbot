@@ -91,10 +91,15 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def on_endofnames(self, c, e):
         trace(f"Receive '{self.channel}' user list")
-        #Require users list to be received, don't do it in on_join on purpose
-        self.restore_status(self.channel)
-        #Consider this as a first instant ping
-        self.on_ping(c, e)
+        self.clear_missing_players(self.channel)
+
+    def on_mode(self, c, e):
+        try:
+            if e.arguments[0] == "+o" and e.arguments[1] == self._nickname:
+                trace(f"Receive operator mode for '{self.channel}'")
+                self.restore_voice_status(self.channel)
+        except IndexError:
+            pass
 
     def on_privmsg(self, c, e):
         #Talk to our source
@@ -355,8 +360,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         trace(f"Mode -v '{nick}'")
         self.connection.mode(target, f"-v {nick}")
 
-    def restore_status(self, target):
-        trace("Restore voice status from save")
+    def clear_missing_players(self, target):
+        trace("Clear missing players")
         users = self.get_users()
         #Remove people that left
         for player in self.game.players_ingame:
@@ -368,6 +373,10 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             if not found:
                 trace(f"Player '{player}' left before save reload, remove him from game")
                 self.game.players_ingame.remove(player)
+
+    def restore_voice_status(self, target):
+        trace("Restore voice status")
+        users = self.get_users()
         #Set back voice status to all players
         for user in users:
             voiced = False
