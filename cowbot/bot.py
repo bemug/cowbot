@@ -542,7 +542,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         if old_item == item:
             self.msg(target, f"{ERR} {self._str_item(item, index, True)} est déjà équipé.")
             return
-        msg =  f"{self._str_item(item, index)} équipé"
+        msg =  f"{self._str_item(item, index, True)} équipé"
         if old_item != None:
             old_slot = player.get_slot(old_item)
             msg += f" à la place de {self._str_item(old_item, old_slot)}"
