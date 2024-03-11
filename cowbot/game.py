@@ -17,7 +17,7 @@ class Game():
     hour_close = time(16, 30)
     fight_timeout = timedelta(minutes=30)
     heal_timeout = timedelta(minutes=10)
-    tick_heal = timedelta(minutes=15)
+    tick_heal = timedelta(minutes=12)
     foe_items_tries = 5
     foe_win_exp_multiplier = 3
     miss_rival_chance = 0.1
