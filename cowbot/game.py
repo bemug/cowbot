@@ -18,7 +18,7 @@ class Game():
     fight_timeout = timedelta(minutes=30)
     heal_timeout = timedelta(minutes=10)
     tick_heal = timedelta(minutes=15)
-    foe_items_tries = 3
+    foe_items_tries = 5
     foe_win_exp_multiplier = 3
     miss_rival_chance = 0.1
     speed = 1 #Overridden in config
@@ -133,7 +133,9 @@ class Game():
             noised_foe_exp = int(player.foe_exp + foe_curve.draw())
             foe: Foe = Foe(noised_foe_exp)
             #Let the foe pick some items
-            for i in range(0, Game.foe_items_tries):
+            retries = int(foe.level / Game.foe_items_tries) + int(random() < (foe.level % Game.foe_items_tries) / Game.foe_items_tries)
+            trace(f"Number of item retries : {retries}")
+            for i in range(0, retries):
                 for lootable in lootables:
                     #If the player just reached level X, he didn't have the opportunity to get a loot for level X.
                     #The foe could be really deadly if he gets lucky.
@@ -141,11 +143,11 @@ class Game():
                     item = lootable.generate_item(foe.level - 1)
                     if item != None:
                         if isinstance(item, Weapon) and foe.weapon == None:
-                            foe.weapon = item
+                            if not foe.weapon or item.damage > foe.weapon.damage:
+                                foe.weapon = item
                         elif isinstance(item, Armor) and foe.armor == None:
-                            foe.armor = item
-                        if foe.weapon != None and foe.armor != None:
-                            break
+                            if not foe.armor or item.armor > foe.weapon.armor:
+                                foe.armor = item
             self.foes.append(foe)
             self.rivals[player] = foe
             self.rivals[foe] = player
