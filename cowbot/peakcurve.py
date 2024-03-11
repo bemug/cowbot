@@ -14,7 +14,7 @@ class PeakCurve():
         #Explicitely allow start == peak and peak == end, for single side grownth
         if start > peak or peak > end:
             raise ValueError
-        if peak_value < 0 or peak_value > 1:
+        if peak_value < 0:
             raise ValueError
         self.peak = peak
         self.start = start

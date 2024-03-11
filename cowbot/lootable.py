@@ -43,8 +43,8 @@ class Lootable():
 
 lootables = (
         #Weapons
-        #Require at least level 2 to spawn
-        Lootable("Pistolet de poche Derringer", Weapon, PeakCurve(2,2,5),        [1],     [DownCurve(5)]),
+        #Must always loot at level 2
+        Lootable("Pistolet de poche Derringer", Weapon, PeakCurve(2,2,5, 1/Lootable.loot_rate), [1], [DownCurve(5)]),
         Lootable("Revolver Colt",               Weapon, PeakCurve(2,10,15),      [2],     [DownCurve(7)]),
         Lootable("Revolver Remington",          Weapon, PeakCurve(2,11,15),      [1,4],   [DownCurve(7),  DownCurve(10)]),
         Lootable("Revolver S&W",                Weapon, PeakCurve(8,16,20),      [4],     [DownCurve(10)]),
