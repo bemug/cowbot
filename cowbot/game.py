@@ -16,7 +16,6 @@ class Game():
     hour_open = time(9, 30)
     hour_close = time(16, 30)
     fight_timeout = timedelta(minutes=30)
-    heal_timeout = timedelta(minutes=10)
     tick_heal = timedelta(minutes=12)
     foe_items_tries = 5
     foe_win_exp_multiplier = 3
@@ -94,9 +93,6 @@ class Game():
         for heal_time in self.heal_times[:]:
             if now > heal_time:
                 self.heal_times.remove(heal_time)
-                if now - heal_time > Game.heal_timeout:
-                    #Don't trace on purpose, this is to avoid spam on reload
-                    continue
                 trace("Heal " + " ".join(str(player) for player in self.players_ingame) + " " + str(heal_time))
                 return True
         return False
@@ -319,14 +315,15 @@ class Game():
             trace(f"Last game save was at {str(game.last_save)}")
             #We have no idea when the save will be loaded
             game.opened = Game.is_open_hour()
-            #Always heal player, this is a little gift in case of crash
-            for player in game.players:
-                trace("Heal every player on save load")
-                player.hp = player.get_max_hp()
             #If fights or heal were yesterday, reschedule
             fmt = "%Y-%m-%d"
             if datetime.now().strftime(fmt) != game.last_scheduled.strftime(fmt):
-                trace("Save file belongs to yesterday or older, schedule new events")
+                trace("Save file belongs to yesterday or older, catch up missded heals")
+                while self.game.is_heal_time():
+                    self.game.heal_players()
+                if Game.is_open_hour():
+                    trace(f"Schedule new events")
+                    self.game.open()
                 game.schedule()
         except (FileNotFoundError, IndexError):
             trace("No saves found, creating a new game")
