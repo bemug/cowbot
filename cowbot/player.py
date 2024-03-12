@@ -53,3 +53,6 @@ class Player(Character):
         else:
             self.inventory[slot1], self.inventory[slot2] = self.inventory[slot2], self.inventory[slot1]
         trace("Inventory : " + str(self.inventory))
+
+    def get_inventory_usage(self):
+        return f"{len(self.inventory)}/{Player.inventory_size}"

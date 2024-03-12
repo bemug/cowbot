@@ -480,7 +480,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, "!inventory : Affiche ton inventaire.")
             return
         player: Player = self.game.find_player(source, True)
-        log = "Inventaire :"
+        log = f"Inventaire ({player.get_inventory_usage()}) :"
         items_log = ""
         for i, item in sorted(player.inventory.items()):
             items_log += f" {self._str_item(item, i, player.has_equipped(item))}"
@@ -511,7 +511,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         except ValueError:
             self.msg(target, f"{ERR} Ton inventaire est plein.")
             return
-        self.msg(target, f"{self._str_item(item, index)} ramassé dans le slot [{slot}] de ton inventaire.")
+        self.msg(target, f"{self._str_item(item, index)} ramassé dans le slot [{slot}] de ton inventaire ({player.get_inventory_usage()}).")
 
     def _callback_drop(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
