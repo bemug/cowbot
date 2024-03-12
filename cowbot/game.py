@@ -259,7 +259,7 @@ class Game():
         return player
 
     def do_pick(self, player: Player, loot_index: int) -> [int, Item] :
-        if len(player.inventory) > Player.inventory_size:
+        if len(player.inventory) >= Player.inventory_size:
             raise ValueError
         item = self.loot[loot_index]
         del self.loot[loot_index]
