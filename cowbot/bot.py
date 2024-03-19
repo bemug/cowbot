@@ -255,7 +255,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
                 with_miss = decor_str(str(am.target.armor.miss), decorations["miss"])
             log += " et ".join(filter(None, [with_crit, with_miss]))
 
-            log += ". Reste {}.".format(decor_str(f"{am.target.hp}/{am.target.get_max_hp()}", decorations["hp"]))
+            log += ". Reste {} → {}.".format(
+                    decor_str(f"{am.old_hp}/{am.target.get_max_hp()}", decorations["hp"], False),
+                    decor_str(f"{am.target.hp}/{am.target.get_max_hp()}", decorations["hp"]))
 
             self.msg(target, log)
 
