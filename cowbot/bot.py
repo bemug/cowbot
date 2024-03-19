@@ -338,13 +338,14 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         return ret
 
     def _show_loot(self, target):
-        log = "Dépouille :"
-        items_log = ""
+        log = "Dépouille : "
+        items_list = []
         for i, item in sorted(self.game.loot.items()):
-            items_log += f" {self._str_item(item, i)}"
+            items_list.append(f"{self._str_item(item, i)}")
+        items_log = list_str(items_list)
         if items_log == "":
             log += " Vide"
-        self.msg(target, log + items_log)
+        self.msg(target, log + items_log + ".")
 
     def _parse_uint(self, target, str_index: str) -> int:
         try:
@@ -485,13 +486,14 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, "!inventory : Affiche ton inventaire.")
             return
         player: Player = self.game.find_player(source, True)
-        log = f"Inventaire ({player.get_inventory_usage()}) :"
-        items_log = ""
+        log = f"Inventaire ({player.get_inventory_usage()}) : "
+        items_list = []
         for i, item in sorted(player.inventory.items()):
-            items_log += f" {self._str_item(item, i, player.has_equipped(item))}"
+            items_list.append(f"{self._str_item(item, i, player.has_equipped(item))}")
+        items_log = list_str(items_list)
         if items_log == "":
             log += " Vide"
-        self.msg(target, log + items_log)
+        self.msg(target, log + items_log + ".")
 
     def _callback_loot(self, target, source, args: str) -> None:
         if Command.help_asked(args, [0]):
