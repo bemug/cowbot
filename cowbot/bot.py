@@ -529,7 +529,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         str_unequipped = ""
         if unequipped:
-            str_unequipped = "d'abord déséquipé, puis "
+            str_unequipped = f"d'abord {decor_str('déséquipé', decorations['important'])}, puis "
         self.msg(target, f"{self._str_item(item, index, unequipped)} {str_unequipped}déposé dans le slot [{slot}] de la dépouille.")
 
     def _callback_equip(self, target, source, args: str) -> None:
