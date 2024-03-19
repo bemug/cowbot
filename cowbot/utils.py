@@ -31,6 +31,7 @@ decorations = {
     "level" : Decoration("\x02", ""), #Bold
     "position" : Decoration("\x1F", ""), #Underline
     "important" : Decoration("\x02", ""), #Bold
+    "slot" : Decoration("\x02", ""), #Bold
 }
 
 

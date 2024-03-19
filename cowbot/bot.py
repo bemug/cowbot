@@ -304,12 +304,17 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         #Start a time to ignore all new messages that came inbetween the fight sleeps
         self.last_fight_time = datetime.now()
 
+    def _str_slot(self, slot = -1):
+        if slot != -1:
+            return f"[{decor_str(f'{slot}', decorations['slot'])}]"
+        return ""
+
     def _str_item(self, item, slot = -1, equipped = False):
         if item == None:
             return None
         ret = ""
         if slot != -1:
-            ret += f"[{slot}]"
+            ret += self._str_slot(slot)
         if isinstance(item, Weapon):
             decor = [decorations["dmg"], decorations["crit"]]
             attr1 = item.damage
@@ -511,7 +516,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         except ValueError:
             self.msg(target, f"{ERR} Ton inventaire est plein.")
             return
-        self.msg(target, f"{self._str_item(item, index)} ramassé dans le slot [{slot}] de ton inventaire ({player.get_inventory_usage()}).")
+        self.msg(target, f"{self._str_item(item, index)} ramassé dans le slot {self._str_slot(slot)} de ton inventaire ({player.get_inventory_usage()}).")
 
     def _callback_drop(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
@@ -530,7 +535,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         str_unequipped = ""
         if unequipped:
             str_unequipped = f"d'abord {decor_str('déséquipé', decorations['important'])}, puis "
-        self.msg(target, f"{self._str_item(item, index, unequipped)} {str_unequipped}déposé dans le slot [{slot}] de la dépouille.")
+        self.msg(target, f"{self._str_item(item, index, unequipped)} {str_unequipped}déposé dans le slot {self._str_slot(slot)} de la dépouille.")
 
     def _callback_equip(self, target, source, args: str) -> None:
         if Command.help_asked(args, [1]):
@@ -587,7 +592,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             return
         player: Player = self.game.find_player(source, True)
         next_slot = player.pack_inventory()
-        self.msg(target, f"Inventaire tassé. Prochain slot disponible : [{next_slot}].")
+        self.msg(target, f"Inventaire tassé. Prochain slot disponible : {self._str_slot(next_slot)} ({player.get_inventory_usage()}).")
 
     def _callback_swap(self, target, source, args: str) -> None:
         if Command.help_asked(args, [2]):
@@ -608,7 +613,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         try:
             player.swap_inventory(index1, index2)
         except ValueError:
-            self.msg(target, f"{ERR} Les 2 slots [{index1}] et [{index2}] sont vides.")
+            self.msg(target, f"{ERR} Les 2 slots {self._str_slot(index1)} et {self._str_slot(index2)} sont vides.")
             return
         try:
             equipped = player.has_equipped(player.inventory[index1])
@@ -621,10 +626,10 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         except KeyError:
             str2 = ""
         if str1 == "":
-            self.msg(target, f"Déplacé [{index1}] vers {str2}.")
+            self.msg(target, f"Déplacé {self._str_slot(index1)} vers {str2}.")
             return
         elif str2 == "":
-            self.msg(target, f"Déplacé [{index2}] vers {str1}.")
+            self.msg(target, f"Déplacé {self._str_slot(index2)} vers {str1}.")
             return
         self.msg(target, f"{str1} et {str2} permutés.")
 
