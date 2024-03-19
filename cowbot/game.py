@@ -315,16 +315,17 @@ class Game():
             trace(f"Last game save was at {str(game.last_save)}")
             #We have no idea when the save will be loaded
             game.opened = Game.is_open_hour()
-            #If fights or heal were yesterday, reschedule
+            trace("Catch up missing heals if any")
+            while game.is_heal_time():
+                game.heal_players()
+            #If fights were yesterday, rearm game state
             fmt = "%Y-%m-%d"
             if datetime.now().strftime(fmt) != game.last_scheduled.strftime(fmt):
-                trace("Save file belongs to yesterday or older, catch up missded heals")
-                while game.is_heal_time():
-                    game.heal_players()
+                trace("Save file belongs to yesterday or older")
                 if Game.is_open_hour():
-                    trace(f"Schedule new events")
+                    trace(f"This is open hours, schedule new events")
                     game.open()
-                game.schedule()
+                    #else time tick will do it for us
         except (FileNotFoundError, IndexError):
             trace("No saves found, creating a new game")
             game = Game()
