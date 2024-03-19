@@ -370,7 +370,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         trace("Clear missing players")
         users = self.get_users()
         #Remove people that left
-        for player in self.game.players_ingame:
+        #Iterate over a copy so we can remove items safely
+        for player in self.game.players_ingame[:]:
             found = False
             for user in users:
                 if get_real_nick(user) == player.name:
