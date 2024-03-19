@@ -319,11 +319,11 @@ class Game():
             fmt = "%Y-%m-%d"
             if datetime.now().strftime(fmt) != game.last_scheduled.strftime(fmt):
                 trace("Save file belongs to yesterday or older, catch up missded heals")
-                while self.game.is_heal_time():
-                    self.game.heal_players()
+                while game.is_heal_time():
+                    game.heal_players()
                 if Game.is_open_hour():
                     trace(f"Schedule new events")
-                    self.game.open()
+                    game.open()
                 game.schedule()
         except (FileNotFoundError, IndexError):
             trace("No saves found, creating a new game")
