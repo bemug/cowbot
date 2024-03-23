@@ -584,6 +584,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         except ValueError:
             return
         player: Player = self.game.find_player(source, True)
+        old_hp = player.hp
         try:
             item = self.game.do_drink(player, index)
         except KeyError:
@@ -592,9 +593,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         except ValueError:
             self.msg(target, f"{ERR} Cet object ne peut pas être bu.")
             return
-        msg = f"{self._str_item(item)} bu ("
-        msg += decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"])
-        msg += ")."
+        msg = f"{self._str_item(item)} bu. "
+        msg += decor_str(f"{old_hp}/{player.get_max_hp()}", decorations["hp"], False) + " → "
+        msg += decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"]) + "."
         self.msg(target, msg)
 
     def _callback_pack(self, target, source, args: str) -> None:
