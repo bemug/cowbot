@@ -457,15 +457,19 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         if not player:
             self.msg(target, f"{ERR} Le joueur '{source}' n'existe pas.")
             return
-        msg: str = "Cowboy "
-        msg += decor_str(f"niveau {player.level}", decorations["level"])
-        if player.weapon != None or player.armor != None:
-            msg += " équipé de " + " et ".join(filter(None, ([self._str_item(player.weapon, player.get_slot(player.weapon), True), self._str_item(player.armor, player.get_slot(player.armor), True)])))
-        msg += ". {} {} {}.".format(
-                decor_str(f"{player.get_damage()}", decorations["dmg"]),
+        damage = player.get_damage()
+        if player.weapon != None and player.weapon.damage != 0:
+            damage += player.weapon.damage
+        msg: str = "Cowboy {} : {}".format(
+                decor_str(f"niveau {player.level}", decorations["level"]),
+                decor_str(f"{damage}", decorations["dmg"]))
+        if player.weapon != None and player.weapon.damage != 0:
+            msg += " " + decor_str(f"({player.get_damage()} + {player.weapon.damage})", decorations["dmg"], False)
+        msg += ", {} et {}.".format(
                 decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"]),
-                decor_str(f"{player.exp}/{player.get_max_exp()}", decorations["exp"]),
-            )
+                decor_str(f"{player.exp}/{player.get_max_exp()}", decorations["exp"]))
+        if player.weapon != None or player.armor != None:
+            msg += " Equipé de " + " et ".join(filter(None, ([self._str_item(player.weapon, player.get_slot(player.weapon), True), self._str_item(player.armor, player.get_slot(player.armor), True)]))) + "."
 
         self.msg(target, msg)
 
