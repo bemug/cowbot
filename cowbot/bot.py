@@ -132,6 +132,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.game.players_ingame.remove(player)
         else:
             trace(f"Player {player} quit, but was not ingame. Do nothing")
+        #This is a game status change, save the game
+        Game.save(self.game)
 
     def debug_start(self):
         pass
