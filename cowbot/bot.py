@@ -50,8 +50,9 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
     def msg(self, target, msg):
         #This lib is fucked up.
         #It could either let me know how much byte it sends in a message, or either wrap lines for me.
-        max_chars = 512 #IRC protocol limit excluding CR/LF
-        max_chars -= 25 #So we should be safe
+        #We could anticipate the total message length, but even that fails and cut our message. Could be a socket issue.
+        #Classic IRC clients cut at 350, just do the same and don't bother too much.
+        max_chars = 350
         for sub_msg in wrap(msg, max_chars):
             try:
                 self.connection.privmsg(target, sub_msg)
