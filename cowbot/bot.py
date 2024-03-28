@@ -744,6 +744,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         self.msg(target, f"Experience du joueur {player.exp}.")
 
     def _callback_admin_say(self, target, source, args: str) -> None:
+        # Treat all arguments as one
+        args = list(filter(None, [' '.join(args)]))
         if Command.help_asked(args, [1]):
             self.msg(target, "!!say <message> : Parle")
             return
