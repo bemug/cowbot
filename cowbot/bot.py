@@ -162,6 +162,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
 
     def _process_command(self, c, e, target):
         message: str = e.arguments[0]
+        if message == "!" or message == "!!":
+            return
         if message.startswith("!!") and self.is_admin(e.source.nick):
             command_array = self.admin_commands
         elif message.startswith('!'):
