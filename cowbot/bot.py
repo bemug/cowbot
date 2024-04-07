@@ -586,7 +586,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
             self.msg(target, f"{ERR} Cet objet ne peut pas être équippé.")
             return
         if old_item == item:
-            self.msg(target, f"{ERR} {self._str_item(item, index, True)} est déjà équipé.")
+            self.msg(target, f"{ERR} {self._str_item(item)} est déjà équipé.")
             return
         msg =  f"{self._str_item(item)} équipé"
         if old_item != None:
