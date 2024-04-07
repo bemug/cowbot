@@ -296,7 +296,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
                         )
                     self.msg(target, log)
                     sleep(Bot.fight_wait)
-
+            self._show_party(target)
+            sleep(Bot.fight_wait)
             self._show_loot(target)
         else:
             log = "DEFAITE. Avant de s'échapper {} vole{} {} dans le tiroir-caisse ({}).".format(
@@ -343,6 +344,17 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         if attr2 > 0:
             ret += " " + decor_str(str(attr2), decor[1])
         return ret
+
+    def _show_party(self, target):
+        if len(self.game.players_ingame) == 0:
+            self.msg(target, f"{ERR} Il n'y a aucun joueur dans le saloon.")
+            return
+        party = []
+        for player in self.game.players_ingame:
+            str_party = player.no_hl_str() + " " + decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"])
+            party.append(str_party)
+        msg = "Groupe : " + list_str(party) + "."
+        self.msg(target, msg)
 
     def _show_loot(self, target):
         log = "Dépouille : "
@@ -480,15 +492,8 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
     def _callback_party(self, target, source, args: str) -> None:
         if Command.help_asked(args, [0]):
             self.msg(target, "!party : Affiche la santé des joueurs présents dans le saloon")
-        if len(self.game.players_ingame) == 0:
-            self.msg(target, f"{ERR} Il n'y a aucun joueur dans le saloon.")
             return
-        party = []
-        for player in self.game.players_ingame:
-            str_party = player.no_hl_str() + " " + decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"])
-            party.append(str_party)
-        msg = "Etat du groupe : " + list_str(party) + "."
-        self.msg(target, msg)
+        self._show_party(target)
 
     def _callback_cash(self, target, source, args: str) -> None:
         if Command.help_asked(args, [0]):
