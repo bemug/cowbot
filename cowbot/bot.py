@@ -542,7 +542,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         try:
             slot, item = self.game.do_pick(player, index)
         except KeyError:
-            self.msg(target, f"{ERR} Il n'y a pas d'objet [{int(args[0])}] dans la dépouille.")
+            self.msg(target, f"{ERR} Il n'y a pas d'objet {self._str_slot(args[0])} dans la dépouille.")
             return
         except ValueError:
             self.msg(target, f"{ERR} Ton inventaire est plein.")
@@ -561,7 +561,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         try:
             slot, item, unequipped = self.game.do_drop(player, index)
         except KeyError:
-            self.msg(target, f"{ERR} Il n'y a pas d'objet [{int(args[0])}] dans ton inventaire.")
+            self.msg(target, f"{ERR} Il n'y a pas d'objet {self._str_slot(args[0])} dans ton inventaire.")
             return
         str_unequipped = ""
         if unequipped:
@@ -580,7 +580,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         try:
             old_item, item = self.game.do_equip(player, index)
         except KeyError:
-            self.msg(target, f"{ERR} Il n'y a pas d'objet numéro [{int(args[0])}] dans ton inventaire.")
+            self.msg(target, f"{ERR} Il n'y a pas d'objet {self._str_slot(args[0])} dans ton inventaire.")
             return
         except ValueError:
             self.msg(target, f"{ERR} Cet objet ne peut pas être équippé.")
@@ -608,7 +608,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         try:
             item = self.game.do_drink(player, index)
         except KeyError:
-            self.msg(target, f"{ERR} Il n'y a pas d'objet numéro [{int(args[0])}] dans ton inventaire.")
+            self.msg(target, f"{ERR} Il n'y a pas d'objet {self._str_slot(args[0])} dans ton inventaire.")
             return
         except ValueError:
             self.msg(target, f"{ERR} Cet object ne peut pas être bu.")
@@ -675,7 +675,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         try:
             item = player.inventory[slot]
         except KeyError:
-            self.msg(target, f"{ERR} Il n'y a pas d'objet [{int(args[0])}] dans ton inventaire.")
+            self.msg(target, f"{ERR} Il n'y a pas d'objet {self._str_slot(args[0])} dans ton inventaire.")
             return
         self.msg(target, self._str_item(item, slot, player.has_equipped(item)))
 
