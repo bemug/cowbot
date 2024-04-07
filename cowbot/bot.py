@@ -475,7 +475,19 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
                 decor_str(f"{player.exp}/{player.get_max_exp()}", decorations["exp"]))
         if player.weapon != None or player.armor != None:
             msg += " Equipé de " + " et ".join(filter(None, ([self._str_item(player.weapon, player.get_slot(player.weapon), True), self._str_item(player.armor, player.get_slot(player.armor), True)]))) + "."
+        self.msg(target, msg)
 
+    def _callback_party(self, target, source, args: str) -> None:
+        if Command.help_asked(args, [0]):
+            self.msg(target, "!party : Affiche la santé des joueurs présents dans le saloon")
+        if len(self.game.players_ingame) == 0:
+            self.msg(target, f"{ERR} Il n'y a aucun joueur dans le saloon.")
+            return
+        party = []
+        for player in self.game.players_ingame:
+            str_party = player.no_hl_str() + " " + decor_str(f"{player.hp}/{player.get_max_hp()}", decorations["hp"])
+            party.append(str_party)
+        msg = "Etat du groupe : " + list_str(party) + "."
         self.msg(target, msg)
 
     def _callback_cash(self, target, source, args: str) -> None:
@@ -771,6 +783,7 @@ class Bot(irc.bot.SingleServerIRCBot): #type: ignore
         "!enter": Command(_callback_enter, v.PUBLIC),
         "!leave": Command(_callback_leave, v.PUBLIC),
         "!cash": Command(_callback_cash, v.PUBLIC | v.PRIVATE),
+        "!party": Command(_callback_party, v.PUBLIC | v.PRIVATE),
         "!status": Command(_callback_status, v.PUBLIC | v.PRIVATE),
         "!inventory": Command(_callback_inventory, v.PUBLIC | v.PRIVATE),
         "!loot": Command(_callback_loot, v.PUBLIC | v.PRIVATE),
