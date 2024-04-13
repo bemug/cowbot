@@ -3,9 +3,10 @@ import pickle
 import pathlib
 import re
 
-
 from enum import Enum
-from datetime import datetime
+from datetime import date, datetime
+from jours_feries_france import JoursFeries
+
 
 class Decoration:
     def __init__(self, color: str, icon: str):
@@ -85,3 +86,7 @@ def load_save(prefix):
 
 def get_real_nick(nick):
     return re.sub('_*$', '', nick)
+
+def is_jour_ferie():
+    yearly_feries = JoursFeries.for_year(date.today().year)
+    return date.today() in yearly_feries.values()
