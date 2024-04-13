@@ -1,2 +1,2 @@
-irc==20.3.0
-jours-feries-france
+irc >= 20.1.1
+jours-feries-france >= 0.7
