@@ -33,8 +33,8 @@ class Player(Character):
         i = 0
         old_inv = self.inventory.copy()
         self.inventory.clear()
-        for value in old_inv.values():
-            self.inventory[i] = value
+        for key in sorted(old_inv):
+            self.inventory[i] = old_inv[key]
             i += 1
         return i
 
