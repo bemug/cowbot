@@ -214,13 +214,20 @@ class Game():
         return Game.exp_to_cash(total_exp)
 
     def generate_loot(self) -> None:
+        loot = []
         for foe in self.foes:
             trace(f"Generating loot from {foe}")
             for lootable in lootables:
                 item = lootable.generate_item(foe.level)
                 if item != None:
-                    self.loot[self.loot_index] = item
-                    self.loot_index += 1
+                    loot.append(item)
+        #Sort by type
+        sort_order = {Weapon: 0, Armor: 1, Consumable: 2, object: 100}
+        loot.sort(key=lambda x: sort_order[type(x)])
+        #Add numbers to items
+        for item in loot:
+            self.loot[self.loot_index] = item
+            self.loot_index +=1
 
     def end_fight(self) -> int:
         self.loot_index = 0
