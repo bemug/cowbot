@@ -18,10 +18,11 @@ class Character:
         return self.name
 
     def no_hl_str(self) -> str:
-        #Insert this 0 width whitespace to avoid highlighting people: ​
-        #See https://blanktext.net/
+        #Used to avoid highlighting people
+        #Previously we used a 'zero width space' caracter, but it means the word is semantically separated in two
+        #Use a 'word joiner' caracter instead to mark it as a single word, but still differ from the origin word : ⁠
         s: str = self.__str__()
-        return s[:1] + '​' + s[1:]
+        return s[:1] + '⁠' + s[1:]
 
     def get_damage(self) -> int:
         return self.base_damage + self.level - 1
