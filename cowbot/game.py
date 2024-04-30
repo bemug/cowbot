@@ -133,10 +133,7 @@ class Game():
             trace(f"Number of item retries : {retries}")
             for i in range(0, retries):
                 for lootable in lootables:
-                    #If the player just reached level X, he didn't have the opportunity to get a loot for level X.
-                    #The foe could be really deadly if he gets lucky.
-                    #Make the foe only pick up items from its previous level, he'll catch up eventually.
-                    item = lootable.generate_item(foe.level - 1)
+                    item = lootable.generate_item(foe.level)
                     if item != None:
                         if isinstance(item, Weapon) and foe.weapon == None:
                             if not foe.weapon or item.damage > foe.weapon.damage:
