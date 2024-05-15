@@ -269,8 +269,6 @@ class Game():
         del self.loot[loot_index]
         slot = player.next_slot()
         player.inventory[slot] = item
-        trace(f"Pick : {self.loot}")
-        trace(f"{player} inventory : {player.inventory}")
         return [slot, item]
 
     def do_drop(self, player: Player, loot_index: int) -> [int, Item, bool] :
@@ -289,8 +287,6 @@ class Game():
         slot = self.loot_index
         self.loot[slot] = item
         self.loot_index += 1
-        trace(f"Loot : {self.loot}")
-        trace(f"{player} inventory : {player.inventory}")
         return [slot, item, unequipped]
 
     def do_equip(self, player: Player, loot_index: int) -> [Item, Item] :
