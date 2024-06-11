@@ -53,7 +53,7 @@ lootables = (
         Lootable("Fusil Springfield",           Weapon, PeakCurve(19,21,23),     [9,4],   [DownCurve(20), DownCurve(20)]),
         Lootable("Carabine Mauser",             Weapon, PeakCurve(20,23,24),     [4,19],  [DownCurve(20), DownCurve(20)]),
         Lootable("Carabine Winchester",         Weapon, PeakCurve(23,25,25),     [14,9],  [DownCurve(25), DownCurve(25)]),
-        Lootable("Mitrailleuse Gatling",        Weapon, PeakCurve(10,25,25,0.1), [0,50],  [DownCurve(1),  DownCurve(30)]),
+        Lootable("Mitrailleuse Gatling",        Weapon, PeakCurve(10,25,25,0.1), [10,50],  [DownCurve(1),  DownCurve(30)]),
         ### Armors
         #Require at least level 4 to spawn
         Lootable("Chapeau Cattleman", Armor, PeakCurve(4,4,7),        [1],    [DownCurve(4)]),
@@ -66,7 +66,7 @@ lootables = (
         Lootable("Chapeau Brick",     Armor, PeakCurve(18,23,24),     [10,4], [DownCurve(13), DownCurve(13)]),
         Lootable("Chapeau Diamond",   Armor, PeakCurve(19,24,25),     [5,11], [DownCurve(13), DownCurve(13)]),
         Lootable("Chapeau Telescope", Armor, PeakCurve(22,25,25),     [15,6], [DownCurve(18), DownCurve(18)]),
-        Lootable("Chapeau Gambler",   Armor, PeakCurve(12,25,25,0.1), [0,25], [DownCurve(1),  DownCurve(20)]),
+        Lootable("Chapeau Gambler",   Armor, PeakCurve(12,25,25,0.1), [6,25], [DownCurve(1),  DownCurve(20)]),
 
         ### Consumables
         Lootable("Tequila", Consumable, PeakCurve(5,10,13,0.55),  [3],  [DownCurve(6)]),
