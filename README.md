@@ -26,11 +26,4 @@ $EDITOR config.cfg
 python cowbot.py
 ```
 
-## Development
-This project uses mypy to check for python errors.
-```
-pip install -r requirements/dev.txt
-mypy --strict cowbot/*.py
-```
-
 <sub><sup>Cowbot icon created by shmai - <a href="https://www.flaticon.com/authors/shmai" title="shmai on Flaticon">Flaticon</a></sub></sup>

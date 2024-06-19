@@ -1,1 +1,2 @@
-requirements/prod.txt
+irc >= 20.1.1
+jours-feries-france >= 0.7
