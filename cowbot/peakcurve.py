@@ -48,7 +48,7 @@ class PeakCurve():
         for i in range(PeakCurve.random_max_draw):
             value = self.random_in_bounds()
             if self.draw_at(value):
-                return value - self.start
+                return value
         trace("Can't find a value in curve, check your curve values immediately")
         return 0
 

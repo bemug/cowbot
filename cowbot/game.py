@@ -126,7 +126,7 @@ class Game():
         #TODO generate combined/split foes with 5% chance of appearance
         for player in self.players_ingame:
             foe_curve = PeakCurve(int(player.foe_exp * 0.6), player.foe_exp, int(player.foe_exp * 1.4))
-            noised_foe_exp = int(player.foe_exp + foe_curve.draw())
+            noised_foe_exp = int(player.foe_exp + foe_curve.draw_center())
             foe: Foe = Foe(noised_foe_exp)
             #Let the foe pick some items
             retries = int(foe.level / Game.foe_items_tries) + int(random() < (foe.level % Game.foe_items_tries) / Game.foe_items_tries)
