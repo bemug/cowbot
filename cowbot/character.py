@@ -7,6 +7,7 @@ class Character:
     exp_multiplier = 100
     crit_multiplier = 1.5
     miss_multiplier = 0
+    level_max = 25
 
     def __init__(self):
         self.level = 1
@@ -42,6 +43,10 @@ class Character:
         while self.exp >= self.get_max_exp():
             self.exp -= self.get_max_exp()
             self.level += 1
+        #Cap at max level
+        if self.level > Character.level_max:
+            self.level = Character.level_max
+            self.exp = self.get_max_exp()
         return self.level - old_level
 
     def has_equipped(self, item):
