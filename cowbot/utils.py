@@ -25,7 +25,7 @@ decorations = {
     "exp" : Decoration("\x0302", "✦"), #Blue
     "dmg" : Decoration("\x0307", "✸"), #Orange
     "cash" : Decoration("\x0342", "$"), #Custom yellow, as default is too bright on some white themes
-    "arm" : Decoration("\x0314", "⛨"), #Grey
+    "arm" : Decoration("\x0314", "🛡"), #Grey
     "crit" : Decoration("\x0305", "%‼"), #Brown
     "miss" : Decoration("\x0303", "%↯"), #Green
     "cmd" : Decoration("\x1D", ""), #Italic
