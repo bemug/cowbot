@@ -51,7 +51,7 @@ lootables = (
         Lootable("Fusil Spencer",               Weapon, PeakCurve(12,18,20),     [5,0],   [DownCurve(15), DownCurve(15)]),
         Lootable("Fusil Sharps",                Weapon, PeakCurve(14,21,22),     [3,14],  [DownCurve(15), DownCurve(15)]),
         Lootable("Fusil Springfield",           Weapon, PeakCurve(19,21,23),     [9,4],   [DownCurve(20), DownCurve(20)]),
-        Lootable("Carabine Mauser",             Weapon, PeakCurve(20,23,24),     [4,19],  [DownCurve(20), DownCurve(20)]),
+        Lootable("Carabine Mauser",             Weapon, PeakCurve(20,23,24),     [5,19],  [DownCurve(20), DownCurve(20)]),
         Lootable("Carabine Winchester",         Weapon, PeakCurve(23,25,25),     [14,9],  [DownCurve(25), DownCurve(25)]),
         Lootable("Mitrailleuse Gatling",        Weapon, PeakCurve(10,25,25,0.1), [10,50], [DownCurve(1),  DownCurve(30)]),
         ### Armors
