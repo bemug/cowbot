@@ -34,8 +34,10 @@ class Character:
     def is_dead(self):
         return self.hp <= 0
 
-    def get_max_exp(self) -> int:
-        return int(pow((self.level + 1), 3) / Character.level_up_speed * self.__class__.scale_factor * Character.exp_multiplier)
+    def get_max_exp(self, level=-1) -> int:
+        if level == -1:
+            level = self.level
+        return int(pow((level + 1), 3) / Character.level_up_speed * self.__class__.scale_factor * Character.exp_multiplier)
 
     def add_exp(self, xp: int) -> int:
         old_level: int = self.level
@@ -44,9 +46,9 @@ class Character:
             self.exp -= self.get_max_exp()
             self.level += 1
         #Cap at max level
-        if self.level > Character.level_max:
+        if self.level >= Character.level_max:
             self.level = Character.level_max
-            self.exp = self.get_max_exp()
+            self.exp = self.get_max_exp(Character.level_max)
         return self.level - old_level
 
     def has_equipped(self, item):
