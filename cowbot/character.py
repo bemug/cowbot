@@ -48,7 +48,7 @@ class Character:
         #Cap at max level
         if self.level >= Character.level_max:
             self.level = Character.level_max
-            self.exp = self.get_max_exp(Character.level_max)
+            self.exp = self.get_max_exp(Character.level_max - 1)
         return self.level - old_level
 
     def has_equipped(self, item):
