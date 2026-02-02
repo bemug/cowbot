@@ -23,7 +23,7 @@ Blaireau
 Blobfish
 Boa
 Boeuf
-Bongos
+Bongo
 Bonobo
 Bouquetin
 Brebis
@@ -133,7 +133,7 @@ Kodiak
 Kodkod
 Koudou
 Lamantin
-Lamas
+Lama
 Lapin
 Lemming
 Lémurien
@@ -147,7 +147,7 @@ Lophophore
 Lori
 Loup
 Loutre
-Lycaons
+Lycaon
 Lynx
 Macaque
 Mammouth
@@ -185,18 +185,18 @@ Once
 Opossum
 Oran
 Ornithorynque
-Orques
+Orque
 Oryctérope
 Oryx
 Otarie
 Ouistiti
 Ours
-Pandas
+Panda
 Pangolin
 Panthère
 Paon
 Paresseux
-Pécaris
+Pécari
 Pékan
 Pélican
 Perroquet
@@ -205,7 +205,7 @@ Phoque
 Pie
 Pika
 Pingouin
-Pipistrelles
+Pipistrelle
 Piton
 Pogona
 Poisson
